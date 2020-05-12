@@ -1,0 +1,7 @@
+extends ../layouts/application.pug
+
+block content
+  +formFor(t('views.session.new.login'))(class='simple_form new_user_sign_in_type' novalidate='novalidate' action=route('login') method='post')
+    +input(loginData, 'email', errors)(class='required user_sign_in_type_email' type='text')
+    +input(loginData, 'password', errors)(class='required user_sign_in_type_password' type='password')
+    +submit(loginData)(value=t('views.session.new.submit'))

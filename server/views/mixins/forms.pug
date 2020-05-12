@@ -1,0 +1,70 @@
+- const getInputName = (entity, property) => `${entity.constructor.name.toLowerCase()}[${property}]`
+- const getErrorText = (errors, property) => {
+-   const error = errors.find((error) => error.property === property)
+-   if (!error) {
+-     return;
+-   }
+-   return Object.values(error.constraints).join(', ');
+- }
+
+mixin formFor(header)
+  div.container-fluid
+    div.row.justify-content-center.pb-5.mt-5
+      div.col-12.col-sm-8.col-md-7.col-lg-4
+        div.card.shadow-sm.border-top.border-primary
+          div.card-body
+            h1.h3.mb-4.mt-3.text-center= t(header)
+            form&attributes(attributes)
+              block
+
+mixin input(entity, propertyName, errors = [])
+  - const errorText = getErrorText(errors, propertyName);
+  - let formClass = 'form-control'
+  - if (errorText) {
+  -   formClass += ' ' + 'is-invalid'
+  - } else if(value) {
+  -     formClass += ' ' + 'is-valid'
+  - }
+  - const feedbackClass = errorText ? 'invalid-feedback' : 'valid_feedback'
+  - const feedbackValue = errorText || ''
+  div.form-group(class=propertyName)
+    input(
+      class= formClass
+      name=getInputName(entity, propertyName)
+      value=_.get(entity, propertyName, '')
+    )&attributes(attributes)
+    div(class=feedbackClass)= feedbackValue
+
+mixin submit
+  .form-group
+        input(class='btn btn-primary' type='submit')&attributes(attributes)
+
+
+mixin buttonTo(action, method)
+  form(action=action, method="post")
+    input(name="_method" type="hidden" value=method)
+    input(type='submit')&attributes(attributes)
+
+mixin listFor(header)
+  div.container-fluid
+    div.row.flex-xl-nowrap
+      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
+        div.card.shadow-sm.border-top.border-primary
+          div.card-body
+            h1.h3.mb-4.mt-3.text-center= t(header)
+            table.table.table-striped.table-bordered
+              thead.thead-dark
+                tr
+                  th(scope=col)=t('views.users.list.id')
+                  th(scope=col)=t('views.users.list.email')
+                  th(scope=col)=t('views.users.list.firstname')
+                  th(scope=col)=t('views.users.list.lastname')
+                  th(scope=col)=t('views.users.list.role')
+                tbody
+                  each user in users
+                    tr
+                      td= user.id
+                      td= user.email
+                      td= user.firstname
+                      td= user.lastname
+                      td= user.role

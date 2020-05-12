@@ -1,0 +1,2 @@
+server: make start-backend
+client: make start-frontend

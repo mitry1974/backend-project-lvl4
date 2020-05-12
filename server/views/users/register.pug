@@ -1,0 +1,21 @@
+extends ../layouts/application.pug
+
+block content
+  +formFor(caption)(class='simple_form_new_user' novalidate action=action  method='post')&attributes(attributes)
+    +input(user, 'email', errors)(
+      class = "string required email"
+      type='email'
+      placeholder= t('views.users.new.email'))
+    +input(user, 'firstname', errors)(
+      type='firstname'
+      placeholder= t('views.users.new.firstname'))
+    +input(user, 'lastname', errors)(
+      type='lastname'
+      placeholder= t('views.users.new.lastname'))
+    +input(user, 'rawPassword', errors)(
+      type='password'
+      placeholder= t('views.users.new.password'))
+    +input(user, 'rawPasswordConfirm', errors)(
+      type='password'
+      placeholder= t('views.users.new.confirm_password'))
+    +submit(user)(value = t('views.users.new.submit'))
