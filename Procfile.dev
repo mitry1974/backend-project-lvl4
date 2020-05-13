@@ -1,2 +1,2 @@
-server: make start-backend
-client: make start-frontend
+web: npm run start:server:dev
+client: npm run start:frontend:dev

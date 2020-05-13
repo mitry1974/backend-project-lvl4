@@ -25,7 +25,7 @@ const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
-
+console.log(`IsDevelopment: ${isDevelopment}, isProduction: ${isProduction}, isTest: ${isTest}`);
 const registerPlugins = (app) => {
   app.register(fastifyErrorPage);
   app.register(fastifyReverseRoutes);
@@ -46,7 +46,7 @@ const registerPlugins = (app) => {
 
 const setupStaticAssets = (app) => {
   app.register(fastifyStatic, {
-    root: path.resolve(__dirname, '../', 'dist', 'public'),
+    root: path.resolve(__dirname, '../', 'public'),
     prefix: '/assets/',
   });
 };
