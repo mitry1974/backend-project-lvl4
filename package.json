@@ -7,12 +7,11 @@
     "postinstall": "npm run build",
     "clean": "rm -rf dist",
     "build": "npm run clean && npx webpack -p && NODE_ENV=production npx babel server --out-dir dist/server && babel config --out-dir dist/config && cp webpack.config.js dist && cp .env.sample dist/.env && cp -r server/views dist/server/",
-    "start": "NODE_ENV=production NODE_CONFIG_DIR=./dist/config node -r dotenv/config dist/server/bin/server.js dotenv_config_path=./dist/.env",
-    "start:server:dev": "npx nodemon --exec npx babel-node server/bin/server.js",
+    "start": "NODE_ENV=production NODE_CONFIG_DIR=./dist/config node -r dotenv/config dist/server/bin/server.js dotenv_config_path=./dist/production.env",
+    "start:server:dev": "npx nodemon --exec npx babel-node -r dotenv/config server/bin/server.js dotenv_config_path=./development.env",
     "start:frontend:dev": "npx webpack-dev-server",
     "start:dev": "heroku local -f Procfile.dev",
-    "start-debug": "concurrentlynpx webpack-dev-server && npx nodemon --exec npx babel-node --inspect server/bin/server.js",
-    "test": "npx jest --testPathIgnorePatterns=utils.js",
+    "test": "npx jest --testPathIgnorePatterns=utils.js --setupFiles dotenv/config dotenv_config_path=./test.env",
     "test-dev": "npx jest --testPathIgnorePatterns=utils.js --watchAll"
   },
   "dependencies": {
@@ -21,6 +20,7 @@
     "class-validator": "^0.12.1",
     "config": "^3.3.1",
     "connect-flash": "^0.1.1",
+    "css-loader": "^3.5.2",
     "dotenv": "^8.2.0",
     "fastify": "^2.14.1",
     "fastify-cookie": "^3.6.0",
@@ -43,9 +43,9 @@
     "pug": "^2.0.4",
     "reflect-metadata": "^0.1.13",
     "rollbar": "^2.15.2",
+    "sqlite3": "^4.2.0",
     "typeorm": "^0.2.24",
-    "webpack": "^4.43.0",
-    "css-loader": "^3.5.2"
+    "webpack": "^4.43.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
