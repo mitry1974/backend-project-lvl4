@@ -1,5 +1,5 @@
 import i18next from 'i18next';
-import encrypt from '../lib/secure';
+import bcrypt from 'bcrypt';
 import User from '../entity/User';
 
 export default (app) => {
@@ -10,10 +10,9 @@ export default (app) => {
       return reply;
     })
     .post('/session', { name: 'login' }, async (request, reply) => {
-      console.log(`Login data: ${JSON.stringify(request.body)}`);
       const loginData = request.body.object;
       const user = await User.findOne({ email: loginData.email });
-      if (!user || user.password !== encrypt(loginData.password)) {
+      if (!user || !(await bcrypt.compare(loginData.password, user.password))) {
         request.flash('error', i18next.t('flash.session.create.error'));
         reply.render('session/login', { loginData });
         return reply;
@@ -29,7 +28,6 @@ export default (app) => {
       request.session.delete();
       request.flash('info', i18next.t('flash.session.delete.success'));
       reply.redirect(app.reverse('root'));
-      console.log(`Session delete, set userId to null, session : ${JSON.stringify(request.session)}`);
 
       return reply;
     });

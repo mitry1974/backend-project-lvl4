@@ -1,9 +1,10 @@
 module.exports = {
   db: {
-    synchronize: true,
+    synchronize: false,
+    migrationsRun: true,
     type: 'postgres',
     port: 15024,
-    'url': process.env.DATABASE_URL,
+    url: process.env.DATABASE_URL,
     logging: 'error',
   },
 };

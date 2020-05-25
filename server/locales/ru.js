@@ -2,6 +2,9 @@ export default {
   translation: {
     appName: 'TaskMan',
     flash: {
+      auth: {
+        error: 'У вас нет доступа к этой странице',
+      },
       session: {
         create: {
           success: 'Вы залогинены',

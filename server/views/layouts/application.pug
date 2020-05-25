@@ -19,24 +19,18 @@ html(lang="en").h-100
       button.navbar-toggler(data-toggle="collapse" data-target="#navbarSupportedContent")
         span.navbar-toggler-icon
       .collapse.navbar-collapse
+        - console.log(`current user: ${JSON.stringify(reply.request.currentUser)}`)
         ul.navbar-nav.mr-auto
+        if(reply.request.currentUser.role == 'admin')
           li.nav-item
             a.nav-link(href=route('users'))= t('layouts.application.users')
+
         ul.navbar-nav
-          - console.log(`application.pug - Is user signed in  =============> ${JSON.stringify(reply.request.signedIn)}`);
           if reply.request.signedIn
             li.nav-item
               a.nav-link(href="#") #{reply.request.currentUser.email}
             li.nav-item
               a.nav-link(href=route('logout'))= t('layouts.application.logout')
-            // li.nav-item.dropdown
-            //   a.nav-link.dropdown-toggle(href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
-            //     i.fas.fa-user
-            //   div.dropdown-menu.dropdown-menu-right(aria-labelledby="navbarDropdownMenuLink")
-            //     - const id = reply.request.session.get('userId');
-            //     - console.log(`id id id id id ${id}`);
-            //     a.dropdown-item(href=route('getEditUserForm', { id: reply.request.session.get('userId') }))=t('layouts.application.edituser')
-            //     a.dropdown-item(href=route('logout'))= t('layouts.application.logout')
           else
             li.nav-item
               a.nav-link(href=route('getLoginForm'))= t('layouts.application.login')

@@ -1,51 +1,49 @@
 import 'reflect-metadata';
 import fastify from 'fastify';
-import fastifyTypeORM from 'fastify-typeorm';
-import fastifyReverseRoutes from 'fastify-reverse-routes';
-import fastifyErrorPage from 'fastify-error-page';
-import fastifyFlash from 'fastify-flash';
-import fastifySession from 'fastify-secure-session';
-import fastifyStatic from 'fastify-static';
-import fastifyFormbody from 'fastify-formbody';
 import i18next from 'i18next';
-import pointOfView from 'point-of-view';
 import pug from 'pug';
 import path from 'path';
 import config from 'config';
 import Rollbar from 'rollbar';
 
 import webpackConfig from '../webpack.config';
-import setupRoutes from './routes';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import User from './entity/User';
 import Guest from './entity/Guest';
+import verifyAdmin from './lib/auth';
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
-console.log(`IsDevelopment: ${isDevelopment}, isProduction: ${isProduction}, isTest: ${isTest}`);
 const registerPlugins = (app) => {
-  app.register(fastifyErrorPage);
-  app.register(fastifyReverseRoutes);
-  app.register(fastifyFormbody);
+  app.register(import('fastify-error-page'));
+  app.register(import('fastify-reverse-routes'));
+  app.register(import('fastify-formbody'));
 
-  app.register(fastifySession, {
+  app.register(import('fastify-secure-session'), {
     secret: app.config.get('SESSION_KEY'),
     cookie: {
       path: '/',
     },
   });
-  app.register(fastifyFlash);
-  app.register(fastifyTypeORM, app.config.db)
+
+  app.register(import('fastify-auth'));
+  app.decorate('verifyAdmin', verifyAdmin);
+
+  app.register(import('fastify-flash'));
+  console.log(`Database config: ${JSON.stringify(app.config.db)}`);
+  app.register(import('fastify-typeorm'), app.config.db)
     .after((err) => {
       if (err) throw err;
     });
+
+  app.register(import('./routes'));
 };
 
 const setupStaticAssets = (app) => {
-  app.register(fastifyStatic, {
+  app.register(import('fastify-static'), {
     root: path.resolve(__dirname, '../', 'public'),
     prefix: '/assets/',
   });
@@ -58,7 +56,7 @@ const setupViews = (app) => {
   const devHost = `http://${devServer.host}:${devServer.port}`;
   const domain = isDevelopment ? devHost : '';
 
-  app.register(pointOfView, {
+  app.register(import('point-of-view'), {
     engine: {
       pug,
     },
@@ -124,14 +122,17 @@ export default async () => {
   registerPlugins(app);
   setupViews(app);
   setupStaticAssets(app);
-  setupRoutes(app);
   setupHooks(app);
   setupLocalization(app);
 
   const rollbar = new Rollbar(app.config.get('ROLLBAR_KEY'));
-  app.setErrorHandler((error, request) => {
+  app.setErrorHandler(async (error, request, reply) => {
+    console.log('MAIN ERROR HANDLER');
     rollbar.error(error, request);
+    reply.status(500);
+    reply.send();
   });
+
   await app.ready();
   return app;
 };

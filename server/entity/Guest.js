@@ -1,3 +1,3 @@
-export default class Guest {
+module.exports = class Guest {
 
-}
+};

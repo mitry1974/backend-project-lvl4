@@ -12,10 +12,12 @@ block content
     +input(user, 'lastname', errors)(
       type='lastname'
       placeholder= t('views.users.new.lastname'))
-    +input(user, 'rawPassword', errors)(
+    +input(user, 'password', errors)(
       type='password'
       placeholder= t('views.users.new.password'))
-    +input(user, 'rawPasswordConfirm', errors)(
+    +input(user, 'confirm', errors)(
       type='password'
       placeholder= t('views.users.new.confirm_password'))
+    +input(user, 'role', errors)(
+      type='hidden')
     +submit(user)(value = t('views.users.new.submit'))

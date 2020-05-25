@@ -4,4 +4,4 @@ import sessions from './sessions';
 
 const routes = [welcome, users, sessions];
 
-export default (app) => routes.forEach((f) => f(app));
+export default async (app) => routes.forEach((f) => f(app));
