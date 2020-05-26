@@ -36,16 +36,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.addUser1590226464460 = void 0;
-var addUser1590226464460 = /** @class */ (function () {
-    function addUser1590226464460() {
-        this.name = 'addUser1590226464460';
+exports.addUser1590207523067 = void 0;
+var typeorm_1 = require("typeorm");
+var addUser1590207523067 = /** @class */ (function () {
+    function addUser1590207523067() {
     }
-    addUser1590226464460.prototype.up = function (queryRunner) {
+    addUser1590207523067.prototype.up = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("CREATE TABLE \"user\" (\"id\" integer PRIMARY KEY AUTOINCREMENT NOT NULL, \"email\" varchar NOT NULL, \"firstname\" varchar NOT NULL, \"lastname\" varchar NOT NULL, \"password\" varchar NOT NULL, \"role\" varchar NOT NULL)", undefined)];
+                    case 0: return [4 /*yield*/, queryRunner.createTable(new typeorm_1.Table({
+                            name: 'user',
+                            columns: [
+                                {
+                                    name: 'id',
+                                    type: 'integer',
+                                    isPrimary: true,
+                                    isGenerated: true,
+                                    generationStrategy: 'increment'
+                                },
+                                {
+                                    name: 'email',
+                                    type: 'varchar'
+                                },
+                                {
+                                    name: 'firstname',
+                                    type: 'varchar'
+                                },
+                                {
+                                    name: 'lastname',
+                                    type: 'varchar'
+                                },
+                                {
+                                    name: 'password',
+                                    type: 'varchar'
+                                },
+                                {
+                                    name: 'role',
+                                    type: 'varchar'
+                                }
+                            ]
+                        }), true)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -53,11 +84,11 @@ var addUser1590226464460 = /** @class */ (function () {
             });
         });
     };
-    addUser1590226464460.prototype.down = function (queryRunner) {
+    addUser1590207523067.prototype.down = function (queryRunner) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, queryRunner.query("DROP TABLE \"user\"", undefined)];
+                    case 0: return [4 /*yield*/, queryRunner.dropTable('user')];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -65,6 +96,6 @@ var addUser1590226464460 = /** @class */ (function () {
             });
         });
     };
-    return addUser1590226464460;
+    return addUser1590207523067;
 }());
-exports.addUser1590226464460 = addUser1590226464460;
+exports.addUser1590207523067 = addUser1590207523067;

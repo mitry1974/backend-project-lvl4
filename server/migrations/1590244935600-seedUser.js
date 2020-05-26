@@ -41,23 +41,23 @@ var typeorm_1 = require("typeorm");
 var User_js_1 = require("../entity/User.js");
 var userData = [
     {
+        email: "pittbull@fakedomain.com",
         firstname: 'Pitt',
         lastname: 'Bull',
-        email: "pittbull@fakedomain.com",
         password: "123456",
         role: "user"
     },
     {
+        email: 'coronavirus@2020.ru',
         firstname: 'Corona',
         lastname: 'Virus',
-        email: 'coronavirus@2020.ru',
         password: '123456',
         role: 'admin'
     },
     {
+        email: 'dinozavr@fakedomain.com',
         firstname: 'Dino',
         lastname: 'Zavr',
-        email: 'dinozavr@fakedomain.com',
         password: '123456',
         role: 'guest'
     },
@@ -73,6 +73,7 @@ var seedUser1590244935600 = /** @class */ (function () {
                     case 0:
                         userRepo = typeorm_1.getRepository('User');
                         users = userData.map(function (ud) { return new User_js_1["default"](ud); });
+                        console.log("Migration, users before save: " + JSON.stringify(users));
                         return [4 /*yield*/, userRepo.save(users)];
                     case 1:
                         _a.sent();
