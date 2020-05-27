@@ -2,6 +2,9 @@
   "name": "backend-project-lvl4",
   "version": "1.0.0",
   "description": "Hexlet nackend node.js project 4 level",
+  "engines": {
+    "node": "13.6.0"
+  },
   "main": "index.js",
   "scripts": {
     "postinstall": "npm run build",
