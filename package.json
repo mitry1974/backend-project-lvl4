@@ -53,7 +53,7 @@
     "rollbar": "^2.15.2",
     "sqlite3": "^4.2.0",
     "typeorm": "^0.2.25",
-    "webpack": "^4.43.0"
+    "webpack": "^4.43.0",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.3"
   },
