@@ -48,7 +48,7 @@ export default (app) => {
 
   app.post('/users', { name: 'registerUser' }, async (request, reply) => {
     const userData = request.body.user;
-    const user = User.create(userData);
+    const user = User.build(userData);
     user.password = userData.password;
     user.confirm = userData.confirm;
     const errors = await validate(user);

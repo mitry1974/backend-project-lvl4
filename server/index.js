@@ -34,10 +34,7 @@ const registerPlugins = (app) => {
 
   app.register(import('fastify-flash'));
   console.log(`Database config: ${JSON.stringify(app.config.db)}`);
-  app.register(import('fastify-typeorm'), app.config.db)
-    .after((err) => {
-      if (err) throw err;
-    });
+  app.register(import('fastify-sequelize'), app.config.db);
 
   app.register(import('./routes'));
 };

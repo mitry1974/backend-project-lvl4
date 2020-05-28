@@ -3,3 +3,4 @@
 /development.env
 *.env
 database.sqlite
+db.sqlite
