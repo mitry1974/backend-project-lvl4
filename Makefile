@@ -22,3 +22,9 @@ start:
 start-debug:
 	npx webpack-dev-server
 	npx nodemon --exec npx babel-node --inspect server/bin/server.js
+
+migrations:
+	npm run migrations:run
+
+seeds:
+	npm run seeds:run

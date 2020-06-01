@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -11,19 +11,21 @@ module.exports = (sequelize, DataTypes) => {
         return () => this.getDataValue('password');
       },
       set(value) {
-        this.password = value;
+        this.setDataValue('password', value);
       },
     },
     salt: {
+      type: DataTypes.STRING,
       get() {
         return () => this.getDataValue('salt');
       },
+
       set(value) {
-        this.salt = value;
+        this.setDataValue('salt', value);
       },
     },
     role: DataTypes.STRING,
-  }, {});
+  }, { timestamps: true });
 
   User.associate = function (models) {
     // associations can be defined here
@@ -43,9 +45,8 @@ module.exports = (sequelize, DataTypes) => {
 
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      user.salt(User.generateSalt());
-      const encryptedPassword = User.encryptPassword(user.password(), user.salt());
-      user.password(encryptedPassword);
+      user.salt = User.generateSalt();
+      user.password = User.encryptPassword(user.password(), user.salt());
     }
   };
 
@@ -58,4 +59,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
-
