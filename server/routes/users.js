@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import { validate } from 'class-validator';
-import User from '../entity/User';
+import Models from '../db/models';
 // import encrypt from '../lib/secure';
 
 export default (app) => {
@@ -10,15 +10,14 @@ export default (app) => {
     name: 'users',
     preHandler: app.auth([app.verifyAdmin]),
     handler: async (request, reply) => {
-      const users = await app.orm.getRepository(User).find();
+      const users = await Models.User.findAll();
       reply.render('/users/list', { users });
       return reply;
     },
   });
 
   app.get('/users/new', { name: 'getRegisterUserForm' }, (request, reply) => {
-    console.log('users: getRegisterUserForm');
-    const user = new User();
+    const user = new Models.User();
     reply.render('users/register', {
       user,
       action: app.reverse('registerUser'),
@@ -32,7 +31,7 @@ export default (app) => {
     if (!userId) {
       throw new Error('Edit user with missing user id');
     }
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await Models.User.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error('Edit user with migging user');
     }
@@ -48,7 +47,8 @@ export default (app) => {
 
   app.post('/users', { name: 'registerUser' }, async (request, reply) => {
     const userData = request.body.user;
-    const user = User.build(userData);
+    console.log(`Register user: ${JSON.stringify(userData)}`);
+    const user = Models.User.build(userData);
     user.password = userData.password;
     user.confirm = userData.confirm;
     const errors = await validate(user);
@@ -72,7 +72,7 @@ export default (app) => {
       throw new Error('Save user with null userId');
     }
     console.log(`Save user, userId isn't null, try to find user with id: ${userId}`);
-    const user = await User.findOne(userId);
+    const user = await Models.User.findOne(userId);
     if (!user) {
       console.log('Save user didn\'t found');
       throw new Error('Save user, user not found');

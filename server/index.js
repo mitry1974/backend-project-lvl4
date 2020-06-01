@@ -9,8 +9,8 @@ import Rollbar from 'rollbar';
 import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
 import ru from './locales/ru';
-import User from './entity/User';
-import Guest from './entity/Guest';
+import Models from './db/models';
+import Guest from './db/models/Guest';
 import verifyAdmin from './lib/auth';
 
 const env = process.env.NODE_ENV;
@@ -22,6 +22,7 @@ const registerPlugins = (app) => {
   app.register(import('fastify-reverse-routes'));
   app.register(import('fastify-formbody'));
 
+  console.log(`Application config: ${JSON.stringify(app.config)}`);
   app.register(import('fastify-secure-session'), {
     secret: app.config.get('SESSION_KEY'),
     cookie: {
@@ -79,7 +80,7 @@ const setupHooks = (app) => {
   app.addHook('preHandler', async (req) => {
     const userId = req.session.get('userId');
     if (userId) {
-      const currentUser = await User.findOne({ where: { id: userId } });
+      const currentUser = await Models.User.findOne({ where: { id: userId } });
       if (currentUser) {
         req.currentUser = currentUser;
         req.signedIn = true;

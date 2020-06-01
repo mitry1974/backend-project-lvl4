@@ -59,11 +59,10 @@ export default {
           submit: 'Зарегистрировать',
           register: 'Регистрация',
           firstname: 'Имя',
-
           lastname: 'Фамилия',
           email: 'email',
           password: 'Пароль',
-          confirm_password: 'Пароль еще раз',
+          confirm: 'Пароль еще раз',
         },
       },
       welcome: {

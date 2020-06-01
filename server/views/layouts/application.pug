@@ -21,9 +21,9 @@ html(lang="en").h-100
       .collapse.navbar-collapse
         - console.log(`current user: ${JSON.stringify(reply.request.currentUser)}`)
         ul.navbar-nav.mr-auto
-        if(reply.request.currentUser.role == 'admin')
-          li.nav-item
-            a.nav-link(href=route('users'))= t('layouts.application.users')
+          if(reply.request.currentUser.role == 'admin')
+            li.nav-item
+              a.nav-link(href=route('users'))= t('layouts.application.users')
 
         ul.navbar-nav
           if reply.request.signedIn

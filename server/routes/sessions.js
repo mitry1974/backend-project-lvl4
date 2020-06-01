@@ -1,6 +1,5 @@
 import i18next from 'i18next';
-import bcrypt from 'bcrypt';
-import User from '../entity/User';
+import Models from '../db/models';
 
 export default (app) => {
   app
@@ -11,8 +10,9 @@ export default (app) => {
     })
     .post('/session', { name: 'login' }, async (request, reply) => {
       const loginData = request.body.object;
-      const user = await User.findOne({ email: loginData.email });
-      if (!user || !(await bcrypt.compare(loginData.password, user.password))) {
+      console.log(`Session:login, login data: ${JSON.stringify(loginData)}`);
+      const user = await Models.User.findOne({ where:{ email: loginData.email } });
+      if (!user || !(await user.checkPassword(loginData.password))) {
         request.flash('error', i18next.t('flash.session.create.error'));
         reply.render('session/login', { loginData });
         return reply;

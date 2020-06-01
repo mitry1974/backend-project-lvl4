@@ -2,29 +2,29 @@ const crypto = require('crypto');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    email: DataTypes.STRING,
-    firstName: DataTypes.STRING,
-    lastname: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+    },
+    firstname: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+    },
+    lastname: {
+      type: DataTypes.STRING,
+      defaultValue: '',
+    },
     password: {
       type: DataTypes.STRING,
-      get() {
-        return () => this.getDataValue('password');
-      },
-      set(value) {
-        this.setDataValue('password', value);
-      },
+      defaultValue: '',
     },
     salt: {
       type: DataTypes.STRING,
-      get() {
-        return () => this.getDataValue('salt');
-      },
-
-      set(value) {
-        this.setDataValue('salt', value);
-      },
     },
-    role: DataTypes.STRING,
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: 'user',
+    },
   }, { timestamps: true });
 
   User.associate = function (models) {
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
       user.salt = User.generateSalt();
-      user.password = User.encryptPassword(user.password(), user.salt());
+      user.password = User.encryptPassword(user.password, user.salt);
     }
   };
 
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(setSaltAndPassword);
 
   User.prototype.checkPassword = function checkPassword(password) {
-    return User.encryptPassword(password, this.salt()) === this.password();
+    return User.encryptPassword(password, this.salt) === this.password;
   };
 
   return User;
