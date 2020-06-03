@@ -1,11 +1,10 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
-import User from '../server/entity/User';
+import Models from '../server/db/models';
 import { createTestApp } from './utils';
 
 describe('test root', () => {
   let app = null;
-  let usersRepo = null;
 
   const newUserData = {
     firstname: 'Sarah',
@@ -17,7 +16,6 @@ describe('test root', () => {
   beforeAll(async () => {
     expect.extend(matchers);
     app = await createTestApp();
-    usersRepo = await app.orm.getRepository(User);
   });
 
   test('Get all users', async () => {
@@ -37,7 +35,7 @@ describe('test root', () => {
       .post('/users')
       .send({ user: newUserData });
     expect(res).toHaveHTTPStatus(302);
-    const createdUser = usersRepo.findOne({ email: newUserData.email });
+    const createdUser = await Models.User.findOne({ where:{ email: newUserData.email } });
     expect(createdUser).not.toBeNull();
   });
 

@@ -4,7 +4,6 @@ import i18next from 'i18next';
 import pug from 'pug';
 import path from 'path';
 import config from 'config';
-import Rollbar from 'rollbar';
 
 import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
@@ -107,6 +106,12 @@ const setupLocalization = () => {
 
 export default async () => {
   const app = fastify({
+    ajv: {
+      customOptions: {allErrors: true, jsonPointers: true},
+      plugins: [
+        require('ajv-errors')
+      ]
+    },
     logger: {
       level: 'trace',
       prettyPrint: isDevelopment,
@@ -123,13 +128,7 @@ export default async () => {
   setupHooks(app);
   setupLocalization(app);
 
-  const rollbar = new Rollbar(app.config.get('ROLLBAR_KEY'));
-  app.setErrorHandler(async (error, request, reply) => {
-    console.log('MAIN ERROR HANDLER');
-    rollbar.error(error, request);
-    reply.status(500);
-    reply.send();
-  });
+  app.setErrorHandler(import('./lib/errorHandler'));
 
   await app.ready();
   return app;
