@@ -1,4 +1,4 @@
-t usersData
+{
   "extends": ["airbnb-base", "plugin:jest/recommended"],
   "parser": "babel-eslint",
   "ignorePatterns": ["/dist", "node_modules"],

@@ -1,12 +1,11 @@
 import i18next from 'i18next';
+import { validate } from 'class-validator';
+import { plainToClass } from 'class-transformer';
+import 'reflect-metadata';
 import Models from '../db/models';
-import Ajv from 'ajv';
-import AjvErrors from 'ajv-errors';
+import RegisterUserDto from '../db/models/dto/RegisterUserDto';
 
 export default (app) => {
-  const ajv = new Ajv({ allErrors: true, jsonPointers: true });
-  AjvErrors(ajv);
-
   app.route({
     method: 'GET',
     url: '/users',
@@ -24,16 +23,14 @@ export default (app) => {
     url: '/users/new',
     name: 'getRegisterUserForm',
     handler: async (request, reply) => {
-//    const userData = {}; //new Models.User();
+      const userDto = new RegisterUserDto();
       reply.render('users/register', {
-        userData: {
-          email: 'eeee',
-        },
+        userDto,
         action: app.reverse('registerUser'),
         caption: 'Register user',
       });
       return reply;
-    }
+    },
   });
 
   app.get('/users/:id', { name: 'getEditUserForm' }, async (request, reply) => {
@@ -54,39 +51,20 @@ export default (app) => {
     return reply;
   });
 
-  app.route({
-    method: 'POST',
-    url: '/users',
-    schema: { body: app.getSchemas().bodyRegisterUserSchema  },
-    attachValidation: true,
-    schemaCompiler: schema => {
-      const validate = ajv.compile(schema)
-      return validate
-    },
-    name: 'registerUser',
-    preHandler: async(request, reply) =>{
-      console.log('prehandler!!!!!!!!!!!!!!!!!!');
-      console.log(`    request:${JSON.stringify(request.body)}`);
-    },
-    handler: async (request, reply) => {
-      const userData = request.body.userData;
-      if (request.validationError) {
-        console.log(`Validation errors!!!: ${JSON.stringify(request.validationError)}`)
-        request.flash('error', i18next.t('flash.users.create.error'));
-        reply.render('users/register', { userData, errors: request.validationError.validation });
-        return reply;
-      }
-      console.log(`In handler, schema validated!!!!!!!!!!!!!, userData: ${request.body.userData}`)
-      const user = Models.User.build(userData);
-      user.password = userData.password;
-      user.confirm = userData.confirm;
-
-      await user.save();
-
-      request.flash('info', i18next.t('flash.users.create.success'));
-      reply.redirect(app.reverse('root'));
+  app.post('/users/', { name: 'registerUser' }, async (request, reply) => {
+    const userDto = plainToClass(RegisterUserDto, request.body.registeruserdto);
+    const errors = await validate(userDto);
+    if (errors.length !== 0) {
+      request.flash('error', i18next.t('flash.users.create.error'));
+      reply.render('users/register', { userDto, errors });
       return reply;
     }
+    const user = Models.User.build(userDto);
+    await user.save();
+
+    request.flash('info', i18next.t('flash.users.create.success'));
+    reply.redirect(app.reverse('root'));
+    return reply;
   });
 
   app.post('/users/:id', { name: 'saveUser' }, async (request, reply) => {

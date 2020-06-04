@@ -2,22 +2,23 @@ extends ../layouts/application.pug
 
 block content
   +formFor(caption)(class='simple_form_new_user' novalidate action=action  method='post')&attributes(attributes)
-    +input(userData, 'email', errors)(
+    +input(userDto, 'email', errors)(
       class = "string required email"
       type='email'
       placeholder= t('views.users.new.email'))
-    +input(userData, 'firstname', errors)(
+    +input(userDto, 'firstname', errors)(
       type='firstname'
       placeholder= t('views.users.new.firstname'))
-    +input(userData, 'lastname', errors)(
+    +input(userDto, 'lastname', errors)(
       type='lastname'
       placeholder= t('views.users.new.lastname'))
-    +input(userData, 'password', errors)(
+    +input(userDto, 'password', errors)(
       type='password'
       placeholder= t('views.users.new.password'))
-    +input(userData, 'confirm', errors)(
+    +input(userDto, 'confirm', errors)(
       type='password'
       placeholder= t('views.users.new.confirm'))
-    +input(userData, 'role', errors)(
+    +input(userDto, 'role', errors)(
       type='hidden')
-    +submit(userData)(value = t('views.users.new.submit'))
+    +submit(userDto)(value = t('views.users.new.submit'))
+

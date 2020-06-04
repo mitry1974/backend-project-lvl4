@@ -1,9 +1,6 @@
-const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
 const config = require(`${__dirname}/../../../config/dbconfig.js`);
 const db = {};
 
@@ -17,10 +14,10 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-  models.forEach((file) => {
-    const model = sequelize.import(path.join(__dirname, file));
-    db[model.name] = model;
-  });
+models.forEach((file) => {
+  const model = sequelize.import(path.join(__dirname, file));
+  db[model.name] = model;
+});
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
