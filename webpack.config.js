@@ -12,7 +12,7 @@ module.exports = {
     publicPath: '/assets/',
   },
   devServer: {
-    host: '192.168.0.20',
+    host: 'localhost',
     port: 5001,
   },
   module: {

@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, { timestamps: true });
 
-  User.associate = function (models) {
+  User.associate = function associate() {
     // associations can be defined here
   };
 
@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(setSaltAndPassword);
 
   User.prototype.checkPassword = function checkPassword(password) {
+    console.log(`check password: ${password}`);
     return User.encryptPassword(password, this.salt) === this.password;
   };
 

@@ -18,9 +18,6 @@
     "seeds:run": "npx sequelize db:seed:all"
   },
   "dependencies": {
-    "ajv": "^6.12.2",
-    "ajv-error-parser": "^1.0.7",
-    "ajv-errors": "^1.0.1",
     "autoprefixer": "^9.7.6",
     "bootstrap": "^4.4.1",
     "class-transformer": "^0.2.3",
@@ -69,6 +66,7 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jest": "^23.10.0",
+    "faker": "^4.1.0",
     "jest": "^25.4.0",
     "jest-supertest-matchers": "0.0.2",
     "sequelize-cli": "^5.5.1",

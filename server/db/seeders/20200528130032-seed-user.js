@@ -1,4 +1,3 @@
-'use strict';
 const Models = require('../models');
 
 module.exports = {
@@ -25,9 +24,9 @@ module.exports = {
         password: '123456',
         role: 'guest',
       },
-    ].map(async (el) => await Models.User.create(el))
+    ].map(async (el) => Models.User.create(el));
 
-    return await Promise.all(users);
+    return Promise.all(users);
   },
 
   down: () => {

@@ -11,6 +11,8 @@ describe('test root', () => {
     lastname: 'O\'Connor',
     email: 'sarahoconnor@fakedomain.com',
     password: '12345',
+    confirm: '12345',
+    role: 'user',
   };
 
   beforeAll(async () => {
@@ -18,10 +20,10 @@ describe('test root', () => {
     app = await createTestApp();
   });
 
-  test('Get all users', async () => {
+  test('Get all users unauthorised access', async () => {
     const res = await request(app.server)
       .get('/users');
-    expect(res).toHaveHTTPStatus(200);
+    expect(res).toHaveHTTPStatus(401);
   });
 
   test('Get new user page', async () => {
@@ -33,9 +35,9 @@ describe('test root', () => {
   test('Create new user', async () => {
     const res = await request(app.server)
       .post('/users')
-      .send({ user: newUserData });
+      .send({ registeruserdto: newUserData });
     expect(res).toHaveHTTPStatus(302);
-    const createdUser = await Models.User.findOne({ where:{ email: newUserData.email } });
+    const createdUser = await Models.User.findOne({ where: { email: newUserData.email } });
     expect(createdUser).not.toBeNull();
   });
 

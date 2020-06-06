@@ -18,19 +18,15 @@ export default (app) => {
     },
   });
 
-  app.route({
-    method: 'GET',
-    url: '/users/new',
-    name: 'getRegisterUserForm',
-    handler: async (request, reply) => {
-      const userDto = new RegisterUserDto();
-      reply.render('users/register', {
-        userDto,
-        action: app.reverse('registerUser'),
-        caption: 'Register user',
-      });
-      return reply;
-    },
+  app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
+    const userDto = new RegisterUserDto();
+    reply.render('users/register', {
+      userDto,
+      action: app.reverse('registerUser'),
+      caption: 'Register user',
+    });
+
+    return reply;
   });
 
   app.get('/users/:id', { name: 'getEditUserForm' }, async (request, reply) => {
@@ -51,14 +47,19 @@ export default (app) => {
     return reply;
   });
 
-  app.post('/users/', { name: 'registerUser' }, async (request, reply) => {
+  app.post('/users', { name: 'registerUser' }, async (request, reply) => {
     const userDto = plainToClass(RegisterUserDto, request.body.registeruserdto);
+    if (!userDto) {
+      throw new Error('Register new user, missing user data!');
+    }
     const errors = await validate(userDto);
     if (errors.length !== 0) {
+      console.log(`Validation errors: ${errors, null, '\t'}`);
       request.flash('error', i18next.t('flash.users.create.error'));
       reply.render('users/register', { userDto, errors });
       return reply;
     }
+    console.log('user data validated');
     const user = Models.User.build(userDto);
     await user.save();
 

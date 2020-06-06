@@ -1,1 +1,1 @@
-module.exports = class Guest {}
+module.exports = class Guest {};

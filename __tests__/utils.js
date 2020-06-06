@@ -1,15 +1,14 @@
 import * as path from 'path';
-import getApp from '../server';
 import fixtures from 'sequelize-fixtures';
 import Models from '../server/db/models';
-import config from 'config';
+import getApp from '../server';
 
 const clearDb = async () => {
-  const connection = getConnection('default');
-  if (connection.isConnected) {
-    await connection.dropDatabase();
-    await connection.close();
-  }
+  // const connection = getConnection('default');
+  // if (connection.isConnected) {
+  //   await connection.dropDatabase();
+  //   await connection.close();
+  // }
 };
 
 const loadFixtures = async () => {
@@ -17,8 +16,7 @@ const loadFixtures = async () => {
     await Models.User.sync({ force: true });
     const fixturesPath = path.resolve(__dirname, './__fixtures__');
 
-    const fixturesData = await fixtures.loadFile(path.resolve(fixturesPath, '*.yml'), Models);
-
+    await fixtures.loadFile(path.resolve(fixturesPath, '*.yml'), Models);
   } catch (err) {
     console.log(`error!!! ${err}, Load fixtures error, clear database`);
     throw err;

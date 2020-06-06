@@ -10,8 +10,7 @@ export default (app) => {
     })
     .post('/session', { name: 'login' }, async (request, reply) => {
       const loginData = request.body.object;
-      console.log(`Session:login, login data: ${JSON.stringify(loginData)}`);
-      const user = await Models.User.findOne({ where:{ email: loginData.email } });
+      const user = await Models.User.findOne({ where: { email: loginData.email } });
       if (!user || !(await user.checkPassword(loginData.password))) {
         request.flash('error', i18next.t('flash.session.create.error'));
         reply.render('session/login', { loginData });

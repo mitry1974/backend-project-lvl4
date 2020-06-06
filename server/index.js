@@ -11,6 +11,7 @@ import ru from './locales/ru';
 import Models from './db/models';
 import Guest from './db/models/Guest';
 import verifyAdmin from './lib/auth';
+import setupErrorHandler from './lib/errorHandler';
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
@@ -21,7 +22,6 @@ const registerPlugins = (app) => {
   app.register(import('fastify-reverse-routes'));
   app.register(import('fastify-formbody'));
 
-  console.log(`Application config: ${JSON.stringify(app.config)}`);
   app.register(import('fastify-secure-session'), {
     secret: app.config.get('SESSION_KEY'),
     cookie: {
@@ -33,7 +33,6 @@ const registerPlugins = (app) => {
   app.decorate('verifyAdmin', verifyAdmin);
 
   app.register(import('fastify-flash'));
-  console.log(`Database config: ${JSON.stringify(app.config.db)}`);
   app.register(import('fastify-sequelize'), app.config.db);
 
   app.register(import('./routes'));
@@ -106,12 +105,6 @@ const setupLocalization = () => {
 
 export default async () => {
   const app = fastify({
-    ajv: {
-      customOptions: {allErrors: true, jsonPointers: true},
-      plugins: [
-        require('ajv-errors')
-      ]
-    },
     logger: {
       level: 'trace',
       prettyPrint: isDevelopment,
@@ -128,7 +121,7 @@ export default async () => {
   setupHooks(app);
   setupLocalization(app);
 
-  app.setErrorHandler(import('./lib/errorHandler'));
+  setupErrorHandler(app);
 
   await app.ready();
   return app;

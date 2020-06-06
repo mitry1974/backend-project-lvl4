@@ -1,4 +1,5 @@
 const path = require('path');
+
 const storage = path.join(__dirname, '../db.sqlite');
 
 module.exports = {
