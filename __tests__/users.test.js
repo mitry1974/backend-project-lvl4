@@ -1,19 +1,11 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import Models from '../server/db/models';
-import { createTestApp } from './utils';
+import { createTestApp } from './lib/utils';
+import { generateFakeUserRegisterData } from './lib/fakeItemsGenerator';
 
 describe('test root', () => {
   let app = null;
-
-  const newUserData = {
-    firstname: 'Sarah',
-    lastname: 'O\'Connor',
-    email: 'sarahoconnor@fakedomain.com',
-    password: '12345',
-    confirm: '12345',
-    role: 'user',
-  };
 
   beforeAll(async () => {
     expect.extend(matchers);
@@ -33,6 +25,8 @@ describe('test root', () => {
   });
 
   test('Create new user', async () => {
+    const newUserData = generateFakeUserRegisterData({ role: 'user' });
+    console.log(`Generated register user data: ${JSON.stringify(newUserData)}`);
     const res = await request(app.server)
       .post('/users')
       .send({ registeruserdto: newUserData });

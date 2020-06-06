@@ -1,7 +1,7 @@
 import * as path from 'path';
 import fixtures from 'sequelize-fixtures';
-import Models from '../server/db/models';
-import getApp from '../server';
+import Models from '../../server/db/models';
+import getApp from '../../server';
 
 const clearDb = async () => {
   // const connection = getConnection('default');
@@ -14,7 +14,7 @@ const clearDb = async () => {
 const loadFixtures = async () => {
   try {
     await Models.User.sync({ force: true });
-    const fixturesPath = path.resolve(__dirname, './__fixtures__');
+    const fixturesPath = path.resolve(__dirname, '../__fixtures__');
 
     await fixtures.loadFile(path.resolve(fixturesPath, '*.yml'), Models);
   } catch (err) {

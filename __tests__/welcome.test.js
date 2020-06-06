@@ -1,6 +1,6 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
-import { createTestApp } from './utils';
+import { createTestApp } from './lib/utils';
 
 describe('test welcome route', () => {
   let app = null;
