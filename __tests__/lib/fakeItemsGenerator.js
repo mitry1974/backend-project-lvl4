@@ -11,7 +11,7 @@ function generateFakeUserRegisterData(options) {
     role: options.role,
   };
 
-  return { ...generated, options };
+  return { ...generated, ...options };
 }
 
 export { generateFakeUserRegisterData };

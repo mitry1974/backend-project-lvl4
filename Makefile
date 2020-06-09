@@ -10,8 +10,8 @@ lint:
 test:
 	npm run test
 
-test-dev:
-	npm run test-dev
+test-watch:
+	npm run test:watch
 
 start-dev:
 	npm run start:dev

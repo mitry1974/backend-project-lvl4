@@ -54,7 +54,6 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(setSaltAndPassword);
 
   User.prototype.checkPassword = function checkPassword(password) {
-    console.log(`check password: ${password}`);
     return User.encryptPassword(password, this.salt) === this.password;
   };
 

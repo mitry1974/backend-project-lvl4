@@ -4,42 +4,59 @@ import i18next from 'i18next';
 import pug from 'pug';
 import path from 'path';
 import config from 'config';
+import fastifyFlash from 'fastify-flash';
+import fastifyAuth from 'fastify-auth';
+import fastifySession from 'fastify-secure-session';
+import fastifyStatic from 'fastify-static';
+import fastifyFormbody from 'fastify-formbody';
+import fastifyReverse from 'fastify-reverse-routes';
+import fastifyErrorPage from 'fastify-error-page';
+import fastifyPointOfView from 'point-of-view';
+import Sequelize from 'sequelize';
 
 import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import Models from './db/models';
 import Guest from './db/models/Guest';
-import verifyAdmin from './lib/auth';
+import { verifyAdmin, verifyUserSelf } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
-const registerPlugins = (app) => {
-  app.register(import('fastify-error-page'));
-  app.register(import('fastify-reverse-routes'));
-  app.register(import('fastify-formbody'));
+const registerPlugins = async (app) => {
+  app.register(fastifyErrorPage);
+  app.register(fastifyReverse);
+  app.register(fastifyFormbody);
 
-  app.register(import('fastify-secure-session'), {
+  app.register(fastifySession, {
     secret: app.config.get('SESSION_KEY'),
     cookie: {
       path: '/',
     },
   });
 
-  app.register(import('fastify-auth'));
+  app.register(fastifyAuth);
   app.decorate('verifyAdmin', verifyAdmin);
+  app.decorate('verifyUserSelf', verifyUserSelf);
 
-  app.register(import('fastify-flash'));
-  app.register(import('fastify-sequelize'), app.config.db);
+  app.register(fastifyFlash);
+
+  const sequelize = new Sequelize(app.config.db);
+  app.decorate('sequelize', sequelize);
+  await sequelize.authenticate();
+  app.addHook('onClose', async () => {
+    await app.sequelize.close();
+  });
+
 
   app.register(import('./routes'));
 };
 
 const setupStaticAssets = (app) => {
-  app.register(import('fastify-static'), {
+  app.register(fastifyStatic, {
     root: path.resolve(__dirname, '../', 'public'),
     prefix: '/assets/',
   });
@@ -52,7 +69,7 @@ const setupViews = (app) => {
   const devHost = `http://${devServer.host}:${devServer.port}`;
   const domain = isDevelopment ? devHost : '';
 
-  app.register(import('point-of-view'), {
+  app.register(fastifyPointOfView, {
     engine: {
       pug,
     },
@@ -106,8 +123,8 @@ const setupLocalization = () => {
 export default async () => {
   const app = fastify({
     logger: {
-      level: 'trace',
-      prettyPrint: isDevelopment,
+      level: 'info',
+      prettyPrint: !isProduction,
       timestamp: !isDevelopment,
       base: null,
     },
@@ -115,7 +132,7 @@ export default async () => {
 
   app.decorate('config', config);
 
-  registerPlugins(app);
+  await registerPlugins(app);
   setupViews(app);
   setupStaticAssets(app);
   setupHooks(app);

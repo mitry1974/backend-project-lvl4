@@ -1,4 +1,4 @@
--const getInputName = (entity, property) => `${entity.constructor.name.toLowerCase()}[${property}]`
+- const getInputName = (propertyName) => `formData[${propertyName}]`
 - const getErrorText = (errors, property) => {
 -   const error = errors.find((error) => error.property === property)
 -   if (!error) {
@@ -30,7 +30,7 @@ mixin input(entity, propertyName, errors = [])
   div.form-group(class=propertyName)
     input(
       class= formClass
-      name=getInputName(entity, propertyName)
+      name=getInputName(propertyName)
       value=_.get(entity, propertyName, '')
     )&attributes(attributes)
     div(class=feedbackClass)= feedbackValue

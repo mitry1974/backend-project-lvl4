@@ -1,1 +1,3 @@
-module.exports = class Guest {};
+module.exports = class Guest {
+  role = 'guest';
+};
