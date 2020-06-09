@@ -130,7 +130,7 @@ describe('test users', () => {
       expect(updateResponse.status).toBe(400);
     });
 
-    test('Update missing email, should fail with 400', async () => {
+    test('Update user with unknown email, should fail with 400', async () => {
       const loginData = {
         email: 'coronavirus@2020.ru',
         password: '123456',
@@ -143,7 +143,7 @@ describe('test users', () => {
       const cookie = res.header['set-cookie'];
       expect(cookie.session).not.toBe('');
 
-      const email = 'missing@email.com';
+      const email = 'unknown@email.com';
       const newData = generateFakeUserRegisterData({ role: 'user' });
       const updateResponse = await request(app.server)
         .put(`/users/${email}`)
@@ -183,23 +183,113 @@ describe('test users', () => {
       expect(updateResponse.status).toBe(403);
     });
   });
+
   describe('Delete user test', () => {
     test('Delete by not logged in user, should fail', async () => {
+      const email = 'coronavirus@2020.ru';
+      const res = await request(app.server)
+        .delete(`/users/${email}`);
+      expect(res.status).toBe(403);
     });
 
     test('Delete with logged in user, wrong email to delete, should fail', async () => {
+      const loginData = {
+        email: 'coronavirus@2020.ru',
+        password: '123456',
+      };
+      const loginResult = await request(app.server)
+        .post('/session')
+        .send({ formData: loginData });
+      expect(loginResult.status).toBe(302);
+
+      const cookie = loginResult.header['set-cookie'];
+      expect(cookie.session).not.toBe('');
+
+      const email = 'coronavirus@2020.ru';
+      const deleteResult = await request(app.server)
+        .delete(`/users/${email}`)
+        .set('cookie', cookie);
+      expect(deleteResult.status).toBe(400);
     });
 
-    test('Delete with logged in user, missing email to delete, should fail', async () => {
+    test('Delete with logged in user, unknown email to delete, should fail', async () => {
+      const loginData = {
+        email: 'coronavirus@2020.ru',
+        password: '123456',
+      };
+      const res = await request(app.server)
+        .post('/session')
+        .send({ formData: loginData });
+      expect(res.status).toBe(302);
+
+      const cookie = res.header['set-cookie'];
+      expect(cookie.session).not.toBe('');
+
+      const email = 'unknown@email.com';
+      const updateResponse = await request(app.server)
+        .delete(`/users/${email}`)
+        .set('Cookie', cookie);
+      expect(updateResponse.status).toBe(400);
     });
 
     test('Delete with logged in user, admin can delete every user, succeed', async () => {
+      const loginData = {
+        email: 'coronavirus@2020.ru',
+        password: '123456',
+      };
+      const res = await request(app.server)
+        .post('/session')
+        .send({ formData: loginData });
+      expect(res.status).toBe(302);
+
+      const cookie = res.header['set-cookie'];
+      expect(cookie.session).not.toBe('');
+
+      const email = 'pittbull@fakedomain.com';
+      const updateResponse = await request(app.server)
+        .delete(`/users/${email}`)
+        .set('Cookie', cookie);
+      expect(updateResponse.status).toBe(302);
     });
 
     test('Delete with logged in user, user can delete only self, succeed', async () => {
+      const loginData = {
+        email: 'pittbull@fakedomain.com',
+        password: '123456',
+      };
+      const res = await request(app.server)
+        .post('/session')
+        .send({ formData: loginData });
+      expect(res.status).toBe(302);
+
+      const cookie = res.header['set-cookie'];
+      expect(cookie.session).not.toBe('');
+
+      const email = 'pittbull@fakedomain.com';
+      const updateResponse = await request(app.server)
+        .delete(`/users/${email}`)
+        .set('Cookie', cookie);
+      expect(updateResponse.status).toBe(302);
     });
 
     test('Delete with logged in user, user can\'t delete foreign user, fail', async () => {
+      const loginData = {
+        email: 'pittbull@fakedomain.com',
+        password: '123456',
+      };
+      const res = await request(app.server)
+        .post('/session')
+        .send({ formData: loginData });
+      expect(res.status).toBe(302);
+
+      const cookie = res.header['set-cookie'];
+      expect(cookie.session).not.toBe('');
+
+      const email = 'coronavirus@2020.ru';
+      const updateResponse = await request(app.server)
+        .delete(`/users/${email}`)
+        .set('Cookie', cookie);
+      expect(updateResponse.status).toBe(403);
     });
   });
 });
