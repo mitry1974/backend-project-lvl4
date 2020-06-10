@@ -8,15 +8,15 @@ fixtures:
       "role": "user"
   - model: User
     data:
+      "firstname": "Zara"
+      "lastname": "Tustra"
+      "email": "zaratustra@fakedomain.com"
+      "password": "123456"
+      "role": "user"
+  - model: User
+    data:
       "firstname": "Corona"
       "lastname": "Virus"
       "email": "coronavirus@2020.ru"
       "password": "123456"
       "role": "admin"
-  - model: User
-    data:
-      "firstname": "Dino"
-      "lastname": "Zavr"
-      "email": "dinozavr@fakedomain.com"
-      "password": "123456"
-      "role": "guest"
