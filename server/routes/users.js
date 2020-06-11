@@ -123,13 +123,31 @@ export default (app) => {
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const { email } = request.params;
-      const user = Models.User.findOne({ where: { email } });
+      const emailDto = plainToClass(EmailDto, request.params);
+      if (!emailDto) {
+        throw new Error('Register new user, missing user email!');
+      }
+      const errors = await validate(emailDto);
+
+      if (errors.length !== 0) {
+        throw new ValidationError({
+          url: app.reverse('root'),
+          message: `PUT: /users, data: ${JSON.stringify(request.body.formData)}, validation errors: ${JSON.stringify(errors)}`,
+          formData: emailDto,
+          errors,
+        });
+      }
+      const user = await Models.User.findOne({ where: { email: emailDto } });
       if (!user) {
         request.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
       }
+
+      await user.destroy({ where: { email: emailDto } });
+      request.flash('info', i18next.t('flash.users.create.success'));
+      reply.redirect(app.reverse('root'));
+      return reply;
     },
   });
 };

@@ -3,7 +3,9 @@ import matchers from 'jest-supertest-matchers';
 import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import { generateFakeUserRegisterData } from './lib/fakeItemsGenerator';
-import { login, deleteUser, updateUser, getUser, getAllUsers } from './lib/testHelpers';
+import {
+  login, deleteUser, updateUser, getUser, getAllUsers,
+} from './lib/testHelpers';
 
 describe('test users', () => {
   const testData = {
@@ -67,8 +69,6 @@ describe('test users', () => {
         .post('/users')
         .send({ formData });
       expect(res.status).toBe(400);
-      const createdUser = await Models.User.findOne({ where: { email: formData.email } });
-      expect(createdUser).toBeNull();
     });
   });
 
@@ -154,7 +154,7 @@ describe('test users', () => {
       },
     ];
 
-    test.each(testUpdateSuccessData)('Update test, should susseeded', async ({ emailToUpdate, loginData, newData }) => {
+    test.each(testUpdateSuccessData)('Update test, should suceeded', async ({ emailToUpdate, loginData, newData }) => {
       const { cookie } = await login({ app, formData: loginData });
 
       const { updateResponse } = await updateUser(
