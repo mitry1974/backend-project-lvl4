@@ -24,7 +24,6 @@ export default (app) => {
       return reply;
     })
     .post('/session', { name: 'login' }, async (request, reply) => {
-      console.log(`Login, credentials: ${JSON.stringify(request.body, null, '\t')}`);
       const loginCredentialsDto = plainToClass(LoginCredentialsDto, request.body.formData);
       const errors = await validate(loginCredentialsDto);
       if (errors.length !== 0) {

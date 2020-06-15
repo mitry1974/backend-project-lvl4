@@ -1,18 +1,7 @@
-import i18next from 'i18next';
+import StatusCodeError from './StatusCodeError';
 
-export default class AuthorizationError extends Error {
-  constructor(
-    {
-      message,
-    },
-  ) {
-    super(message);
-  }
-
-  proceed(request, reply) {
-    request.log.info(`Routes error: ${this.message}`);
-    request.flash('error', i18next.t('flash.auth.error'));
-    reply.code(403).render('welcome/index');
-    return reply;
+export default class AuthorizationError extends StatusCodeError {
+  constructor() {
+    super('flash.auth.error', 403);
   }
 }

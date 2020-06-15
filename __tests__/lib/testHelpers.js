@@ -18,7 +18,7 @@ const deleteUser = async ({ app, emailToDelete, cookie }) => {
 
 const updateUser = async (
   {
-    app, emailToUpdate, formData, cookie = '',
+    app, emailToUpdate, formData, cookie,
   },
 ) => {
   const updateResponse = await request(app.server)
@@ -29,20 +29,19 @@ const updateUser = async (
   return { updateResponse };
 };
 
-const getUser = async ({ app, email, cookie }) => {
-  const readResponse = await request(app.server)
-    .get(app.router('getUser', { email }))
+const getUser = async ({ app, cookie, email }) => {
+  const getResponse = await request(app.server)
+    .get(app.reverse('getUser', { email }))
     .set('cookie', cookie);
 
-  return { readResponse };
+  return { getResponse };
 };
 
 const getAllUsers = async ({ app, cookie }) => {
-  const readResponse = await request(app.server)
-    .get(app.router('getAllUsers'))
+  const getResponse = await request(app.server)
+    .get(app.reverse('getAllUsers'))
     .set('cookie', cookie);
-
-  return { readResponse };
+  return { getResponse };
 };
 
 export {

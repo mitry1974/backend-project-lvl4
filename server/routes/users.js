@@ -6,6 +6,7 @@ import Models from '../db/models';
 import RegisterUserDto from '../db/models/dto/RegisterUserDto';
 import EmailDto from '../db/models/dto/EmailDto';
 import ValidationError from '../errors/ValidationError';
+import NotFoundError from '../errors/NotFoundError';
 
 export default (app) => {
   app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
@@ -43,11 +44,7 @@ export default (app) => {
     name: 'getUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      console.log(`getUser !!!!!!!!!!!!!!!!!!!!!!!!!, email: ${JSON.stringify(request.params)}`);
       const emailDto = plainToClass(EmailDto, request.params);
-      if (!emailDto) {
-        throw new Error('Register new user, missing user email!');
-      }
       const errors = await validate(emailDto);
 
       if (errors.length !== 0) {
@@ -60,9 +57,7 @@ export default (app) => {
       }
       const user = await Models.User.findOne({ where: { email: emailDto.email } });
       if (!user) {
-        request.flash('info', i18next.t('flash.users.create.success'));
-        reply.redirect(app.reverse('root'));
-        return reply;
+        throw new NotFoundError();
       }
 
       reply.render('/users/view', { formData: user });
@@ -74,9 +69,8 @@ export default (app) => {
     method: 'GET',
     url: '/users',
     name: 'getAllUsers',
-    prehandler: app.auth([app.verifyAdmin]),
+    preHandler: app.auth([app.verifyAdmin]),
     handler: async (request, reply) => {
-      console.log('getAllUsers !!!!!!!!!!!!!!!!!!!!!!!!!!');
       const users = await Models.User.findAll();
       reply.render('/users/list', { users });
       return reply;
@@ -141,7 +135,7 @@ export default (app) => {
       const { email } = emailDto;
       const user = await Models.User.findOne({ where: { email } });
       if (!user) {
-        throw new Error(`PUT:/users, user with email: ${email} didn't found`);
+        throw new NotFoundError();
       }
       await Models.User.update(updateUserDto, { where: { email } });
 
@@ -158,24 +152,18 @@ export default (app) => {
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const emailDto = plainToClass(EmailDto, request.params);
-      if (!emailDto) {
-        throw new Error('Register new user, missing user email!');
-      }
       const errors = await validate(emailDto);
-
       if (errors.length !== 0) {
         throw new ValidationError({
           url: app.reverse('root'),
-          message: `PUT: /users, data: ${JSON.stringify(request.body.formData)}, validation errors: ${JSON.stringify(errors)}`,
+          message: `PUT: /users, data: ${JSON.stringify(request.params)}, validation errors: ${JSON.stringify(errors)}`,
           formData: emailDto,
           errors,
         });
       }
       const user = await Models.User.findOne({ where: { email: emailDto.email } });
       if (!user) {
-        request.flash('info', i18next.t('flash.users.create.success'));
-        reply.redirect(app.reverse('root'));
-        return reply;
+        throw new NotFoundError();
       }
 
       await user.destroy();

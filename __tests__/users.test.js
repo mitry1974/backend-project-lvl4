@@ -73,56 +73,67 @@ describe('test users', () => {
   });
 
   describe('Read user tests', () => {
-    test('Get all users test not logged in, should fail', async () => {
-      const { readResponse } = getAllUsers({ app, email: testData.admin.email, cookie: '' });
-      expect(readResponse.status).toBe(401);
+    test('Get all users not logged in, should fail', async () => {
+      const { getResponse } = await getAllUsers({ app, cookie: '' });
+      expect(getResponse.status).toBe(403);
     });
 
-    test('Get all users test logged in with user role, should fail', async () => {
-      const { cookie } = login({ app, formData: { email: testData.user1.email, password: '123456' } });
-      const { readResponse } = getAllUsers({ app, cookie });
-      expect(readResponse.status).toBe(403);
+    const getAllUsersTestData = [
+      {
+        loginData: { email: testData.user1.email, password: '123456' },
+        statusCode: 403,
+      },
+      {
+        loginData: { email: testData.admin.email, password: '123456' },
+        statusCode: 200,
+      },
+    ];
+
+    test.each(getAllUsersTestData)(' test getAllUsers', async ({ loginData, statusCode }) => {
+      const { cookie } = await login({ app, formData: loginData });
+
+      const { getResponse } = await getAllUsers({ app, cookie });
+      expect(getResponse.status).toBe(statusCode);
     });
 
-    test('Get all users test logged in with admin role, should succed', async () => {
-      const { cookie } = login({ app, formData: { email: testData.admin.email, password: '123456' } });
-      const { readResponse } = getAllUsers({ app, cookie });
-      expect(readResponse.status).toBe(302);
-    });
 
     test('Get user data not logged in, should fail', async () => {
-      const { getResponse } = getUser({ app, email: testData.user.email, cookie: '' });
-      expect(getResponse.status).toBe(401);
-    });
-
-    test('Get user data, user email wrong, 400', async () => {
-      const { cookie } = login({ app, formData: { email: testData.admin.email, password: '123456' } });
-      const { getResponse } = getUser({ app, email: 'wrong@email', cookie });
-      expect(getResponse.status).toBe(400);
-    });
-
-    test('Get user data, user email not in database, 400', async () => {
-      const { cookie } = login({ app, formData: { email: testData.admin.email, password: '123456' } });
-      const { getResponse } = getUser({ app, email: 'unknown@email.com', cookie });
-      expect(getResponse.status).toBe(400);
-    });
-
-    test('Get user data, admin role, 302', async () => {
-      const { cookie } = login({ app, formData: { email: testData.admin.email, password: '123456' } });
-      const { getResponse } = getUser({ app, email: testData.user1.email, cookie });
-      expect(getResponse.status).toBe(302);
-    });
-
-    test('Get user data, user role, 403', async () => {
-      const { cookie } = login({ app, formData: { email: testData.user1.email, password: '123456' } });
-      const { getResponse } = getUser({ app, email: testData.user2.email, cookie });
+      const { getResponse } = await getUser({ app, cookie: '', email: testData.user1.email });
       expect(getResponse.status).toBe(403);
     });
 
-    test('Get user own data, user role, 302', async () => {
-      const { cookie } = login({ app, formData: { email: testData.user1.email, password: '123456' } });
-      const { getResponse } = getUser({ app, email: testData.user1.email, cookie });
-      expect(getResponse.status).toBe(403);
+    const getUserTestData = [
+      {
+        loginData: { email: testData.admin.email, password: '123456' },
+        emailToGet: 'wrong@email',
+        statusCode: 400,
+      },
+      {
+        loginData: { email: testData.admin.email, password: '123456' },
+        emailToGet: 'unknown@email.com',
+        statusCode: 404,
+      },
+      {
+        loginData: { email: testData.user1.email, password: '123456' },
+        emailToGet: testData.user2.email,
+        statusCode: 403,
+      },
+      {
+        loginData: { email: testData.admin.email, password: '123456' },
+        emailToGet: testData.user1.email,
+        statusCode: 200,
+      },
+      {
+        loginData: { email: testData.user1.email, password: '123456' },
+        emailToGet: testData.user1.email,
+        statusCode: 200,
+      },
+    ];
+
+    test.each(getUserTestData)('Test getUser api with different data', async ({ loginData, emailToGet, statusCode }) => {
+      const { cookie } = await login({ app, formData: loginData });
+      const { getResponse } = await getUser({ app, email: emailToGet, cookie });
+      expect(getResponse.status).toBe(statusCode);
     });
   });
 
@@ -175,13 +186,15 @@ describe('test users', () => {
     const validationErrorsData = [
       {
         emailToUpdate: 'wrong@email',
+        statusCode: 400,
       }, {
         emailToUpdate: 'unknown@email.com',
+        statusCode: 404,
       },
     ];
 
-    test.each(validationErrorsData)('testing validation emailToUpdate errors', async ({ emailToUpdate }) => {
-      const { cookie } = await login({ app, formData: { email: 'coronavirus@2020.ru', password: '123456' } });
+    test.each(validationErrorsData)('testing validation emailToUpdate errors', async ({ emailToUpdate, statusCode }) => {
+      const { cookie } = await login({ app, formData: { email: testData.admin.email, password: '123456' } });
 
       const newData = generateFakeUserRegisterData({ role: 'user' });
       const { updateResponse } = await updateUser(
@@ -189,11 +202,11 @@ describe('test users', () => {
           app, emailToUpdate, formData: newData, cookie,
         },
       );
-      expect(updateResponse.status).toBe(400);
+      expect(updateResponse.status).toBe(statusCode);
     });
 
     test('Update foreign user with user role, should fail', async () => {
-      const { cookie } = await login({ app, formData: { email: 'pittbull@fakedomain.com', password: '123456' } });
+      const { cookie } = await login({ app, formData: { email: testData.user1.email, password: '123456' } });
 
       const newData = generateFakeUserRegisterData({ role: 'admin' });
       const { updateResponse } = await updateUser(
@@ -209,42 +222,44 @@ describe('test users', () => {
     const validationErrorsData = [
       {
         emailToDelete: 'wrong@email',
+        statusCode: 400,
       }, {
         emailToDelete: 'unknown@email.com',
+        statusCode: 404,
       },
     ];
 
-    test.each(validationErrorsData)('Testing emailToDelete validation', async ({ emailToDelete }) => {
+    test.each(validationErrorsData)('Testing emailToDelete validation', async ({ emailToDelete, statusCode }) => {
       const { cookie } = await login({ app, formData: { email: testData.admin.email, password: '123456' } });
 
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(400);
+      expect(deleteResponse.status).toBe(statusCode);
     });
 
     const succedData = [
       {
         emailWhoDelete: testData.admin.email,
-        emailToDelete: testData.user.email,
+        emailToDelete: testData.user1.email,
       }, {
-        emailWhoDelete: testData.user.email,
-        emailToDelete: testData.user.email,
+        emailWhoDelete: testData.user1.email,
+        emailToDelete: testData.user1.email,
       },
     ];
 
     test.each(succedData)('Testing succeded data', async ({ emailWhoDelete, emailToDelete }) => {
       const { cookie } = await login({ app, formData: { email: emailWhoDelete, password: '123456' } });
 
-      const { deleteResponse } = deleteUser({ app, emailToDelete, cookie });
+      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
-      const user = Models.User.findOne({ where: { emailToDelete } });
+      const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeFalsy();
     });
 
     test('Delete by not logged in user, should fail', async () => {
       const emailToDelete = testData.admin.email;
-      const { deleteResponse } = deleteUser({ app, emailToDelete, cookie: '' });
+      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
       expect(deleteResponse.status).toBe(403);
-      const user = Models.User.findOne({ where: { emailToDelete } });
+      const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 
@@ -252,9 +267,9 @@ describe('test users', () => {
       const { cookie } = await login({ app, formData: { email: testData.user1.email, password: '123456' } });
 
       const emailToDelete = testData.admin.email;
-      const { deleteResponse } = deleteUser({ app, emailToDelete, cookie });
+      const { deleteResponse } = await deleteUser({ app, email: emailToDelete, cookie });
       expect(deleteResponse.status).toBe(403);
-      const user = Models.User.findOne({ where: { emailToDelete } });
+      const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
   });
