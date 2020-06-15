@@ -171,14 +171,14 @@ export default (app) => {
           errors,
         });
       }
-      const user = await Models.User.findOne({ where: { email: emailDto } });
+      const user = await Models.User.findOne({ where: { email: emailDto.email } });
       if (!user) {
         request.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
       }
 
-      await user.destroy({ where: { email: emailDto } });
+      await user.destroy();
       request.flash('info', i18next.t('flash.users.create.success'));
       reply.redirect(app.reverse('root'));
       return reply;
