@@ -6,7 +6,7 @@ const login = async ({ app, formData }) => {
     .send({ formData });
 
   const cookie = loginResponse.header['set-cookie'];
-  return { cookie };
+  return { cookie, status: loginResponse.status };
 };
 
 const deleteUser = async ({ app, emailToDelete, cookie }) => {

@@ -1,7 +1,7 @@
 import request from 'supertest';
-import cookieParser from 'cookie';
 import matchers from 'jest-supertest-matchers';
 import { createTestApp } from './lib/utils';
+import { login } from './lib/testHelpers';
 
 describe('test sessions routes', () => {
   let app = null;
@@ -14,55 +14,39 @@ describe('test sessions routes', () => {
   afterEach(async () => {
     await app.close();
   });
+  const loginTestData = [
+    {
+      loginData: {
+        email: 'coronavirus@2020.ru',
+        password: '123456',
+      },
+      loginStatus: 302,
+    },
+    {
+      loginData: {
+        email: 'wrong@email',
+        password: '123456',
+      },
+      loginStatus: 400,
+    },
+    {
+      loginData: {
+        email: 'missing@email.ru',
+        password: '123456',
+      },
+      loginStatus: 401,
+    },
+  ];
+  test.each(loginTestData)('Test login with different login data and status', async ({ loginData, loginStatus }) => {
+    const { status } = await login({ app, formData: loginData });
 
-  test('Test login with good credentials', async () => {
-    const formData = {
-      email: 'coronavirus@2020.ru',
-      password: '123456',
-    };
-
-    const loginResponse = await request(app.server)
-      .post('/session')
-      .send({ formData });
-
-    expect(loginResponse.status).toBe(302);
+    expect(status).toBe(loginStatus);
   });
 
-  test('Test login with wrong credentials', async () => {
-    const formData = {
-      email: 'wrong@email',
-      password: '123456',
-    };
-
-    const loginResponse = await request(app.server)
-      .post('/session')
-      .send({ formData });
-
-    expect(loginResponse.status).toBe(400);
-  });
-
-  test('Test login with missing email', async () => {
-    const formData = {
-      email: 'missing@email.ru',
-      password: '123456',
-    };
-
-    const loginResponse = await request(app.server)
-      .post('/session')
-      .send({ formData });
-    expect(loginResponse.status).toBe(401);
-  });
 
   test('Test logout', async () => {
-    const formData = {
-      email: 'coronavirus@2020.ru',
-      password: '123456',
-    };
-
-    const loginResponse = await request(app.server)
-      .post('/session')
-      .send({ formData });
-    expect(loginResponse.status).toBe(302);
+    const { status } = await login({ app, formData: { email: 'coronavirus@2020.ru', password: '123456' } });
+    expect(status).toBe(302);
 
     const logoutResponse = await request(app.server)
       .get('/session/logout');
