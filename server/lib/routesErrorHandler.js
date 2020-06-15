@@ -10,7 +10,7 @@ export default (error, request, reply) => {
     || (error instanceof ValidationError)) {
     error.proceed(request, reply);
   } else {
-    request.log.info(`Routes error happens: type: ${type}, error: ${JSON.stringify(error, null, '\t')}`);
+    console.log(`Routes error happens: type: ${type}, error: ${JSON.stringify(error, null, '\t')}`);
     throw error;
   }
 };
