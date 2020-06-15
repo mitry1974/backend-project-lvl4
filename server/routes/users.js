@@ -8,18 +8,6 @@ import EmailDto from '../db/models/dto/EmailDto';
 import ValidationError from '../errors/ValidationError';
 
 export default (app) => {
-  app.route({
-    method: 'GET',
-    url: '/users',
-    name: 'users',
-    preHandler: app.auth([app.verifyAdmin]),
-    handler: async (request, reply) => {
-      const users = await Models.User.findAll();
-      reply.render('/users/list', { users });
-      return reply;
-    },
-  });
-
   app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
     const formData = new RegisterUserDto();
     reply.render('users/register', {
@@ -31,7 +19,7 @@ export default (app) => {
     return reply;
   });
 
-  app.get('/users/:id', { name: 'getEditUserForm' }, async (request, reply) => {
+  app.get('/users/edit/:email', { name: 'getEditUserForm' }, async (request, reply) => {
     const userId = request.session.get('userId') || request.params.id;
     if (!userId) {
       throw new Error('Edit user with missing user id');
@@ -47,6 +35,52 @@ export default (app) => {
       caption: 'Save',
     });
     return reply;
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/users/:email',
+    name: 'getUser',
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    handler: async (request, reply) => {
+      console.log(`getUser !!!!!!!!!!!!!!!!!!!!!!!!!, email: ${JSON.stringify(request.params)}`);
+      const emailDto = plainToClass(EmailDto, request.params);
+      if (!emailDto) {
+        throw new Error('Register new user, missing user email!');
+      }
+      const errors = await validate(emailDto);
+
+      if (errors.length !== 0) {
+        throw new ValidationError({
+          url: app.reverse('root'),
+          message: `GET: /users:email, data: ${JSON.stringify(request.params.email)}, validation errors: ${JSON.stringify(errors)}`,
+          formData: emailDto,
+          errors,
+        });
+      }
+      const user = await Models.User.findOne({ where: { email: emailDto.email } });
+      if (!user) {
+        request.flash('info', i18next.t('flash.users.create.success'));
+        reply.redirect(app.reverse('root'));
+        return reply;
+      }
+
+      reply.render('/users/view', { formData: user });
+      return reply;
+    },
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/users',
+    name: 'getAllUsers',
+    prehandler: app.auth([app.verifyAdmin]),
+    handler: async (request, reply) => {
+      console.log('getAllUsers !!!!!!!!!!!!!!!!!!!!!!!!!!');
+      const users = await Models.User.findAll();
+      reply.render('/users/list', { users });
+      return reply;
+    },
   });
 
   app.route({

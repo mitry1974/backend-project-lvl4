@@ -22,7 +22,7 @@ html(lang="en").h-100
         ul.navbar-nav.mr-auto
           if(reply.request.currentUser.role == 'admin')
             li.nav-item
-              a.nav-link(href=route('users'))= t('layouts.application.users')
+              a.nav-link(href=route('getAllUsers'))= t('layouts.application.users')
 
         ul.navbar-nav
           if reply.request.signedIn

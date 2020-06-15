@@ -31,7 +31,7 @@ const updateUser = async (
 
 const getUser = async ({ app, email, cookie }) => {
   const readResponse = await request(app.server)
-    .get(`/users/${email}`)
+    .get(app.router('getUser', { email }))
     .set('cookie', cookie);
 
   return { readResponse };
@@ -39,7 +39,7 @@ const getUser = async ({ app, email, cookie }) => {
 
 const getAllUsers = async ({ app, cookie }) => {
   const readResponse = await request(app.server)
-    .get('/users')
+    .get(app.router('getAllUsers'))
     .set('cookie', cookie);
 
   return { readResponse };

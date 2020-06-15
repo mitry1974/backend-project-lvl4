@@ -1,0 +1,12 @@
+extends ../layouts/application.pug
+
+block content
+  +formFor(caption)(class='simple_form_new_user' novalidate action=action  method='post')&attributes(attributes)
+    h2 User data:
+    h4 email: 
+      span.label.label-default #{formData.email}
+    h4 First name: 
+      span.label.label-default #{formData.firstname}
+    h4 Last name: 
+      span.label.label-default #{formData.lastname}
+
