@@ -8,7 +8,7 @@ import EmailDto from '../db/models/dto/EmailDto';
 import ValidationError from '../errors/ValidationError';
 import NotFoundError from '../errors/NotFoundError';
 
-export default (app) => {
+export default (app, ajv) => {
   app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
     const formData = new RegisterUserDto();
     reply.render('users/register', {
@@ -81,21 +81,9 @@ export default (app) => {
     method: 'POST',
     url: '/users',
     name: 'registerUser',
+    schema: ajv.getSchema('registerUserSchema').schema,
     handler: async (request, reply) => {
-      const userDto = plainToClass(RegisterUserDto, request.body.formData);
-      if (!userDto) {
-        throw new Error('Register new user, missing user data!');
-      }
-      const errors = await validate(userDto);
-      if (errors.length !== 0) {
-        throw new ValidationError({
-          url: '/users/register',
-          message: `POST: /users, data: ${JSON.stringify(request.body.formData)}, validation errors: ${JSON.stringify(errors)}`,
-          formData: request.body.formData,
-          errors,
-        });
-      }
-      const user = Models.User.build(userDto);
+      const user = Models.User.build(request.body.formData);
       await user.save();
 
       request.flash('info', i18next.t('flash.users.create.success'));

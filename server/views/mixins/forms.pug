@@ -1,13 +1,8 @@
 - const getInputName = (propertyName) => `formData[${propertyName}]`
-- const getErrorText = (errors, property) => {
--   const error = errors.find((error) => error.property === property)
--   if (!error) {
--     return;
--   }
--   return Object.values(error.constraints).join(', ');
-- }
+- const getErrorText = (errors, property) => errors[property] ? errors[property].join(',') : '';
 
 mixin formFor(header)
+  - console.log(`input data: ${JSON.stringify(formData.email)}`);
   div.container-fluid
     div.row.justify-content-center.pb-5.mt-5
       div.col-12.col-sm-8.col-md-7.col-lg-4

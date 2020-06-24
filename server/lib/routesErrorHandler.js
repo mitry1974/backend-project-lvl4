@@ -4,6 +4,7 @@ import AutheticationError from '../errors/AutheticationError';
 import NotFoundError from '../errors/NotFoundError';
 
 export default (error, request, reply) => {
+  console.log(`routes error handler: ${JSON.stringify(request.currentUser)}`);
   const type = error.constructor.name;
   request.log.info(`Routes error handler, error class: ${error.constructor.name}`);
   if ((error instanceof AutheticationError)

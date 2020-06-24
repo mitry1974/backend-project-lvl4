@@ -123,7 +123,7 @@ const setupLocalization = () => {
 export default async () => {
   const app = fastify({
     logger: {
-      level: 'info',
+      level: 'trace',
       prettyPrint: !isProduction,
       timestamp: !isDevelopment,
       base: null,
@@ -132,11 +132,12 @@ export default async () => {
 
   app.decorate('config', config);
 
+  setupLocalization(app);
+
   await registerPlugins(app);
   setupViews(app);
   setupStaticAssets(app);
   setupHooks(app);
-  setupLocalization(app);
 
   setupErrorHandler(app);
 

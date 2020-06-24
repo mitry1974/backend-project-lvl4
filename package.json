@@ -20,6 +20,9 @@
   },
   "dependencies": {
     "acorn": "^7.2.0",
+    "ajv": "^6.12.2",
+    "ajv-error-messages": "^1.0.2",
+    "ajv-errors": "^1.0.1",
     "autoprefixer": "^9.8.0",
     "bootstrap": "^4.5.0",
     "class-transformer": "^0.2.3",

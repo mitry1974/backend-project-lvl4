@@ -43,10 +43,10 @@ export default {
         errors: {
           email_already_exists: 'Пользователь уже зарегистрирован',
           email_not_empty: 'Email не может быть пустым',
-          email_not_email: 'Введите правильный e-mail адрес',
+          email: 'Введите правильный e-mail адрес',
           password_not_empty: 'Пароль не может быть пустым',
           password_confirmation_not_empty: 'Подтверждение пароля не может быть пустым',
-          password_confirmation_the_same_as_password: 'Подтверждение пароля должно совпадать с паролем',
+          password_confirmation: 'Подтверждение пароля не может быть пустым и должно совпадать с паролем',
         },
         list: {
           header: 'Пользователи',
