@@ -15,7 +15,7 @@ export default class ValidationError extends Error {
 
   proceed(request, reply) {
     request.log.info(`Routes error: ${this.message}, formData:${JSON.stringify(this.formData, null, '\t')}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
-    request.flash('error', i18next.t(this.flashMessage));
+    request.flash('error', this.flashMessage);
     reply.code(400).render(this.url, { formData: this.formData, errors: this.validationErrors });
     return reply;
   }

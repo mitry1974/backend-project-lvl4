@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const autoprefixer = require('autoprefixer');
 
@@ -9,6 +10,7 @@ module.exports = {
   entry: path.join(__dirname, 'client', 'index.js'),
   output: {
     path: path.join(__dirname, 'dist', 'public'),
+    filename: 'main.js',
     publicPath: '/assets/',
   },
   devServer: {
@@ -37,4 +39,10 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
+  ],
 };

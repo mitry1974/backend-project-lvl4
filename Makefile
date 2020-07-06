@@ -1,6 +1,9 @@
 install:
 	npm install
 
+db-setup:
+	make migrations && make seeds
+
 build:
 	npm run build
 

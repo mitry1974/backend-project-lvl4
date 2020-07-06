@@ -7,13 +7,13 @@
 -   return Object.values(error.constraints).join(', ');
 - }
 
-mixin formFor(header)
+mixin formFor(caption)
   div.container-fluid
     div.row.justify-content-center.pb-5.mt-5
       div.col-12.col-sm-8.col-md-7.col-lg-4
         div.card.shadow-sm.border-top.border-primary
           div.card-body
-            h1.h3.mb-4.mt-3.text-center= t(header)
+            h1.h3.mb-4.mt-3.text-center= caption
             form&attributes(attributes)
               block
 
@@ -37,34 +37,10 @@ mixin input(entity, propertyName, errors = [])
 
 mixin submit
   .form-group
-        input(class='btn btn-primary' type='submit')&attributes(attributes)
+    input(class='btn btn-primary' type='submit')&attributes(attributes)
 
 
-mixin buttonTo(action, method)
-  form(action=action, method="post")
+mixin buttonTo(method)
+  .form-group
     input(name="_method" type="hidden" value=method)
-    input(type='submit')&attributes(attributes)
-
-mixin listFor(header)
-  div.container-fluid
-    div.row.flex-xl-nowrap
-      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
-        div.card.shadow-sm.border-top.border-primary
-          div.card-body
-            h1.h3.mb-4.mt-3.text-center= t(header)
-            table.table.table-striped.table-bordered
-              thead.thead-dark
-                tr
-                  th(scope=col)=t('views.users.list.id')
-                  th(scope=col)=t('views.users.list.email')
-                  th(scope=col)=t('views.users.list.firstname')
-                  th(scope=col)=t('views.users.list.lastname')
-                  th(scope=col)=t('views.users.list.role')
-                tbody
-                  each user in users
-                    tr
-                      td= user.id
-                      td= user.email
-                      td= user.firstname
-                      td= user.lastname
-                      td= user.role
+    input.btn.btn-primary(type='submit')&attributes(attributes)

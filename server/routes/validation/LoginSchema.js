@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { IsNotEmpty, IsEmail } from 'class-validator';
 
-export default class LoginCredentialsDto {
+export default class LoginValidationSchema {
   @IsEmail({}, {
     message: () => `${i18next.t('views.users.errors.email_not_email')}`,
   })

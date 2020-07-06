@@ -1,41 +1,69 @@
 import i18next from 'i18next';
-import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
 import Models from '../db/models';
-import RegisterUserDto from '../db/models/dto/RegisterUserDto';
-import EmailDto from '../db/models/dto/EmailDto';
-import ValidationError from '../errors/ValidationError';
+import RegisterUserSchema from './validation/RegisterUserSchema';
+import UpdateUserSchema from './validation/UpdateUserSchema';
+import EmailSchema from './validation/EmailSchema';
 import NotFoundError from '../errors/NotFoundError';
+import validateData from './validation/helpers';
+
+const findUserByEmail = async (email) => {
+  const user = await Models.User.findOne({ where: { email } });
+  if (!user) {
+    throw new NotFoundError();
+  }
+  return user;
+};
+
+const redirectRoot = (app, request, reply, flash) => {
+  request.flash('info', i18next.t(flash));
+  reply.redirect(app.reverse('root'));
+  return reply;
+};
 
 export default (app) => {
   app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
-    const formData = new RegisterUserDto();
-    reply.render('users/register', {
-      formData,
-      action: app.reverse('registerUser'),
-      caption: 'Register user',
-    });
+    const formData = new RegisterUserSchema();
+
+    reply.render('users/register', { formData });
 
     return reply;
   });
 
-  app.get('/users/edit/:email', { name: 'getEditUserForm' }, async (request, reply) => {
-    const userId = request.session.get('userId') || request.params.id;
-    if (!userId) {
-      throw new Error('Edit user with missing user id');
-    }
-    const user = await Models.User.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new Error('Edit user with migging user');
-    }
+  app.route({
+    method: 'GET',
+    url: '/users/edit/:email',
+    name: 'getEditUserForm',
+    preValidate: async (request) => {
+      await validateData({
+        ClassToValidate: EmailSchema,
+        objectToValidate: request.params,
+        url: app.reverse('root'),
+        flashMessage: i18next.t('flash.users.create.error'),
+      });
+    },
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    handler: async (request, reply) => {
+      const user = await findUserByEmail(request.params.email);
+      reply.render('users/edit', { formData: user });
 
-    reply.render('users/register', {
-      user,
-      action: app.reverse('saveUser', { id: userId }),
-      caption: 'Save',
-    });
-    return reply;
+      return reply;
+    },
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/users/change_password/:email',
+    name: 'getChangePasswordForm',
+    preValidate: async (request) => {
+      await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
+    },
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    handler: async (request, reply) => {
+      reply.render('users/changePassword', { email: request.params.email });
+      return reply;
+    },
   });
 
   app.route({
@@ -44,21 +72,11 @@ export default (app) => {
     name: 'getUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const emailDto = plainToClass(EmailDto, request.params);
-      const errors = await validate(emailDto);
+      request.log.info(`GET /users/${request.params.email}`);
+      const emailDto = plainToClass(EmailSchema, request.params);
+      await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
 
-      if (errors.length !== 0) {
-        throw new ValidationError({
-          url: app.reverse('root'),
-          message: `GET: /users:email, data: ${JSON.stringify(request.params.email)}, validation errors: ${JSON.stringify(errors)}`,
-          formData: emailDto,
-          errors,
-        });
-      }
-      const user = await Models.User.findOne({ where: { email: emailDto.email } });
-      if (!user) {
-        throw new NotFoundError();
-      }
+      const user = await findUserByEmail(emailDto.email);
 
       reply.render('/users/view', { formData: user });
       return reply;
@@ -71,6 +89,7 @@ export default (app) => {
     name: 'getAllUsers',
     preHandler: app.auth([app.verifyAdmin]),
     handler: async (request, reply) => {
+      request.log.info('GET /users');
       const users = await Models.User.findAll();
       reply.render('/users/list', { users });
       return reply;
@@ -81,26 +100,20 @@ export default (app) => {
     method: 'POST',
     url: '/users',
     name: 'registerUser',
+    preValidation: async (request) => {
+      await validateData({
+        ClassToValidate: RegisterUserSchema,
+        objectToValidate: request.body.formData,
+        url: 'users/register',
+        flashMessage: i18next.t('flash.users.create.error'),
+      });
+    },
     handler: async (request, reply) => {
-      const userDto = plainToClass(RegisterUserDto, request.body.formData);
-      if (!userDto) {
-        throw new Error('Register new user, missing user data!');
-      }
-      const errors = await validate(userDto);
-      if (errors.length !== 0) {
-        throw new ValidationError({
-          url: '/users/register',
-          message: `POST: /users, data: ${JSON.stringify(request.body.formData)}, validation errors: ${JSON.stringify(errors)}`,
-          formData: request.body.formData,
-          errors,
-        });
-      }
-      const user = Models.User.build(userDto);
+      console.log(`POST /users/, create user with data: ${JSON.stringify(request.body.formData, null, '\t')}!`);
+      const user = Models.User.build(request.body.formData);
       await user.save();
 
-      request.flash('info', i18next.t('flash.users.create.success'));
-      reply.redirect(app.reverse('root'));
-      return reply;
+      return redirectRoot(app, request, reply, 'flash.users.create.success');
     },
   });
 
@@ -108,40 +121,17 @@ export default (app) => {
     method: 'PUT',
     url: '/users/:email',
     name: 'updateUser',
+    preValidate: async (request) => {
+      await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
+      await validateData({ ClassToValidate: UpdateUserSchema, objectToValidate: request.body.formData, url: '' });
+    },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const emailDto = plainToClass(EmailDto, request.params);
-      const updateUserDto = plainToClass(RegisterUserDto, request.body.formData);
-      request.log.info(`Update user with email: ${JSON.stringify(emailDto)} and data: ${JSON.stringify(updateUserDto)}`);
-      if (!emailDto) {
-        throw new Error('Register new user, missing user email!');
-      }
-      const errorsEmail = await validate(emailDto);
+      console.log(`PUT /users/:${request.params.email}, update user`);
+      const user = await findUserByEmail(request.params.email);
+      user.update(request.body.formData);
 
-      if (!updateUserDto) {
-        throw new Error('Register new user, missing user data!');
-      }
-      const errorsUpdate = await validate(updateUserDto);
-
-      if (errorsEmail.length !== 0 || errorsUpdate.length !== 0) {
-        const errors = { ...errorsEmail, ...errorsUpdate };
-        throw new ValidationError({
-          url: app.reverse('root'),
-          message: `PUT: /users, data: ${JSON.stringify(request.body.formData)}, validation errors: ${JSON.stringify(errors)}`,
-          formData: request.body.formData,
-          errors,
-        });
-      }
-      const { email } = emailDto;
-      const user = await Models.User.findOne({ where: { email } });
-      if (!user) {
-        throw new NotFoundError();
-      }
-      await Models.User.update(updateUserDto, { where: { email } });
-
-      request.flash('info', i18next.t('flash.users.create.success'));
-      reply.redirect(app.reverse('root'));
-      return reply;
+      return redirectRoot(app, request, reply, 'flash.users.update.success');
     },
   });
 
@@ -149,27 +139,19 @@ export default (app) => {
     method: 'DELETE',
     url: '/users/:email',
     name: 'deleteUser',
+    preValidation: async (request) => {
+      await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
+    },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const emailDto = plainToClass(EmailDto, request.params);
-      const errors = await validate(emailDto);
-      if (errors.length !== 0) {
-        throw new ValidationError({
-          url: app.reverse('root'),
-          message: `PUT: /users, data: ${JSON.stringify(request.params)}, validation errors: ${JSON.stringify(errors)}`,
-          formData: emailDto,
-          errors,
-        });
-      }
-      const user = await Models.User.findOne({ where: { email: emailDto.email } });
+      const user = await findUserByEmail(request.params.email);
       if (!user) {
         throw new NotFoundError();
       }
 
       await user.destroy();
-      request.flash('info', i18next.t('flash.users.create.success'));
-      reply.redirect(app.reverse('root'));
-      return reply;
+
+      return redirectRoot(app, request, reply, 'flash.users.delete.success');
     },
   });
 };

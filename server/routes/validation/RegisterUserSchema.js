@@ -1,22 +1,8 @@
 import i18next from 'i18next';
-import { registerDecorator, IsNotEmpty, IsEmail } from 'class-validator';
-import Models from '..';
+import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsUserAlreadyExist, IsTheSameAs } from './decorators';
 
-function IsUserAlreadyExist(validationOptions) {
-  return function _IsUserAlreadyExist(object, propertyName) {
-    registerDecorator({
-      target: object.constructor,
-      propertyName,
-      options: validationOptions,
-      constraints: [],
-      validator: {
-        validate: async (email) => !(await Models.User.findOne({ where: { email } })),
-      },
-    });
-  };
-}
-
-export default class RegisterUserDto {
+export default class RegisterUserSchema {
   @IsEmail({}, {
     message: () => `${i18next.t('views.users.errors.email_not_email')}`,
   })
@@ -25,7 +11,7 @@ export default class RegisterUserDto {
   })
   @IsUserAlreadyExist({
     message: () => `${i18next.t('views.users.errors.email_already_exists')}`,
-  })
+  }, false)
   email = '';
 
   firstname = '';
@@ -40,6 +26,13 @@ export default class RegisterUserDto {
   @IsNotEmpty({
     message: () => `${i18next.t('views.users.errors.password_confirmation_not_empty')}`,
   })
+  @IsTheSameAs(
+    'password',
+    true,
+    {
+      message: () => `${i18next.t('views.users.errors.password_confirmation_the_same_as_password')}`,
+    },
+  )
   confirm = '';
 
   @IsNotEmpty()

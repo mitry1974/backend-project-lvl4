@@ -12,6 +12,7 @@ import fastifyFormbody from 'fastify-formbody';
 import fastifyReverse from 'fastify-reverse-routes';
 import fastifyErrorPage from 'fastify-error-page';
 import fastifyPointOfView from 'point-of-view';
+import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
 
 import webpackConfig from '../webpack.config';
@@ -27,7 +28,8 @@ const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 const registerPlugins = async (app) => {
-  app.register(fastifyErrorPage);
+  app.register(fastifyMethodOverride);
+  // app.register(fastifyErrorPage);
   app.register(fastifyReverse);
   app.register(fastifyFormbody);
 
@@ -132,8 +134,8 @@ export default async () => {
 
   app.decorate('config', config);
 
-  await registerPlugins(app);
   setupViews(app);
+  await registerPlugins(app);
   setupStaticAssets(app);
   setupHooks(app);
   setupLocalization(app);

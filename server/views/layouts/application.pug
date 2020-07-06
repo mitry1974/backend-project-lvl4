@@ -5,13 +5,6 @@ html(lang="en").h-100
   head
     title TaskMan - простой менеджер задач
     script(src=assetPath('main.js'))
-    script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")
-    script(src="https://kit.fontawesome.com/6e9b960882.js" crossorigin="anonymous")
-    script(src="https://code.jquery.com/jquery-3.5.0.js" integrity="sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=" crossorigin="anonymous")
-    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
-    link(href=assetPath('main.css'))
 
   body.h-100.d-flex.flex-column
     nav.navbar.navbar-expand-lg.navbar-light.bg-light.mb-3
@@ -20,7 +13,6 @@ html(lang="en").h-100
         span.navbar-toggler-icon
       .collapse.navbar-collapse
         ul.navbar-nav.mr-auto
-          if(reply.request.currentUser.role == 'admin')
             li.nav-item
               a.nav-link(href=route('getAllUsers'))= t('layouts.application.users')
 

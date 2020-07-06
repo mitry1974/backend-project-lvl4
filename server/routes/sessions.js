@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import Models from '../db/models';
-import LoginCredentialsDto from '../db/models/dto/LoginCredentialsDto';
+import LoginSchema from './validation/LoginSchema';
 import ValidationError from '../errors/ValidationError';
 import AuthenticationError from '../errors/AutheticationError';
 
@@ -19,13 +19,13 @@ const doRedirect = (
 export default (app) => {
   app
     .get('/session/new', { name: 'getLoginForm' }, async (request, reply) => {
-      const formData = new LoginCredentialsDto();
+      const formData = new LoginSchema();
       reply.render('session/login', { formData });
       return reply;
     })
     .post('/session', { name: 'login' }, async (request, reply) => {
-      const loginCredentialsDto = plainToClass(LoginCredentialsDto, request.body.formData);
-      const errors = await validate(loginCredentialsDto);
+      const loginSchema = plainToClass(LoginSchema, request.body.formData);
+      const errors = await validate(loginSchema);
       if (errors.length !== 0) {
         throw new ValidationError({
           url: '/session/login',
@@ -35,8 +35,9 @@ export default (app) => {
           errors,
         });
       }
-      const user = await Models.User.findOne({ where: { email: loginCredentialsDto.email } });
-      if (!user || !(await user.checkPassword(loginCredentialsDto.password))) {
+      const { formData } = request.body;
+      const user = await Models.User.findOne({ where: { email: formData.email } });
+      if (!user || !(await user.checkPassword(formData.password))) {
         throw new AuthenticationError({
           message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,
         });
