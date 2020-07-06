@@ -10,7 +10,6 @@ import fastifySession from 'fastify-secure-session';
 import fastifyStatic from 'fastify-static';
 import fastifyFormbody from 'fastify-formbody';
 import fastifyReverse from 'fastify-reverse-routes';
-import fastifyErrorPage from 'fastify-error-page';
 import fastifyPointOfView from 'point-of-view';
 import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
@@ -53,13 +52,15 @@ const registerPlugins = async (app) => {
     await app.sequelize.close();
   });
 
-
   app.register(import('./routes'));
 };
 
 const setupStaticAssets = (app) => {
+  const pathPublic = isProduction
+    ? path.join(__dirname, '..', 'public')
+    : path.join(__dirname, '..', 'dist', 'public');
   app.register(fastifyStatic, {
-    root: path.resolve(__dirname, '../', 'public'),
+    root: pathPublic,
     prefix: '/assets/',
   });
 };

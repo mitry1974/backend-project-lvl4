@@ -33,7 +33,7 @@ export default (app) => {
 
   app.route({
     method: 'GET',
-    url: '/users/edit/:email',
+    url: '/users/:email/edit',
     name: 'getEditUserForm',
     preValidate: async (request) => {
       await validateData({
@@ -54,7 +54,7 @@ export default (app) => {
 
   app.route({
     method: 'GET',
-    url: '/users/change_password/:email',
+    url: '/users/:email/change_password',
     name: 'getChangePasswordForm',
     preValidate: async (request) => {
       await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
