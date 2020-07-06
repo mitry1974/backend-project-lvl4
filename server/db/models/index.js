@@ -4,7 +4,6 @@ const config = require('../../../config/dbconfig.js');
 
 const db = {};
 
-
 const models = ['User.js', 'Task.js'];
 
 let sequelize;
@@ -15,7 +14,8 @@ if (config.use_env_variable) {
 }
 
 models.forEach((file) => {
-  const model = sequelize.import(path.join(__dirname, file));
+  // eslint-disable-next-line
+  const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
   db[model.name] = model;
 });
 
