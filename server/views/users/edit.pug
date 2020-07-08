@@ -15,5 +15,5 @@ block content
     +input(formData, 'role', errors)(
       type='hidden')
     a(href=route('getChangePasswordForm', { email: formData.email })) change password
-    +buttonTo('put')(value = t('views.users.edit.submit'))
+    +submitFor('put')(value = t('views.users.edit.submit'))
 

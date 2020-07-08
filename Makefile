@@ -19,6 +19,9 @@ test-watch:
 start-dev:
 	npm run start:dev
 
+start-dev-inspect:
+	npm run start:dev:inspect
+
 start:
 	npm run start
 

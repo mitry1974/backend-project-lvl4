@@ -37,10 +37,14 @@ mixin input(entity, propertyName, errors = [])
 
 mixin submit
   .form-group
-    input(class='btn btn-primary' type='submit')&attributes(attributes)
+    input.btn.btn-primary(type='submit')&attributes(attributes)
 
 
-mixin buttonTo(method)
-  // .form-group
-  input(name="_method" type="hidden" value=method)
-  input.btn.btn-primary(type='submit')&attributes(attributes)
+mixin submitFor(method)
+  .form-group
+    input(name="_method" type="hidden" value=method)
+    input.btn.btn-primary(type='submit')&attributes(attributes)
+
+mixin altSubmitFor(method)
+  .form-group
+    input.btn.btn-primary(type='submit')&attributes(attributes)
