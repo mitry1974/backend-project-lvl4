@@ -18,7 +18,6 @@ import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import Models from './db/models';
-import Guest from './db/models/Guest';
 import { verifyAdmin, verifyUserSelf } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 
@@ -107,7 +106,7 @@ const setupHooks = (app) => {
       req.session.set('userId', null);
     }
     req.signedIn = false;
-    req.currentUser = new Guest();
+    req.currentUser = Models.Guest.build();
   });
 };
 
