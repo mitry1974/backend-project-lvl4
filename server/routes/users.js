@@ -3,6 +3,7 @@ import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
 import Models from '../db/models';
 import RegisterUserSchema from './validation/RegisterUserSchema';
+import UpdatePasswordSchema from './validation/UpdatePasswordSchema';
 import UpdateUserSchema from './validation/UpdateUserSchema';
 import EmailSchema from './validation/EmailSchema';
 import NotFoundError from '../errors/NotFoundError';
@@ -14,12 +15,6 @@ const findUserByEmail = async (email) => {
     throw new NotFoundError();
   }
   return user;
-};
-
-const redirectRoot = (app, request, reply, flash) => {
-  request.flash('info', i18next.t(flash));
-  reply.redirect(app.reverse('root'));
-  return reply;
 };
 
 export default (app) => {
@@ -61,7 +56,13 @@ export default (app) => {
     },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      reply.render('users/changePassword', { email: request.params.email });
+      const formData = {
+        password: '',
+        confirm: '',
+        oldPassword: '',
+      };
+      console.log(`/users/:email/change_password, email: ${request.params.email}`);
+      reply.render('users/changePassword', { formData, email: request.params.email });
       return reply;
     },
   });
@@ -113,7 +114,9 @@ export default (app) => {
       const user = Models.User.build(request.body.formData);
       await user.save();
 
-      return redirectRoot(app, request, reply, 'flash.users.create.success');
+      request.flash('info', i18next.t('flash.users.create.success'));
+      reply.redirect(app.reverse('root'));
+      return reply;
     },
   });
 
@@ -121,9 +124,9 @@ export default (app) => {
     method: 'PUT',
     url: '/users/:email',
     name: 'updateUser',
-    preValidate: async (request) => {
+    preValidation: async (request) => {
       await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
-      await validateData({ ClassToValidate: UpdateUserSchema, objectToValidate: request.body.formData, url: '' });
+      await validateData({ ClassToValidate: UpdateUserSchema, objectToValidate: request.body.formData, url: 'users/edit' });
     },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
@@ -131,7 +134,36 @@ export default (app) => {
       const user = await findUserByEmail(request.params.email);
       user.update(request.body.formData);
 
-      return redirectRoot(app, request, reply, 'flash.users.update.success');
+      request.flash('info', i18next.t('flash.users.update.success'));
+      reply.redirect(app.reverse('getAllUsers'));
+      return reply;
+    },
+  });
+
+  app.route({
+    method: 'PUT',
+    url: '/users/:email/update_password',
+    name: 'updatePassword',
+    preValidation: async (request) => {
+      const backUrl = app.reverse('getChangePasswordForm');
+      await validateData({
+        ClassToValidate: EmailSchema, objectToValidate: request.params, url: backUrl,
+      });
+      await validateData({
+        ClassToValidate: UpdatePasswordSchema,
+        objectToValidate: request.body.formData,
+        url: backUrl,
+      });
+    },
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    handler: async (request, reply) => {
+      console.log(`PUT /users/:${request.params.email}, update user password`);
+      const user = await findUserByEmail(request.params.email);
+      user.update(request.body.formData);
+
+      request.flash('info', i18next.t('flash.users.update_password.success'));
+      reply.redirect(app.reverse('getEditUserFormUsers', { email: request.email }));
+      return reply;
     },
   });
 
@@ -151,7 +183,9 @@ export default (app) => {
 
       await user.destroy();
 
-      return redirectRoot(app, request, reply, 'flash.users.delete.success');
+      request.flash('info', i18next.t('flash.users.delete.success'));
+      reply.redirect(app.reverse('getAllUsers'));
+      return reply;
     },
   });
 };

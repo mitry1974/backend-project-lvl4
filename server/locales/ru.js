@@ -20,6 +20,10 @@ export default {
           error: 'Не удалось зарегистрировать',
           success: 'Пользователь успешно зарегистрирован',
         },
+        update_password: {
+          error: 'Не удалось обновить пароль пользователя',
+          success: 'Пароль пользователя успешно обновлен',
+        },
         update: {
           error: 'Не удалось обновить данные пользователя',
           success: 'Данные пользователя успешно обновлены',
@@ -52,6 +56,7 @@ export default {
           email_already_exists: 'Пользователь уже зарегистрирован',
           email_not_empty: 'Email не может быть пустым',
           email_not_email: 'Введите правильный e-mail адрес',
+          old_password_not_empty: 'Текущий пароль не может быть пустым',
           password_not_empty: 'Пароль не может быть пустым',
           password_confirmation_not_empty: 'Подтверждение пароля не может быть пустым',
           password_confirmation_the_same_as_password: 'Подтверждение пароля должно совпадать с паролем',
@@ -84,12 +89,14 @@ export default {
           firstname: 'Имя',
           lastname: 'Фамилия',
           email: 'email',
+          change_password: 'Изменить пароль',
         },
         change_password: {
           caption: 'Изменить пароль',
           password: 'Пароль',
           confirm: 'Пароль еще раз',
           old_password: 'Текущий пароль',
+          submit: 'Сохранить',
         },
       },
       welcome: {

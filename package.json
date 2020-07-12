@@ -12,7 +12,7 @@
     "start": "NODE_ENV=production NODE_CONFIG_DIR=./dist/config cd ./dist && node -r dotenv/config server/bin/server.js",
     "start:dev:client": "NODE_ENV=development npx webpack-dev-server ",
     "start:dev:server": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js",
-    "start:dev:server:inspect": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js --inspect",
+    "start:dev:server:inspect": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js --inspect --source-maps inline",
     "start:dev": "npx concurrently npm:start:dev:client npm:start:dev:server",
     "start:dev:inspect": "npx concurrently npm:start:dev:client npm:start:dev:server:inspect",
     "test": "npx jest",

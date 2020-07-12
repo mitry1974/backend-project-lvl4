@@ -12,8 +12,8 @@ block content
     +input(formData, 'lastname', errors)(
       type='lastname'
       placeholder= t('views.users.new.lastname'))
-    +input(formData, 'role', errors)(
-      type='hidden')
-    a(href=route('getChangePasswordForm', { email: formData.email })) change password
+        +input(formData, 'role', errors)(
+          type='hidden')
+    a(href=route('getChangePasswordForm', { email: formData.email }))= t('views.users.edit.change_password')
     +submitFor('put')(value = t('views.users.edit.submit'))
 
