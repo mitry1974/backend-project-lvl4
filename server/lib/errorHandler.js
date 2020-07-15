@@ -13,7 +13,6 @@ export default (app) => {
     },
   );
   app.setErrorHandler(async (error, request, reply) => {
-    console.log('MAIN ERROR HANDLER');
     rollbar.error(error, request);
 
     const type = error.constructor.name;

@@ -11,7 +11,7 @@ export async function verifyAdmin(request) {
 export async function verifyUserSelf(request) {
   const { email } = request.params;
   request.log.info(`verifyUserSelf, current user: ${JSON.stringify(request.currentUser)}, email to check: ${email} `);
-  if (request.currentUser.role !== 'user' || request.currentUser.email !== email) {
+  if (request.currentUser.email !== email) {
     request.log.info('verifyUserSelf failed, throwing error');
     throw new AuthorizationError(
       {

@@ -2,6 +2,9 @@ export default {
   translation: {
     appName: 'TaskMan',
     flash: {
+      authentication: {
+        error: 'Ошибка проверки прав доступа. Неправильный логин или пароль.',
+      },
       auth: {
         error: 'У вас нет доступа к этой странице',
       },

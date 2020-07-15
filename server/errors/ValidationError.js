@@ -1,22 +1,20 @@
-import i18next from 'i18next';
-
 export default class ValidationError extends Error {
   constructor(
     {
-      url, message, formData, errors, flashMessage,
+      message, errors, renderData,
     },
   ) {
     super(message);
-    this.url = url;
     this.validationErrors = errors;
-    this.formData = formData;
-    this.flashMessage = flashMessage;
+    this.renderData = renderData;
   }
 
   proceed(request, reply) {
-    request.log.info(`Routes error: ${this.message}, formData:${JSON.stringify(this.formData, null, '\t')}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
-    request.flash('error', this.flashMessage);
-    reply.code(400).render(this.url, { formData: this.formData, errors: this.validationErrors });
+    request.log.info(`Routes error: ${this.message}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
+    request.flash('error', this.renderData.flashMessage);
+    reply.code(400).render(
+      this.renderData.url, { ...this.renderData.data, errors: this.validationErrors },
+    );
     return reply;
   }
 }
