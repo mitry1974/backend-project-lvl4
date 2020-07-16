@@ -51,7 +51,6 @@ export default (app) => {
         confirm: '',
         oldPassword: '',
       };
-      console.log(`/users/:email/change_password, email: ${request.params.email}`);
       reply.render('users/changePassword', { formData, email: request.params.email });
       return reply;
     },
@@ -105,7 +104,6 @@ export default (app) => {
       });
     },
     handler: async (request, reply) => {
-      console.log(`POST /users/, create user with data: ${JSON.stringify(request.body.formData, null, '\t')}!`);
       const user = Models.User.build(request.body.formData);
       await user.save();
 
@@ -131,7 +129,6 @@ export default (app) => {
     },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      console.log(`PUT /users/:${request.params.email}, update user`);
       const user = await findUserByEmail(request.params.email);
       user.update(request.body.formData);
 
@@ -161,7 +158,6 @@ export default (app) => {
     },
     preHandler: app.auth([app.verifyUserSelf]),
     handler: async (request, reply) => {
-      console.log(`PUT /users/:${request.params.email}, update user password`);
       const user = await findUserByEmail(request.params.email);
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {

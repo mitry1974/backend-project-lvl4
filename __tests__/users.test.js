@@ -96,7 +96,6 @@ describe('test users', () => {
       expect(getResponse.status).toBe(statusCode);
     });
 
-
     test('Get user data not logged in, should fail', async () => {
       const { getResponse } = await getUser({ app, cookie: '', email: testData.user1.email });
       expect(getResponse.status).toBe(403);
@@ -183,28 +182,6 @@ describe('test users', () => {
       expect(findedUser.email).toEqual(newData.email);
     });
 
-    const validationErrorsData = [
-      {
-        emailToUpdate: 'wrong@email',
-        statusCode: 400,
-      }, {
-        emailToUpdate: 'unknown@email.com',
-        statusCode: 404,
-      },
-    ];
-
-    test.each(validationErrorsData)('testing validation emailToUpdate errors', async ({ emailToUpdate, statusCode }) => {
-      const { cookie } = await login({ app, formData: { email: testData.admin.email, password: '123456' } });
-
-      const newData = generateFakeUserRegisterData({ role: 'user' });
-      const { updateResponse } = await updateUser(
-        {
-          app, emailToUpdate, formData: newData, cookie,
-        },
-      );
-      expect(updateResponse.status).toBe(statusCode);
-    });
-
     test('Update foreign user with user role, should fail', async () => {
       const { cookie } = await login({ app, formData: { email: testData.user1.email, password: '123456' } });
 
@@ -219,23 +196,6 @@ describe('test users', () => {
   });
 
   describe('Delete user tests', () => {
-    const validationErrorsData = [
-      {
-        emailToDelete: 'wrong@email',
-        statusCode: 400,
-      }, {
-        emailToDelete: 'unknown@email.com',
-        statusCode: 404,
-      },
-    ];
-
-    test.each(validationErrorsData)('Testing emailToDelete validation', async ({ emailToDelete, statusCode }) => {
-      const { cookie } = await login({ app, formData: { email: testData.admin.email, password: '123456' } });
-
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(statusCode);
-    });
-
     const succedData = [
       {
         emailWhoDelete: testData.admin.email,

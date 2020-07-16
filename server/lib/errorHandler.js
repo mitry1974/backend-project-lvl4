@@ -12,7 +12,7 @@ export default (app) => {
       captureUnhandledRejections: true,
     },
   );
-  app.setErrorHandler(async (error, request, reply) => {
+  app.setErrorHandler((error, request, reply) => {
     rollbar.error(error, request);
 
     const type = error.constructor.name;
