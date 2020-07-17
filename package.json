@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Hexlet nackend node.js project 4 level",
   "engines": {
-    "node": "13.6.0"
+    "node": "14.4.0"
   },
   "main": "index.js",
   "scripts": {
