@@ -2,7 +2,7 @@ import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
-import { generateFakeUserRegisterData } from './lib/fakeItemsGenerator';
+import generateFakeUserRegisterData from './lib/fakeItemsGenerator';
 import {
   login, deleteUser, updateUser, getUser, getAllUsers,
 } from './lib/testHelpers';

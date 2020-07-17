@@ -45,8 +45,8 @@ module.exports = (sequelize, DataTypes) => {
 
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      user.salt = User.generateSalt();
-      user.password = User.encryptPassword(user.password, user.salt);
+      user.salt = User.generateSalt(); // eslint-disable-line
+      user.password = User.encryptPassword(user.password, user.salt); // eslint-disable-line
     }
   };
 

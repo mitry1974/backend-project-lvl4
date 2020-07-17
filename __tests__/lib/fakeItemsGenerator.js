@@ -14,4 +14,4 @@ function generateFakeUserRegisterData(options) {
   return { ...generated, ...options };
 }
 
-export { generateFakeUserRegisterData };
+export default generateFakeUserRegisterData;

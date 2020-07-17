@@ -1,6 +1,5 @@
 import i18next from 'i18next';
 import { IsNotEmpty, IsEmail } from 'class-validator';
-import IsUserAlreadyExist from './decorators';
 
 export default class UpdateUserSchema {
   @IsEmail({}, {

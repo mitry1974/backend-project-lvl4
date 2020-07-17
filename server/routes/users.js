@@ -1,11 +1,9 @@
 import i18next from 'i18next';
-import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
 import Models from '../db/models';
 import RegisterUserSchema from './validation/RegisterUserSchema';
 import UpdatePasswordSchema from './validation/UpdatePasswordSchema';
 import UpdateUserSchema from './validation/UpdateUserSchema';
-import EmailSchema from './validation/EmailSchema';
 import NotFoundError from '../errors/NotFoundError';
 import validateData from './validation/helpers';
 import AuthenticationError from '../errors/AutheticationError';
