@@ -63,11 +63,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       request.log.info(`GET /users/${request.params.email}`);
-      const emailDto = plainToClass(EmailSchema, request.params);
-      await validateData({ ClassToValidate: EmailSchema, objectToValidate: request.params, url: app.reverse('root') });
-
-      const user = await findUserByEmail(emailDto.email);
-
+      const user = await findUserByEmail(request.params.email);
       reply.render('/users/view', { formData: user });
       return reply;
     },

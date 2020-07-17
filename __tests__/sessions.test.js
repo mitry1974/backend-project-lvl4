@@ -6,43 +6,44 @@ import { login } from './lib/testHelpers';
 describe('test sessions routes', () => {
   let app = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     expect.extend(matchers);
     app = await createTestApp();
   });
 
-  afterEach(async () => {
-    await app.close();
+  afterAll(() => {
+    app.close();
   });
-  const loginTestData = [
-    {
-      loginData: {
-        email: 'coronavirus@2020.ru',
-        password: '123456',
-      },
-      loginStatus: 302,
-    },
-    {
-      loginData: {
-        email: 'wrong@email',
-        password: '123456',
-      },
-      loginStatus: 400,
-    },
-    {
-      loginData: {
-        email: 'missing@email.ru',
-        password: '123456',
-      },
-      loginStatus: 401,
-    },
-  ];
-  test.each(loginTestData)('Test login with different login data and status', async ({ loginData, loginStatus }) => {
+
+  test('Test login with missing email', async () => {
+    const loginData = {
+      email: 'missing@email.ru',
+      password: '123456',
+    };
     const { status } = await login({ app, formData: loginData });
 
-    expect(status).toBe(loginStatus);
+    expect(status).toBe(401);
   });
 
+  test('Test login with invalid email', async () => {
+    const loginData = {
+      email: 'wrong@email',
+      password: '123456',
+    };
+    const { status } = await login({ app, formData: loginData });
+
+    expect(status).toBe(400);
+  });
+
+  test('Test login with valid login data', async () => {
+    const loginData = {
+      email: 'coronavirus@2020.ru',
+      password: '123456',
+    };
+    const { status } = await login({ app, formData: loginData });
+
+    expect(status).toBe(302);
+  });
 
   test('Test logout', async () => {
     const { status } = await login({ app, formData: { email: 'coronavirus@2020.ru', password: '123456' } });

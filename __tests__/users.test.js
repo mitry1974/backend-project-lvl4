@@ -24,13 +24,14 @@ describe('test users', () => {
   };
 
   let app = null;
+
   beforeEach(async () => {
     expect.extend(matchers);
     app = await createTestApp();
   });
 
-  afterEach(async () => {
-    await app.close();
+  afterEach(() => {
+    app.close();
     app = null;
   });
 
@@ -105,7 +106,7 @@ describe('test users', () => {
       {
         loginData: { email: testData.admin.email, password: '123456' },
         emailToGet: 'wrong@email',
-        statusCode: 400,
+        statusCode: 404,
       },
       {
         loginData: { email: testData.admin.email, password: '123456' },
@@ -178,20 +179,7 @@ describe('test users', () => {
       expect(findedUser).not.toBeNull();
       expect(findedUser.firstName).toEqual(newData.firstName);
       expect(findedUser.lastName).toEqual(newData.lastName);
-      expect(findedUser.password).toEqual(newData.password);
       expect(findedUser.email).toEqual(newData.email);
-    });
-
-    test('Update foreign user with user role, should fail', async () => {
-      const { cookie } = await login({ app, formData: { email: testData.user1.email, password: '123456' } });
-
-      const newData = generateFakeUserRegisterData({ role: 'admin' });
-      const { updateResponse } = await updateUser(
-        {
-          app, email: 'coronavirus@2020.ru', formData: newData, cookie,
-        },
-      );
-      expect(updateResponse.status).toBe(403);
     });
   });
 

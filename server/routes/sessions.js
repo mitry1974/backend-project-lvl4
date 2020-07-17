@@ -57,7 +57,7 @@ export default (app) => {
     },
   });
 
-  app.get('/session/logout', { name: 'logout' }, async (request, reply) => {
+  app.delete('/session/logout', { name: 'logout' }, async (request, reply) => {
     request.session.set('userId', null);
     request.session.delete();
     return doRedirect(

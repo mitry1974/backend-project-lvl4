@@ -21,7 +21,7 @@ html(lang="en").h-100
             li.nav-item
               a.nav-link(href="#") #{reply.request.currentUser.email}
             li.nav-item
-              a.nav-link(href=route('logout'))= t('layouts.application.logout')
+              a.nav-link(href=route('logout') data-method="delete")= t('layouts.application.logout')
           else
             li.nav-item
               a.nav-link(href=route('getLoginForm'))= t('layouts.application.login')
