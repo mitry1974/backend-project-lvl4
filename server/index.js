@@ -44,7 +44,6 @@ const registerPlugins = async (app) => {
 
   app.register(fastifyFlash);
 
-  console.log(`Database config: ${JSON.stringify(app.config)}`);
   let initData = null;
   if (app.config.db.use_env_variable) {
     initData = process.env[app.config.db.use_env_variable];
