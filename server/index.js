@@ -44,6 +44,7 @@ const registerPlugins = async (app) => {
 
   app.register(fastifyFlash);
 
+  console.log(`Database config: ${JSON.stringify(app.config)}`);
   const sequelize = new Sequelize(app.config.db);
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
