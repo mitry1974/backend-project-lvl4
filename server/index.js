@@ -45,7 +45,13 @@ const registerPlugins = async (app) => {
   app.register(fastifyFlash);
 
   console.log(`Database config: ${JSON.stringify(app.config)}`);
-  const sequelize = new Sequelize(app.config.db);
+  let initData = null;
+  if (app.config.db.use_env_variable) {
+    initData = process.env[app.config.db.use_env_variable];
+  } else {
+    initData = app.config.db;
+  }
+  const sequelize = new Sequelize(initData);
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
   app.addHook('onClose', async () => {
