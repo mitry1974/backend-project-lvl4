@@ -67,7 +67,8 @@
     "rollbar": "^2.18.0",
     "sequelize": "^6.3.3",
     "sqlite3": "^5.0.0",
-    "webpack": "^4.43.0"
+    "webpack": "^4.43.0",
+    "style-loader": "^1.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -84,7 +85,6 @@
     "jest-supertest-matchers": "0.0.2",
     "sequelize-cli": "^6.2.0",
     "sequelize-fixtures": "^1.2.0",
-    "style-loader": "^1.2.1",
     "supertest": "^4.0.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
