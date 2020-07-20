@@ -9,7 +9,7 @@ export function IsUserAlreadyExist(validationOptions, shouldBe) {
       options: validationOptions,
       constraints: [],
       validator: {
-        validate: async (email) => shouldBe === !!await Models.User.findOne({ where: { email } }),
+        validate: async (email) => shouldBe === !!await Models.user.findOne({ where: { email } }),
       },
     });
   };

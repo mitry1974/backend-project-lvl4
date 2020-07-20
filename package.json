@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && npx webpack-cli -p && NODE_ENV=production npx babel server --out-dir dist/server && babel config --out-dir dist/config && cp webpack.config.js package.json dist && cp -r server/views dist/server/ && npm run migrations:run",
+    "build": "npm run clean && npx webpack-cli -p && NODE_ENV=production npx babel server --out-dir dist/server && babel config --out-dir dist/config && cp webpack.config.js package.json dist && cp -r server/views dist/server/ && npm run migrations:run && npm run seeds:run",
     "start": "NODE_ENV=production NODE_CONFIG_DIR=./dist/config cd ./dist && node -r dotenv/config server/bin/server.js",
     "start:dev:client": "NODE_ENV=development npx webpack-dev-server ",
     "start:dev:server": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js",
@@ -65,15 +65,16 @@
     "style-loader": "^1.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "babel-loader": "^8.1.0",
+    "@babel/node": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.10.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.10.4",
-    "@babel/cli": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
+    "babel-loader": "^8.1.0",
     "concurrently": "^5.2.0",
     "cookie": "^0.4.1",
     "eslint": "^7.4.0",

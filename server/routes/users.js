@@ -9,7 +9,7 @@ import validateData from './validation/helpers';
 import AuthenticationError from '../errors/AutheticationError';
 
 const findUserByEmail = async (email) => {
-  const user = await Models.User.findOne({ where: { email } });
+  const user = await Models.user.findOne({ where: { email } });
   if (!user) {
     throw new NotFoundError();
   }
@@ -74,7 +74,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyAdmin]),
     handler: async (request, reply) => {
       request.log.info('GET /users');
-      const users = await Models.User.findAll();
+      const users = await Models.user.findAll();
       reply.render('/users/list', { users });
       return reply;
     },
@@ -98,7 +98,7 @@ export default (app) => {
       });
     },
     handler: async (request, reply) => {
-      const user = Models.User.build(request.body.formData);
+      const user = Models.user.build(request.body.formData);
       await user.save();
 
       request.flash('info', i18next.t('flash.users.create.success'));

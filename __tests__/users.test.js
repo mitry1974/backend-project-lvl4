@@ -4,25 +4,10 @@ import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import generateFakeUserRegisterData from './lib/fakeItemsGenerator';
 import {
-  login, deleteUser, updateUser, getUser, getAllUsers,
+  login, deleteUser, updateUser, getUser, getAllUsers, testLoginData,
 } from './lib/testHelpers';
 
 describe('test users', () => {
-  const testData = {
-    admin: {
-      email: 'coronavirus@2020.ru',
-      password: '123456',
-    },
-    user1: {
-      email: 'pittbull@fakedomain.com',
-      password: '123456',
-    },
-    user2: {
-      email: 'zaratustra@fakedomain.com',
-      password: '123456',
-    },
-  };
-
   let app = null;
 
   beforeEach(async () => {
@@ -50,7 +35,7 @@ describe('test users', () => {
         .post('/users')
         .send({ formData });
       expect(res.status).toBe(302);
-      const createdUser = await Models.User.findOne({ where: { email: formData.email } });
+      const createdUser = await Models.user.findOne({ where: { email: formData.email } });
       expect(createdUser).not.toBeNull();
     });
 
@@ -60,12 +45,12 @@ describe('test users', () => {
         .post('/users')
         .send({ formData });
       expect(res.status).toBe(400);
-      const createdUser = await Models.User.findOne({ where: { email: formData.email } });
+      const createdUser = await Models.user.findOne({ where: { email: formData.email } });
       expect(createdUser).toBeNull();
     });
 
     test('Create user with existing email', async () => {
-      const formData = generateFakeUserRegisterData({ role: 'user', email: testData.admin.email });
+      const formData = generateFakeUserRegisterData({ role: 'user', email: testLoginData.admin.email });
       const res = await request(app.server)
         .post('/users')
         .send({ formData });
@@ -81,11 +66,11 @@ describe('test users', () => {
 
     const getAllUsersTestData = [
       {
-        loginData: { email: testData.user1.email, password: '123456' },
+        loginData: testLoginData.user1,
         statusCode: 403,
       },
       {
-        loginData: { email: testData.admin.email, password: '123456' },
+        loginData: testLoginData.admin,
         statusCode: 200,
       },
     ];
@@ -98,34 +83,34 @@ describe('test users', () => {
     });
 
     test('Get user data not logged in, should fail', async () => {
-      const { getResponse } = await getUser({ app, cookie: '', email: testData.user1.email });
+      const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user1.email });
       expect(getResponse.status).toBe(403);
     });
 
     const getUserTestData = [
       {
-        loginData: { email: testData.admin.email, password: '123456' },
+        loginData: testLoginData.admin,
         emailToGet: 'wrong@email',
         statusCode: 404,
       },
       {
-        loginData: { email: testData.admin.email, password: '123456' },
+        loginData: testLoginData.admin,
         emailToGet: 'unknown@email.com',
         statusCode: 404,
       },
       {
-        loginData: { email: testData.user1.email, password: '123456' },
-        emailToGet: testData.user2.email,
+        loginData: testLoginData.user1,
+        emailToGet: testLoginData.user2.email,
         statusCode: 403,
       },
       {
-        loginData: { email: testData.admin.email, password: '123456' },
-        emailToGet: testData.user1.email,
+        loginData: testLoginData.admin,
+        emailToGet: testLoginData.user1.email,
         statusCode: 200,
       },
       {
-        loginData: { email: testData.user1.email, password: '123456' },
-        emailToGet: testData.user1.email,
+        loginData: testLoginData.user1,
+        emailToGet: testLoginData.user1.email,
         statusCode: 200,
       },
     ];
@@ -140,27 +125,18 @@ describe('test users', () => {
   describe('Update user tests', () => {
     const testUpdateSuccessData = [
       {
-        emailToUpdate: testData.admin.email,
-        loginData: {
-          email: testData.admin.email,
-          password: '123456',
-        },
+        emailToUpdate: testLoginData.admin.email,
+        loginData: testLoginData.admin,
         newData: generateFakeUserRegisterData({ role: 'admin' }),
       },
       {
-        emailToUpdate: testData.user1.email,
-        loginData: {
-          email: testData.user1.email,
-          password: '123456',
-        },
+        emailToUpdate: testLoginData.user1.email,
+        loginData: testLoginData.user1,
         newData: generateFakeUserRegisterData({ role: 'admin' }),
       },
       {
-        emailToUpdate: testData.user1.email,
-        loginData: {
-          email: testData.admin.email,
-          password: '123456',
-        },
+        emailToUpdate: testLoginData.user1.email,
+        loginData: testLoginData.admin,
         newData: generateFakeUserRegisterData({ role: 'user' }),
       },
     ];
@@ -175,7 +151,7 @@ describe('test users', () => {
       );
       expect(updateResponse.status).toBe(302);
 
-      const findedUser = await Models.User.findOne({ where: { email: newData.email } });
+      const findedUser = await Models.user.findOne({ where: { email: newData.email } });
       expect(findedUser).not.toBeNull();
       expect(findedUser.firstName).toEqual(newData.firstName);
       expect(findedUser.lastName).toEqual(newData.lastName);
@@ -186,11 +162,11 @@ describe('test users', () => {
   describe('Delete user tests', () => {
     const succedData = [
       {
-        emailWhoDelete: testData.admin.email,
-        emailToDelete: testData.user1.email,
+        emailWhoDelete: testLoginData.admin.email,
+        emailToDelete: testLoginData.user1.email,
       }, {
-        emailWhoDelete: testData.user1.email,
-        emailToDelete: testData.user1.email,
+        emailWhoDelete: testLoginData.user1.email,
+        emailToDelete: testLoginData.user1.email,
       },
     ];
 
@@ -199,25 +175,25 @@ describe('test users', () => {
 
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await Models.user.findOne({ where: { email: emailToDelete } });
       expect(user).toBeFalsy();
     });
 
     test('Delete by not logged in user, should fail', async () => {
-      const emailToDelete = testData.admin.email;
+      const emailToDelete = testLoginData.admin.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
       expect(deleteResponse.status).toBe(403);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await Models.user.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 
     test('Delete with logged in user, user can\'t delete foreign user, fail', async () => {
-      const { cookie } = await login({ app, formData: { email: testData.user1.email, password: '123456' } });
+      const { cookie } = await login({ app, formData: testLoginData.user1 });
 
-      const emailToDelete = testData.admin.email;
+      const emailToDelete = testLoginData.admin.email;
       const { deleteResponse } = await deleteUser({ app, email: emailToDelete, cookie });
       expect(deleteResponse.status).toBe(403);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await Models.user.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
   });

@@ -1,22 +1,22 @@
 fixtures:
-  - model: User
+  - model: user
     data:
-      "firstname": "Pitt"
-      "lastname": "Bull"
-      "email": "pittbull@fakedomain.com"
+      "firstname": "User1 firstname"
+      "lastname": "User1 lastname"
+      "email": "user1@fakedomain.com"
       "password": "123456"
       "role": "user"
-  - model: User
+  - model: user
     data:
-      "firstname": "Zara"
-      "lastname": "Tustra"
-      "email": "zaratustra@fakedomain.com"
+      "firstname": "User2 firstname"
+      "lastname": "User2 lastname"
+      "email": "user2@fakedomain.com"
       "password": "123456"
       "role": "user"
-  - model: User
+  - model: user
     data:
-      "firstname": "Corona"
-      "lastname": "Virus"
-      "email": "coronavirus@2020.ru"
+      "firstname": "Admin firstname"
+      "lastname": "Admin lastname"
+      "email": "admin@fakedomain.com"
       "password": "123456"
       "role": "admin"

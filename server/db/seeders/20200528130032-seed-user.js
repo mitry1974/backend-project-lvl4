@@ -4,27 +4,24 @@ module.exports = {
   up: async () => {
     const users = [
       {
-        email: 'pittbull@fakedomain.com',
-        firstname: 'Pitt',
-        lastname: 'Bull',
-        password: '123456',
-        role: 'user',
-      },
-      {
-        email: 'coronavirus@2020.ru',
-        firstname: 'Corona',
-        lastname: 'Virus',
+        email: 'admin@fakedomain.com',
+        firstname: 'Admin',
+        lastname: 'Admin',
         password: '123456',
         role: 'admin',
       },
       {
-        email: 'dinozavr@fakedomain.com',
-        firstname: 'Dino',
-        lastname: 'Zavr',
+        email: 'user@fakedomain.com',
+        firstname: 'User',
+        lastname: 'User',
         password: '123456',
-        role: 'guest',
+        role: 'user',
       },
-    ].map(async (el) => Models.User.create(el));
+    ].map(async (el) => {
+      if (!await Models.user.findOne({ where: { email: el.email } })) {
+        await Models.user.create(el);
+      }
+    });
 
     return Promise.all(users);
   },

@@ -15,15 +15,12 @@ export default (app) => {
   app.setErrorHandler((error, request, reply) => {
     rollbar.error(error, request);
 
-    const type = error.constructor.name;
-    request.log.info(`Routes error handler, error class: ${error.constructor.name}`);
     if ((error instanceof AutheticationError)
       || (error instanceof AuthorizationError)
       || (error instanceof ValidationError)
       || (error instanceof NotFoundError)) {
       error.proceed(request, reply);
     } else {
-      console.log(`Routes error happens: type: ${type}, error: ${JSON.stringify(error, null, '\t')}`);
       reply.status(500);
       reply.send();
     }

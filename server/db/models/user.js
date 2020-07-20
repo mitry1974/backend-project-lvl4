@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('User', {
+  const user = sequelize.define('user', {
     email: {
       type: DataTypes.STRING,
       defaultValue: '',
@@ -27,15 +27,15 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, { timestamps: true });
 
-  User.associate = function associate() {
+  user.associate = function associate() {
     // associations can be defined here
   };
 
-  User.generateSalt = function generateSalt() {
+  user.generateSalt = function generateSalt() {
     return crypto.randomBytes(16).toString('base64');
   };
 
-  User.encryptPassword = function encryptPassword(plainText, salt) {
+  user.encryptPassword = function encryptPassword(plainText, salt) {
     return crypto
       .createHash('RSA-SHA256')
       .update(plainText)
@@ -43,19 +43,19 @@ module.exports = (sequelize, DataTypes) => {
       .digest('hex');
   };
 
-  const setSaltAndPassword = (user) => {
-    if (user.changed('password')) {
-      user.salt = User.generateSalt(); // eslint-disable-line
-      user.password = User.encryptPassword(user.password, user.salt); // eslint-disable-line
+  const setSaltAndPassword = (u) => {
+    if (u.changed('password')) {
+      u.salt = user.generateSalt(); // eslint-disable-line
+      u.password = user.encryptPassword(u.password, u.salt); // eslint-disable-line
     }
   };
 
-  User.beforeCreate(setSaltAndPassword);
-  User.beforeUpdate(setSaltAndPassword);
+  user.beforeCreate(setSaltAndPassword);
+  user.beforeUpdate(setSaltAndPassword);
 
-  User.prototype.checkPassword = function checkPassword(password) {
-    return User.encryptPassword(password, this.salt) === this.password;
+  user.prototype.checkPassword = function checkPassword(password) {
+    return user.encryptPassword(password, this.salt) === this.password;
   };
 
-  return User;
+  return user;
 };

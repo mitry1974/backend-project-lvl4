@@ -40,7 +40,7 @@ export default (app) => {
     },
     handler: async (request, reply) => {
       const { formData } = request.body;
-      const user = await Models.User.findOne({ where: { email: formData.email } });
+      const user = await Models.user.findOne({ where: { email: formData.email } });
       if (!user || !(await user.checkPassword(formData.password))) {
         throw new AuthenticationError({
           message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => { // eslint-disable-line
-  const Guest = sequelize.define('Guest');
+  const guest = sequelize.define('guest');
 
-  return Guest;
+  return guest;
 };
