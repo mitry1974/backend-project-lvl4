@@ -113,5 +113,11 @@ export default {
         },
       },
     },
+    taskStatusValues: {
+      new: 'новый',
+      inprocess: 'в работе',
+      testing: 'на тестировании',
+      completed: 'завершен',
+    },
   },
 };

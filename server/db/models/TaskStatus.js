@@ -1,17 +1,18 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Task extends Model {
+  class TaskStatus extends Model {
     // static associate(models) {
+    //   // define association here
     // }
   }
 
-  Task.init({
+  TaskStatus.init({
     name: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'Task',
+    modelName: 'TaskStatus',
   });
-
-  return Task;
+  return TaskStatus;
 };
+

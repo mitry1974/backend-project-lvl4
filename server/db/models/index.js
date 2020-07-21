@@ -4,7 +4,7 @@ const config = require('../../../config/dbconfig.js');
 
 const db = {};
 
-const models = ['User.js', 'Task.js', 'Guest.js'];
+const models = ['User.js', 'Task.js', 'Guest.js', 'TaskStatus.js'];
 
 let sequelize;
 if (config.use_env_variable) {

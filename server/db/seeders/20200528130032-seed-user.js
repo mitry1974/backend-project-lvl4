@@ -18,8 +18,8 @@ module.exports = {
         role: 'user',
       },
     ].map(async (el) => {
-      if (!await Models.user.findOne({ where: { email: el.email } })) {
-        await Models.user.create(el);
+      if (!await Models.User.findOne({ where: { email: el.email } })) {
+        await Models.User.create(el);
       }
     });
 
