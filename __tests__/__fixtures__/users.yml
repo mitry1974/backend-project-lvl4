@@ -1,19 +1,19 @@
 fixtures:
-  - model: user
+  - model: User
     data:
       "firstname": "User1 firstname"
       "lastname": "User1 lastname"
       "email": "user1@fakedomain.com"
       "password": "123456"
       "role": "user"
-  - model: user
+  - model: User
     data:
       "firstname": "User2 firstname"
       "lastname": "User2 lastname"
       "email": "user2@fakedomain.com"
       "password": "123456"
       "role": "user"
-  - model: user
+  - model: User
     data:
       "firstname": "Admin firstname"
       "lastname": "Admin lastname"

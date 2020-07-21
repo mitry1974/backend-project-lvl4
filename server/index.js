@@ -103,7 +103,7 @@ const setupHooks = (app) => {
   app.addHook('preHandler', async (req) => {
     const userId = req.session.get('userId');
     if (userId) {
-      const currentUser = await Models.user.findOne({ where: { id: userId } });
+      const currentUser = await Models.User.findOne({ where: { id: userId } });
       if (currentUser) {
         req.currentUser = currentUser;
         req.signedIn = true;
@@ -112,7 +112,7 @@ const setupHooks = (app) => {
       req.session.set('userId', null);
     }
     req.signedIn = false;
-    req.currentUser = Models.guest.build();
+    req.currentUser = Models.Guest.build();
   });
 };
 
