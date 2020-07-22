@@ -1,12 +1,10 @@
 import request from 'supertest';
 
-const login = async ({ app, formData }) => {
-  const loginResponse = await request(app.server)
-    .post('/session')
+const createUser = async ({ app, formData }) => {
+  const createResponse = await request(app.server)
+    .post('/users')
     .send({ formData });
-
-  const cookie = loginResponse.header['set-cookie'];
-  return { cookie, status: loginResponse.status };
+  return { createResponse };
 };
 
 const deleteUser = async ({ app, emailToDelete, cookie }) => {
@@ -44,21 +42,6 @@ const getAllUsers = async ({ app, cookie }) => {
   return { getResponse };
 };
 
-const testLoginData = {
-  admin: {
-    email: 'admin@fakedomain.com',
-    password: '123456',
-  },
-  user1: {
-    email: 'user1@fakedomain.com',
-    password: '123456',
-  },
-  user2: {
-    email: 'user2@fakedomain.com',
-    password: '123456',
-  },
-};
-
 export {
-  login, deleteUser, updateUser, getUser, getAllUsers, testLoginData,
+  createUser, deleteUser, updateUser, getUser, getAllUsers,
 };

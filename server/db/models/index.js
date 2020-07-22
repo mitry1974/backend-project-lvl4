@@ -16,7 +16,6 @@ if (config.use_env_variable) {
 models.forEach((file) => {
   // eslint-disable-next-line
   const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-  console.log(`Model: ${model.name}`);
   db[model.name] = model;
 });
 

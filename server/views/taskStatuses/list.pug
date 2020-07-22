@@ -1,0 +1,28 @@
+extends ../layouts/application.pug
+
+block content
+  div.container-fluid
+    div.row.flex-xl-nowrap
+      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
+        div.card.shadow-sm.border-top.border-primary
+          div.card-body
+            h1.h3.mb-4.mt-3.text-center= t('views.taskStatuses.list.caption')
+            table.table.table-striped.table-bordered
+              thead.thead-dark
+                tr
+                  th(scope=col)=t('views.taskStatuses.list.id')
+                  th(scope=col)=t('views.taskStatuses.list.name')
+                tbody
+                  each ts in taskStatuses
+                    tr
+                      td= ts.id
+                      td= ts.name
+                      td
+                        ul.list-inline.m-0
+                          li.list-inline-item
+                            a(href=route('updateTaskStatus', { id: ts.id }))
+                              i.fas.fa-edit
+                          li.list-inline-item
+                            a(href=route('deleteTaskStatus', { id: ts.id }) data-confirm=t('views.taskStatuses.list.delete_confirmation') data-method="delete" rel="nofollow")
+                              i.fas.fa-trash
+

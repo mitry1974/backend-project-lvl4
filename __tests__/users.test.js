@@ -4,8 +4,10 @@ import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import generateFakeUserRegisterData from './lib/fakeItemsGenerator';
 import {
-  login, deleteUser, updateUser, getUser, getAllUsers, testLoginData,
-} from './lib/testHelpers';
+  createUser, deleteUser, updateUser, getUser, getAllUsers,
+} from './lib/testHelpers/users';
+import { login } from './lib/testHelpers/sessions';
+import { testLoginData } from './lib/testHelpers/testData';
 
 describe('test users', () => {
   let app = null;
@@ -31,30 +33,24 @@ describe('test users', () => {
   describe('Create user tests', () => {
     test('Create new user with good data', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user' });
-      const res = await request(app.server)
-        .post('/users')
-        .send({ formData });
-      expect(res.status).toBe(302);
+      const { createResponse } = await createUser({ app, formData });
+      expect(createResponse.status).toBe(302);
       const createdUser = await Models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).not.toBeNull();
     });
 
     test('Create user with wrong email', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user', email: 'wrong@email' });
-      const res = await request(app.server)
-        .post('/users')
-        .send({ formData });
-      expect(res.status).toBe(400);
+      const { createResponse } = await createUser({ app, formData });
+      expect(createResponse.status).toBe(400);
       const createdUser = await Models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).toBeNull();
     });
 
     test('Create user with existing email', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user', email: testLoginData.admin.email });
-      const res = await request(app.server)
-        .post('/users')
-        .send({ formData });
-      expect(res.status).toBe(400);
+      const { createResponse } = await createUser({ app, formData });
+      expect(createResponse.status).toBe(400);
     });
   });
 

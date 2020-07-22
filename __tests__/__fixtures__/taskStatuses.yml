@@ -1,0 +1,10 @@
+fixtures:
+  - model: TaskStatus
+    data:
+      "name": "status1"
+  - model: TaskStatus
+    data:
+      "name": "status2"
+  - model: TaskStatus
+    data:
+      "name": "status3"

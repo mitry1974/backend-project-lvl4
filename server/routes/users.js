@@ -60,7 +60,7 @@ export default (app) => {
     name: 'getUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      request.log.info(`GET /users/${request.params.email}`);
+      // request.log.info(`GET /users/${request.params.email}`);
       const user = await findUserByEmail(request.params.email);
       reply.render('/users/view', { formData: user });
       return reply;
@@ -73,7 +73,7 @@ export default (app) => {
     name: 'getAllUsers',
     preHandler: app.auth([app.verifyAdmin]),
     handler: async (request, reply) => {
-      request.log.info('GET /users');
+      // request.log.info('GET /users');
       const users = await Models.User.findAll();
       reply.render('/users/list', { users });
       return reply;

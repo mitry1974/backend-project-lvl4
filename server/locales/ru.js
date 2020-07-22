@@ -36,11 +36,27 @@ export default {
           success: 'Пользователь успешно удален',
         },
       },
+      taskStatuses: {
+        create: {
+          error: 'Не удалось создать',
+          success: 'Статус успешно создан',
+        },
+        update: {
+          error: 'Не удалось изменить',
+          success: 'Статус успешно изменен',
+        },
+        delete: {
+          error: 'Не удалось удалить',
+          success: 'Статус успешно удален',
+        },
+      },
     },
     layouts: {
       application: {
         about: 'Возможности',
         users: 'Пользователи',
+        statuses: 'Статусы задач',
+        tasks: 'Задачи',
         login: 'Вход',
         logout: 'Выход',
         edituser: 'Пользователь',
@@ -48,6 +64,17 @@ export default {
       },
     },
     views: {
+      taskStatuses: {
+        errors: {
+          name_not_empty: 'Статус не может быть пустым',
+        },
+        list: {
+          caption: 'Статусы задач',
+          id: 'Id',
+          name: 'Название',
+          delete_confirmation: 'Вы уверены?',
+        },
+      },
       session: {
         new: {
           login: 'Вход',

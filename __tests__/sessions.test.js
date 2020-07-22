@@ -1,7 +1,8 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import { createTestApp } from './lib/utils';
-import { login, testLoginData } from './lib/testHelpers';
+import { login, logout } from './lib/testHelpers/sessions';
+import { testLoginData } from './lib/testHelpers/testData';
 
 describe('test sessions routes', () => {
   let app = null;
@@ -45,8 +46,7 @@ describe('test sessions routes', () => {
     const { status } = await login({ app, formData: testLoginData.user1 });
     expect(status).toBe(302);
 
-    const logoutResponse = await request(app.server)
-      .delete('/session/logout');
+    const logoutResponse = await logout({ app });
     expect(logoutResponse.status).toBe(302);
     const cookie = logoutResponse.header['set-cookie'];
     expect(cookie.session).toBeFalsy();

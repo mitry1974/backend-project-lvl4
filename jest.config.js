@@ -1,5 +1,5 @@
 module.exports = {
-  testPathIgnorePatterns: ['utils.js', 'fakeItemsGenerator.js', 'testHelpers.js'],
+  testPathIgnorePatterns: ['__tests__/lib/*'],
   roots: ['__tests__'],
   setupFiles: ['dotenv/config'],
 };

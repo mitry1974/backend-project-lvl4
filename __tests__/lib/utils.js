@@ -14,6 +14,7 @@ const clearDb = async () => {
 const loadFixtures = async () => {
   try {
     await Models.User.sync({ force: true });
+    await Models.TaskStatus.sync({ force: true });
     const fixturesPath = path.resolve(__dirname, '../__fixtures__');
 
     await fixtures.loadFile(path.resolve(fixturesPath, '*.yml'), Models);

@@ -1,0 +1,14 @@
+
+extends ../layouts/application.pug
+
+block content
+  div.container-fluid
+    div.row.flex-xl-nowrap
+      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
+        div.card.shadow-sm.border-top.border-primary
+          div.card-body
+            h1.h3.mb-4.mt-3.text-center= t('views.users.list.caption')
+            p.buttons
+              a(href=route('getRegisterUserForm'))
+                i.fas.fa-plus
+            table.table.table-striped.table-bordered

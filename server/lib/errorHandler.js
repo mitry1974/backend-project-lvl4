@@ -13,7 +13,6 @@ export default (app) => {
     },
   );
   app.setErrorHandler((error, request, reply) => {
-    rollbar.error(error, request);
 
     if ((error instanceof AutheticationError)
       || (error instanceof AuthorizationError)
@@ -21,6 +20,7 @@ export default (app) => {
       || (error instanceof NotFoundError)) {
       error.proceed(request, reply);
     } else {
+      rollbar.error(error, request);
       reply.status(500);
       reply.send();
     }
