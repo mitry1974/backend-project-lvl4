@@ -13,13 +13,13 @@ export default (app) => {
     },
   );
   app.setErrorHandler((error, request, reply) => {
-
     if ((error instanceof AutheticationError)
       || (error instanceof AuthorizationError)
       || (error instanceof ValidationError)
       || (error instanceof NotFoundError)) {
       error.proceed(request, reply);
     } else {
+      console.log(`Main error handler: ${JSON.stringify(error, null, '\t')}`);
       rollbar.error(error, request);
       reply.status(500);
       reply.send();

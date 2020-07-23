@@ -7,6 +7,31 @@ import NotFoundError from '../errors/NotFoundError';
 export default (app) => {
   app.route({
     method: 'GET',
+    url: '/taskStatuses/new',
+    name: 'getNewTaskStatusForm',
+    handler: async (request, reply) => {
+      const formData = { name: '' };
+      reply.render('/taskStatuses/new', { formData });
+      return reply;
+    },
+  });
+
+  app.route({
+    method: 'GET',
+    url: '/taskStatuses/:id/edit',
+    name: 'getEditTaskStatusForm',
+    handler: async (request, reply) => {
+      const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
+      if(!ts) {
+        throw new NotFoundError();
+      }
+      reply.render('/taskStatuses/edit', { formData: ts });
+      return reply;
+    },
+  });
+
+  app.route({
+    method: 'GET',
     url: '/taskStatuses',
     name: 'getAllTaskStatuses',
     handler: async (request, reply) => {
@@ -26,7 +51,7 @@ export default (app) => {
         ClassToValidate: CreateTaskStatusSchema,
         objectToValidate: request.body.formData,
         renderData: {
-          url: '/taskStatuses',
+          url: '/taskStatuses/list',
           flashMessage: i18next.t('flash.users.create.error'),
           data: {
             formData: request.body.formData,

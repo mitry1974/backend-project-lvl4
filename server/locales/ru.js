@@ -74,6 +74,15 @@ export default {
           name: 'Название',
           delete_confirmation: 'Вы уверены?',
         },
+        new: {
+          caption: 'Новый статус',
+          name: 'Введите статус',
+          submit: 'Создать',
+        },
+        edit: {
+          caption: 'Изменить',
+          update: 'Сохранить',
+        },
       },
       session: {
         new: {

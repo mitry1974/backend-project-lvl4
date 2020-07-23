@@ -3,7 +3,6 @@ import { createTestApp } from './lib/utils';
 import {
   createTaskStatus, getAllTaskStatuses, deleteTaskStatus, updateTaskStatus,
 } from './lib/testHelpers/taskStatuses';
-import testTaskStatusData from './lib/testHelpers/testData';
 import Models from '../server/db/models';
 
 describe('test TaskStatus route', () => {

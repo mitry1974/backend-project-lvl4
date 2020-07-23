@@ -1,0 +1,9 @@
+extends ../layouts/application.pug
+
+block content
+  +formFor(t('views.taskStatuses.new.caption'))(class='form-group' action=route('createTaskStatus') method='post')
+    div.form-group.col-md-10
+      +input(formData, 'name', errors)(
+        class = "form-control"
+        placeholder= t('views.taskStatuses.new.name'))
+      +submit(value = t('views.taskStatuses.new.submit'))

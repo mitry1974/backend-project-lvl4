@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(t('views.users.edit.caption'))(class='simple_form_new_user' novalidate action=route('updateUser', { email: formData.email }) method='post')&attributes(attributes)
+  +formFor(t('views.users.edit.caption'))(class='form-group' novalidate action=route('updateUser', { email: formData.email }) method='post')&attributes(attributes)
     +input(formData, 'email', errors)(
       class = "string email"
       type='email'
