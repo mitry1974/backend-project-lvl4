@@ -6,8 +6,25 @@ module.exports = {
       primaryKey: true,
       type: Sequelize.INTEGER,
     },
-    taskName: {
+    name: {
       type: Sequelize.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    statusId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    creatorId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    assignedToId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
     },
     createdAt: {
       allowNull: false,

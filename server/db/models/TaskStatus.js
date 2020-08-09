@@ -8,11 +8,13 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   TaskStatus.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   }, {
     sequelize,
     modelName: 'TaskStatus',
   });
   return TaskStatus;
 };
-

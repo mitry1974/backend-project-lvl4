@@ -9,10 +9,8 @@ module.exports = {
       { name: 'completed' },
     ]
       .map(async (el) => {
-        console.log(`Create taskStatus with data: ${JSON.stringify(el)}`);
         const ts = await Models.TaskStatus.findOne({ where: { name: el.name } });
-        console.log(`TaskStatus found: ${JSON.stringify(ts)}`);
-        if (!await Models.TaskStatus.findOne({ where: { name: el.name } })) {
+        if (!ts) {
           await Models.TaskStatus.create(el);
         }
       });

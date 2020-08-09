@@ -3,14 +3,17 @@ const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    // static associate(models) {
-    // }
+    static associate(models) {
+      this.hasMany(models.Task, { foreignKey: 'creatorId' });
+      this.hasOne(models.Task, { foreignKey: 'assignedToId' });
+    }
   }
 
   User.init({
     email: {
       type: DataTypes.STRING,
       defaultValue: '',
+      unique: true,
     },
     firstname: {
       type: DataTypes.STRING,
