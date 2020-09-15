@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('tasks', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Tasks', {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -17,14 +17,26 @@ module.exports = {
     statusId: {
       type: Sequelize.INTEGER,
       allowNull: false,
+      references: {
+        model: 'TaskStatuses',
+        key: 'id',
+      },
     },
     creatorId: {
       type: Sequelize.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id',
+      },
     },
     assignedToId: {
       type: Sequelize.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id',
+      },
     },
     createdAt: {
       allowNull: false,
@@ -35,5 +47,5 @@ module.exports = {
       type: Sequelize.DATE,
     },
   }),
-  down: (queryInterface) => queryInterface.dropTable('tasks'),
+  down: (queryInterface) => queryInterface.dropTable('Tasks'),
 };

@@ -1,38 +1,35 @@
 extends ../layouts/application.pug
 
-block content
-  div.container-fluid
-    div.row.flex-xl-nowrap
-      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
-        div.card.shadow-sm.border-top.border-primary
-          div.card-body
-            h1.h3.mb-4.mt-3.text-center= t('views.users.list.caption')
-            p.buttons
-              a(href=route('getregisteruserform'))
-                i.fas.fa-plus
-            table.table.table-striped.table-bordered
-              thead.thead-dark
-                tr
-                  th(scope=col)=t('views.users.list.id')
-                  th(scope=col)=t('views.users.list.email')
-                  th(scope=col)=t('views.users.list.firstname')
-                  th(scope=col)=t('views.users.list.lastname')
-                  th(scope=col)=t('views.users.list.role')
-                  th(scope=col)
-                tbody
-                  each user in users
-                    tr
-                      td= user.id
-                      td= user.email
-                      td= user.firstname
-                      td= user.lastname
-                      td= user.role
-                      td
-                        ul.list-inline.m-0
-                          li.list-inline-item
-                            a(href=route('getEditUserForm', { email: user.email }))
-                              i.fas.fa-edit
-                          li.list-inline-item
-                            a(href=route('deleteUser', { email: user.email }) data-confirm=t('views.users.list.delete_confirmation') data-method="delete" rel="nofollow")
-                              i.fas.fa-trash
+block header
+  = t('views.users.list.caption')
 
+block content
+  p.buttons
+    a(href=route('getRegisterUserForm'))
+      i.fas.fa-plus
+  table.table.table-striped.table-bordered
+    thead.thead-dark
+      tr
+        th(scope=col)=t('views.users.list.id')
+        th(scope=col)=t('views.users.list.email')
+        th(scope=col)=t('views.users.list.firstname')
+        th(scope=col)=t('views.users.list.lastname')
+        th(scope=col)=t('views.users.list.role')
+        th(scope=col)
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td= user.email
+            td= user.firstname
+            td= user.lastname
+            td= user.role
+            td
+              ul.list-inline.m-0
+                li.list-inline-item
+                  a(href=route('getEditUserForm', { email: user.email }))
+                    i.fas.fa-edit
+                li.list-inline-item
+                  a(href=route('deleteUser',
+                    { email: user.email }) data-confirm=t('views.users.list.delete_confirmation') data-method="delete" rel="nofollow")
+                    i.fas.fa-trash

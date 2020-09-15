@@ -59,10 +59,10 @@
     "pug": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "rollbar": "^2.18.0",
-    "sequelize": "^6.3.3",
+    "sequelize": "^5.22.0",
     "sqlite3": "^5.0.0",
-    "webpack": "^4.43.0",
-    "style-loader": "^1.2.1"
+    "style-loader": "^1.2.1",
+    "webpack": "^4.43.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

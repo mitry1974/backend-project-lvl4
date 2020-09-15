@@ -1,14 +1,101 @@
-
 extends ../layouts/application.pug
 
+block nav-items
+  +tasksNavItems
+
+block header
+  = t('views.tasks.list.caption')
+
 block content
-  div.container-fluid
-    div.row.flex-xl-nowrap
-      div.col-12.col-md-9.col-xl-8.py-md-3.pl-md-5.bd-content
-        div.card.shadow-sm.border-top.border-primary
-          div.card-body
-            h1.h3.mb-4.mt-3.text-center= t('views.users.list.caption')
-            p.buttons
-              a(href=route('getRegisterUserForm'))
-                i.fas.fa-plus
-            table.table.table-striped.table-bordered
+  form(action=route('getAllTasks') method='GET')
+    .form-row.align-items-center
+      .col-auto
+        label(for="statusId")= t("views.tasks.status")
+        select.form-control(id="statusuId" name="statusId")
+          option(value="")= t('views.all')
+          each status of data.statuses
+            - const value=status.id
+            if(value==filter.statusId)
+              option(value=status.id selected)= status.name
+            else
+              option(value=status.id)= status.name
+      .col-auto
+        label(for="assignedToId")= t('views.tasks.assigned')
+        select.form-control(id="assignedToId" name="assignedToId")
+          option(value="")= t('views.all')
+          each user in data.users
+            - const value=user.id
+            if(value==filter.assignedToId)
+              option(value=user.id selected)= user.toString()
+            else
+              option(value=user.id)= user.toString()
+      .col-auto
+        label(for="byTag")= t('views.tasks.tags')
+        select.form-control(id="tagId" name="tagId")
+          option(value="")= t('views.all')
+          each tag of data.tags
+            - const selected = tag.id==filter.tagId ? true : false;
+            option(value=tag.id selected=selected)= tag.name
+      .col-auto
+        .form-check.col-auto.mt-4
+          - const checked = filter.selfTasks == "on" ? true : false;
+
+          input.form-check-input(type="checkbox" value=selfTasks id="selfTasks" name="selfTasks" checked=checked)
+          label.form-check-label(for="selfTasks")= t("views.tasks.showSelfTasks")
+      .col-auto
+        button.btn.btn-primary.mt-4(type="submit")= t('views.edit.show')
+
+  p.buttons
+    a(href=route('getNewTaskForm')
+      data-toggle="tooltip"
+      data-placement="top"
+      title=t('views.tooltips.addTask'))
+      i.fas.fa-plus
+  table.table.table-striped.table-bordered.tasks
+    thead.thead-dark
+      tr
+        th.row-tasks-id(scope=col)=t('views.id')
+        th.row-tasks-name(scope=col)=t('views.tasks.name')
+        th.row-tasks-description(scope=col)=t('views.tasks.description')
+        th.row-tasks-status(scope=col)=t('views.tasks.status')
+        th.row-tasks-creator(scope=col)=t('views.tasks.creator')
+        th.row-tasks-assigned(scope=col)=t('views.tasks.assigned')
+        th.row-tasks-operations(scope=col)
+    tbody
+      each task in data.tasks
+        tr
+          td= task.id
+          td= task.name
+          td
+            .col.text-truncate
+              a(href=route('getTask', { id: task.id })
+                data-toggle="tooltip"
+                data-placement="top"
+                title=t('views.tooltips.showTask'))= task.description
+          td= task.status.name
+          td
+            a(href=route('getUser', { email: task.creator.email })
+              data-toggle="tooltip"
+              data-placement="top"
+              title=t('views.tooltips.showUser'))= task.creator.firstname
+          td
+            a(href=route('getUser', { email: task.assignedTo.email })
+              data-toggle="tooltip"
+              data-placement="top"
+              title=t('views.tooltips.showUser'))= task.assignedTo.firstname
+          td
+            ul.list-inline.m-0
+              li.list-inline-item
+                a(href=route('getEditTaskForm', { id: task.id })
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title=t('views.tooltips.editTask'))
+                  i.fas.fa-edit
+              li.list-inline-item
+                a(href=route('deleteTask', { id: task.id })
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title=t('views.tooltips.deleteTask')
+                  data-confirm=t('views.users.list.delete_confirmation')
+                  data-method="delete" rel="nofollow")
+                  i.fas.fa-trash

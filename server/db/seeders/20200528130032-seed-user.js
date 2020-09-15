@@ -8,7 +8,7 @@ module.exports = {
         email: 'admin@fakedomain.com',
         firstname: 'Admin',
         lastname: 'Admin',
-        password: '123356',
+        password: '123456',
         role: 'admin',
       },
       {
@@ -16,7 +16,7 @@ module.exports = {
         email: 'user2@fakedomain.com',
         firstname: 'User2',
         lastname: 'User2 lastname',
-        password: '122356',
+        password: '123456',
         role: 'user',
       },
       {

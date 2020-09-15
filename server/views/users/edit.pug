@@ -2,18 +2,10 @@ extends ../layouts/application.pug
 
 block content
   +formFor(t('views.users.edit.caption'))(class='form-group' novalidate action=route('updateUser', { email: formData.email }) method='post')&attributes(attributes)
-    +input(formData, 'email', errors)(
-      class = "string email"
-      type='email'
-      placeholder= t('views.users.new.email'))
-    +input(formData, 'firstname', errors)(
-      type='firstname'
-      placeholder= t('views.users.new.firstname'))
-    +input(formData, 'lastname', errors)(
-      type='lastname'
-      placeholder= t('views.users.new.lastname'))
-        +input(formData, 'role', errors)(
-          type='hidden')
+    +input(formData, 'email', t('views.users.email'), errors)(class="string email")
+    +input(formData, 'firstname', t('views.users.firstname'), errors)
+    +input(formData, 'lastname', t('views.users.lastname'), errors)
+    +input(formData, 'role', t('views.users.role'), errors)(readonly)
     a(href=route('getChangePasswordForm', { email: formData.email }))= t('views.users.edit.change_password')
-    +submitFor('put')(value = t('views.users.edit.submit'))
+    +submitFor('put')(value = t('views.edit.submit'))
 

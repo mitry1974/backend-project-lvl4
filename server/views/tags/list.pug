@@ -1,0 +1,32 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tags.list.caption')
+
+block content
+  p.buttons
+    a(href=route('getNewTagForm')
+      data-toggle="tooltip"
+      data-placement="top"
+      title=t('views.tooltips.addTag'))
+      i.fas.fa-plus
+  table.table.table-striped.table-bordered.tasks
+    thead.thead-dark
+      tr
+        th.row-tags-id(scope=col)=t('views.id')
+        th.row-tags-name(scope=col)=t('views.tags.name')
+        th(scope=col)
+    tbody
+      each tag in tags
+        tr
+          td= tag.id
+          td= tag.name
+          td
+            ul.list-inline.m-0
+              li.list-inline-item
+                a(href=route('getEditTagForm', { id: tag.id }))
+                  i.fas.fa-edit
+              li.list-inline-item
+                a(href=route('deleteTag',
+                  { id: tag.id }) data-confirm=t('views.tags.list.delete_confirmation') data-method="delete" rel="nofollow")
+                  i.fas.fa-trash

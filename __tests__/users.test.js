@@ -1,13 +1,27 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
+import faker from 'faker';
 import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
-import generateFakeUserRegisterData from './lib/fakeItemsGenerator';
 import {
   createUser, deleteUser, updateUser, getUser, getAllUsers,
 } from './lib/testHelpers/users';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
+
+const generateFakeUserRegisterData = (options) => {
+  const password = faker.internet.password();
+  const generated = {
+    email: faker.internet.email(),
+    firstname: faker.name.firstName(),
+    lastname: faker.name.lastName(),
+    password,
+    confirm: password,
+    role: options.role,
+  };
+
+  return { ...generated, ...options };
+};
 
 describe('test users', () => {
   let app = null;

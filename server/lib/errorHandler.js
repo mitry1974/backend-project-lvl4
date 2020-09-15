@@ -19,10 +19,9 @@ export default (app) => {
       || (error instanceof NotFoundError)) {
       error.proceed(request, reply);
     } else {
-      console.log(`Main error handler: ${JSON.stringify(error, null, '\t')}`);
+      request.log.error(`Main error handler: ${error}`);
       rollbar.error(error, request);
       reply.status(500);
-      reply.send();
     }
   });
 };

@@ -22,7 +22,7 @@ export default (app) => {
     name: 'getEditTaskStatusForm',
     handler: async (request, reply) => {
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
-      if(!ts) {
+      if (!ts) {
         throw new NotFoundError();
       }
       reply.render('/taskStatuses/edit', { formData: ts });

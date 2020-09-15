@@ -18,7 +18,7 @@ import webpackConfig from '../webpack.config';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import Models from './db/models';
-import { verifyAdmin, verifyUserSelf } from './lib/auth';
+import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 
 const env = process.env.NODE_ENV;
@@ -41,6 +41,7 @@ const registerPlugins = async (app) => {
   app.register(fastifyAuth);
   app.decorate('verifyAdmin', verifyAdmin);
   app.decorate('verifyUserSelf', verifyUserSelf);
+  app.decorate('verifyLoggedIn', verifyLoggedIn);
 
   app.register(fastifyFlash);
 
@@ -116,27 +117,27 @@ const setupHooks = (app) => {
   });
 };
 
-const setupLocalization = () => {
-  i18next
-    .init({
-      lng: 'ru',
-      fallbackLng: 'en',
-      debug: isDevelopment,
-      resources: {
-        ru,
-      },
-    });
-};
+const setupLocalization = () => i18next.init({
+  preload: ['ru'],
+  lng: 'ru',
+  fallbackLng: 'en',
+  debug: isDevelopment,
+  resources: {
+    ru,
+  },
+});
 
 export default async () => {
+  await setupLocalization();
   const app = fastify({
     logger: {
-      level: false,
+      level: 'debug',
       prettyPrint: !isProduction,
       timestamp: !isDevelopment,
       base: null,
     },
   });
+  app.decorate('i18n', i18next);
 
   app.decorate('config', config);
 
@@ -144,7 +145,6 @@ export default async () => {
   await registerPlugins(app);
   setupStaticAssets(app);
   setupHooks(app);
-  setupLocalization(app);
 
   setupErrorHandler(app);
 

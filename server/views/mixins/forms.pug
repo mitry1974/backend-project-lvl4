@@ -1,42 +1,72 @@
-- const getInputName = (propertyName) => `formData[${propertyName}]`
-- const getErrorText = (errors, property) => {
--   const error = errors.find((error) => error.property === property)
--   if (!error) {
--     return;
--   }
--   return Object.values(error.constraints).join(', ');
-- }
+-
+  const getInputName = (propertyName) => `formData[${propertyName}]`
+  const getErrorText = (errors, property) => {
+    return errors[property];
+  }
 
-mixin formFor(caption)
-  div.container-fluid
-    div.row.justify-content-center.pb-5.mt-5
-      div.col-12.col-sm-8.col-md-7.col-lg-4
-        div.card.shadow-sm.border-top.border-primary
-          div.card-body
-            h1.h3.mb-4.mt-3.text-center= caption
-            form&attributes(attributes)
-              block
+mixin formFor()
+  form&attributes(attributes)
+    block
 
-mixin input(entity, propertyName, errors = [])
-  - const errorText = getErrorText(errors, propertyName);
-  - let formClass = 'form-control'
-  - if (errorText) {
-  -   formClass += ' ' + 'is-invalid'
-  - } else if(value) {
-  -     formClass += ' ' + 'is-valid'
-  - }
-  - const feedbackClass = errorText ? 'invalid-feedback' : 'valid_feedback'
-  - const feedbackValue = errorText || ''
-  div.form-group(class=propertyName)
-    input(
-      class= formClass
-      name=getInputName(propertyName)
-      value=_.get(entity, propertyName, '')
-    )&attributes(attributes)
+mixin tasksNavItems
+  li.nav-item
+    a.nav-link(href=route('getAllTaskStatuses'))= t('layouts.application.statuses')
+  li.nav-item
+    a.nav-link(href=route('getAllTags'))= t('layouts.application.tags')
+
+
+mixin inputHeader(mixinName, entity, propertyName, labelText, options)
+  -
+    const inputOptions = { errors: [], type: 'text', divClass: '', inputClass: '', ...options};
+    const { errors = [], type, divClass } = inputOptions;
+    let inputClass = `form-control ${inputOptions.inputClass}`;
+    const errorText = getErrorText(errors, propertyName);
+    if(errorText) {
+      inputClass += ' ' + 'is-invalid'
+    }
+    const feedbackClass = errorText ? 'invalid-feedback' : 'valid_feedback'
+    const feedbackValue = errorText || ''
+  div(class=divClass)
+    label(for=propertyName)= `${labelText}:`
+    +#{mixinName}(entity, propertyName, inputClass, inputOptions)&attributes(attributes)
     div(class=feedbackClass)= feedbackValue
 
-mixin submit
-  .form-group
+mixin addInput(mixinName, entity, propertyName, labelText, options)
+  +inputHeader(mixinName, entity, propertyName, labelText, options)&attributes(attributes)
+
+mixin inputTextarea(entity, propertyName, inputClass, options)
+  textarea(
+    class=inputClass
+    name=getInputName(propertyName)
+    id=propertyName
+    rows=options.rows)&attributes(attributes)= _.get(entity, propertyName, '')
+
+mixin input(entity, propertyName, inputClass, options)
+    input(
+      class= inputClass
+      name=getInputName(propertyName)
+      value=_.get(entity, propertyName, '')
+      id=propertyName
+      type=options.type
+    )&attributes(attributes)
+
+mixin select(entity, propertyName, inputClass, options)
+  - const currentValue = _.get(entity, propertyName, '')
+  select(
+      class= inputClass
+      name=getInputName(propertyName)
+      id=propertyName
+      type=options.type)&attributes(attributes)
+    each v in options.values
+      - const value = v[options.compareBy];
+      - const isSelected = _.isArray(currentValue) ? _.indexOf(currentValue, value) !== -1 : value === currentValue;
+      if(isSelected)
+        option(value=value selected)= v.toString()
+      else
+        option(value=value)= v.toString()
+
+mixin submit(options={})
+  div(class=options.divClass)
     input.btn.btn-primary(type='submit')&attributes(attributes)
 
 

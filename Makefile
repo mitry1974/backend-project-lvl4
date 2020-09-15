@@ -4,6 +4,9 @@ install:
 db-setup:
 	make migrations && make seeds
 
+freshdb:
+	rm -rf ./db.sqlite && make db-setup
+
 build:
 	npm run build
 
@@ -19,15 +22,11 @@ test-watch:
 start-dev:
 	npm run start:dev
 
-start-dev-inspect:
+debug:
 	npm run start:dev:inspect
 
 start:
 	npm run start
-
-start-debug:
-	npx webpack-dev-server
-	npx nodemon --exec npx babel-node --inspect server/bin/server.js
 
 migrations:
 	npm run migrations:run

@@ -2,6 +2,6 @@ extends ../layouts/application.pug
 
 block content
   +formFor(t('views.session.new.login'))(class='simple_form new_user_sign_in_type' novalidate='novalidate' action=route('login') method='post')
-    +input(formData, 'email', errors)(class='required user_sign_in_type_email' type='text')
-    +input(formData,'password', errors)(class='required user_sign_in_type_password' type='password')
+    +addInput('input', formData, 'email', t('views.email'), { errors, divClass: 'mb-3'})(type= 'text')
+    +addInput('input', formData, 'password', t('views.password'), { errors, divClass: 'mb-3'})(type= 'password')
     +submit(value=t('views.session.new.submit'))

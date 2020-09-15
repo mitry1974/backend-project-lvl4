@@ -1,0 +1,32 @@
+.tasks {
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
+}
+.tasks td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.row-tasks-id {
+  width: 5%;
+}
+.row-tasks-name {
+  width: 15%;
+}
+.row-tasks-description {
+  width: 30%;
+}
+.row-tasks-status {
+  width: 10%;
+}
+.row-tasks-creator {
+  width: 15%;
+}
+.row-tasks-assigned {
+  width: 15%;
+}
+.row-tasks-operations {
+  width: 10%
+}
+

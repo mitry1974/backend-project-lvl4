@@ -1,8 +1,8 @@
 extends ../layouts/application.pug
 
 block content
-  +formFor(t('views.taskStatuses.edit.caption'))(class='form-group' action=route('updateTaskStatus', { id: formData.id }) method='post')&attributes(attributes)
-    +input(formData, 'name', errors)(
-      class = "form-control"
+  - const formCaption = t('views.taskStatuses.edit.caption')
+  +formFor(formCaption)(action=route('updateTaskStatus', { id: formData.id }) method='post')&attributes(attributes)
+    +input(formData, 'name', t('views.taskStatuses.name'), errors)(
       placeholder= formData.name)
-    +submitFor('put')(value = t('views.taskStatuses.edit.update'))
+    +submitFor('put')(value = t('views.edit.submit'))

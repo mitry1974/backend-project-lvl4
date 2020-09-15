@@ -1,0 +1,28 @@
+extends ../layouts/application.pug
+
+block nav-items
+  +tasksNavItems
+
+block header
+  = t('views.tasks.edit.caption')
+
+block content
+  +formFor()(novalidate action=route('updateTask', { id: formData.id }) method='post' readonly)&attributes(attributes)
+    .form-row
+      +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-2 mb-3'})(readonly)
+      +addInput('input', formData, 'createdAt', t('views.tasks.createdAt'), { errors, divClass: 'col-md-4 mb-3' })(
+        value=formData.createdAt.toLocaleString()
+        readonly)
+      +addInput('input', formData, 'creator', t('views.tasks.creator'), { errors, divClass: 'col-md-6 mb-3' })(value=formData.creator.toString() readonly)
+    .form-row
+      +addInput('input', formData, 'name', t('views.tasks.name'), { errors, divClass: 'col-md-5 mb-3' })
+      +addInput('select', formData, 'assignedToId', t('views.tasks.assigned'), { errors, divClass: 'col-md-5 mb-3', values: users, compareBy: 'id' })
+      +addInput('select', formData, 'statusId', t('views.tasks.status'),  { errors, divClass: 'col-md-2 mb-3', values: statuses, compareBy: 'id' })
+    .form-row
+      +addInput('inputTextarea', formData, 'description', t('views.tasks.description'), { errors, rows: "6", divClass: 'col-md-8 mb-3' })
+      +addInput('select',
+        formData,
+        'tagsId',
+        t('views.tasks.tags'),
+        {errors, divClass: 'flex-group d-flex flex-column col-md-4 mb-3', values: tags, compareBy: 'id'})(class="flex-grow-1" multiple)
+    +submitFor('put')(value = t('views.edit.submit'))

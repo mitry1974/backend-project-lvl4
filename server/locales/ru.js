@@ -17,6 +17,30 @@ export default {
           success: 'Вы разлогинены',
         },
       },
+      tasks: {
+        create: {
+          error: 'Не удалось создать задачу',
+          success: 'Задача успешно создана',
+        },
+        update: {
+          error: 'Не удалось обновить задачу',
+          success: 'Задача успешно обновлена',
+        },
+        delete: {
+          error: 'Не удалось удалить задачу',
+          success: 'Задача успешно удалена',
+        },
+      },
+      tags: {
+        delete: {
+          success: 'Тэг удалён',
+          error: 'Ошибка удаления тэга',
+        },
+        create: {
+          success: 'Тэг создан',
+          error: 'Ошибка создания тэга',
+        },
+      },
       users: {
         not_found: 'Пользователь не найден',
         create: {
@@ -56,6 +80,7 @@ export default {
         about: 'Возможности',
         users: 'Пользователи',
         statuses: 'Статусы задач',
+        tags: 'Тэги',
         tasks: 'Задачи',
         login: 'Вход',
         logout: 'Выход',
@@ -64,13 +89,34 @@ export default {
       },
     },
     views: {
+      tooltips: {
+        showUser: 'Помотреть пользователя',
+        deleteUser: 'удалить пользователя',
+        addUser: 'Добавить пользователя',
+        editUser: 'Редактировать пользователя',
+        showTask: 'Посмотреть задачу',
+        deleteTask: 'Удалить задачу',
+        addTask: 'Добавить задачу',
+        editTask: 'Редактировать задачу',
+        deleteTag: 'Удалить тэг',
+        addTag: 'Добавить тэг',
+        editTag: 'Редактировать тэг',
+      },
+      id: 'Id',
+      email: 'Email',
+      password: 'Пароль',
+      all: 'Все',
+      edit: {
+        submit: 'Сохранить',
+        show: 'Показать',
+      },
       taskStatuses: {
+        name: 'Название',
         errors: {
           name_not_empty: 'Статус не может быть пустым',
         },
         list: {
           caption: 'Статусы задач',
-          id: 'Id',
           name: 'Название',
           delete_confirmation: 'Вы уверены?',
         },
@@ -81,13 +127,51 @@ export default {
         },
         edit: {
           caption: 'Изменить',
-          update: 'Сохранить',
         },
       },
       session: {
         new: {
           login: 'Вход',
           submit: 'Войти',
+        },
+      },
+      tasks: {
+        errors: {
+          name_not_empty: 'Название задачи не может быть пустым',
+          status_not_empty: 'Статус задачи не может быть пустым',
+          assigned_not_empty: 'Id исполнителя задачи не может быть пустым',
+          creator_not_empty: 'Id создателя задачи не может быть пустым',
+        },
+        name: 'Название',
+        description: 'Описание',
+        status: 'Статус',
+        creator: 'Создатель',
+        assigned: 'Исполнитель',
+        tags: 'Тэги',
+        createdAt: 'Дата создания',
+        showSelfTasks: 'Только мои задачи',
+        list: {
+          caption: 'Задачи',
+        },
+        edit: {
+          caption: 'Редактировать задачу',
+        },
+        view: {
+          caption: 'Просмотр задачи',
+          backtolist: 'Обратно к списку задач',
+        },
+      },
+      tags: {
+        name: 'Тэг',
+        list: {
+          caption: 'Список тэгов',
+          delete_confirmation: 'Вы уверены что хотите удалить тэг?',
+        },
+        edit: {
+          caption: 'Редактировать тэг',
+        },
+        create: {
+          caption: 'Создать тэг',
         },
       },
       users: {
@@ -100,13 +184,12 @@ export default {
           password_confirmation_not_empty: 'Подтверждение пароля не может быть пустым',
           password_confirmation_the_same_as_password: 'Подтверждение пароля должно совпадать с паролем',
         },
+        firstname: 'Имя',
+        lastname: 'Фамилия',
+        role: 'Роль',
+        confirm: 'Пароль еще раз',
         list: {
           caption: 'Пользователи',
-          id: 'Id',
-          email: 'Email',
-          firstname: 'Имя',
-          lastname: 'Фамилия',
-          role: 'Роль',
           delete: 'Удалить',
           add: 'Добавить',
           edit: 'Редактировать',
@@ -116,26 +199,14 @@ export default {
           caption: 'Новый пользователь',
           submit: 'Зарегистрировать',
           register: 'Регистрация',
-          firstname: 'Имя',
-          lastname: 'Фамилия',
-          email: 'email',
-          password: 'Пароль',
-          confirm: 'Пароль еще раз',
         },
         edit: {
-          submit: 'Сохранить',
           caption: 'Редактировать',
-          firstname: 'Имя',
-          lastname: 'Фамилия',
-          email: 'email',
           change_password: 'Изменить пароль',
         },
         change_password: {
           caption: 'Изменить пароль',
-          password: 'Пароль',
-          confirm: 'Пароль еще раз',
           old_password: 'Текущий пароль',
-          submit: 'Сохранить',
         },
       },
       welcome: {

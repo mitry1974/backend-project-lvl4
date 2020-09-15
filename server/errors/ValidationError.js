@@ -10,7 +10,8 @@ export default class ValidationError extends Error {
   }
 
   proceed(request, reply) {
-    request.log.info(`Routes error: ${this.message}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
+    request.log.error(`Validation error: ${this.message}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
+
     request.flash('error', this.renderData.flashMessage);
 
     reply.code(400).render(

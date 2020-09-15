@@ -29,7 +29,7 @@ export default (app) => {
     method: 'GET',
     url: '/users/:email/edit',
     name: 'getEditUserForm',
-    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
       reply.render('users/edit', { formData: user });
@@ -58,7 +58,7 @@ export default (app) => {
     method: 'GET',
     url: '/users/:email',
     name: 'getUser',
-    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       // request.log.info(`GET /users/${request.params.email}`);
       const user = await findUserByEmail(request.params.email);
@@ -71,7 +71,7 @@ export default (app) => {
     method: 'GET',
     url: '/users',
     name: 'getAllUsers',
-    preHandler: app.auth([app.verifyAdmin]),
+    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       // request.log.info('GET /users');
       const users = await Models.User.findAll();
@@ -178,7 +178,12 @@ export default (app) => {
         throw new NotFoundError();
       }
 
-      await user.destroy();
+      try {
+        await user.destroy();
+      } catch (e) {
+        request.flash('error', i18next.t('flash.users.delete.error'));
+        reply.redirect(app.reverse('getAllUsers'));
+      }
 
       request.flash('info', i18next.t('flash.users.delete.success'));
       reply.redirect(app.reverse('getAllUsers'));

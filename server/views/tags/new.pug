@@ -1,0 +1,10 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tags.create.caption')
+
+block content
+  +formFor()(novalidate action=route('createTag') method='post' readonly)&attributes(attributes)
+    .form-row
+      +addInput('input', formData, 'name', t('views.tags.name'), { errors, divClass: 'col-md-5 mb-3' })
+    +submit(value = t('views.edit.submit'))

@@ -1,17 +1,17 @@
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class Tag extends Model {
-    static associate(models) {
-      this.belongsToMany(models.Task, { through: 'TaskTags' });
-    }
-  }
-  Tag.init({
-    name: DataTypes.STRING,
-  }, {
-    sequelize,
-    modelName: 'Tag',
+  const Tag = sequelize.define('Tag', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
   });
+
+  Tag.associate = (models) => Tag.belongsToMany(models.Task, { through: 'TaskTags', foreignKey: 'tagId' });
+
+  Tag.prototype.toString = function tagName() {
+    return this.name;
+  };
+
   return Tag;
 };
-
