@@ -1,16 +1,17 @@
 import i18next from 'i18next';
 import { IsNotEmpty, IsEmail } from 'class-validator';
-import { IsUserAlreadyExist, IsTheSameAs } from './decorators';
+import { IsEntityExist, IsTheSameAs } from './decorators';
+import Models from '../../db/models';
 
 export default class RegisterUserSchema {
   @IsEmail({}, {
-    message: () => `${i18next.t('views.users.errors.email_not_email')}`,
+    message: () => `${i18next.t('views.users.errors.emailNotEmail')}`,
   })
   @IsNotEmpty({
-    message: () => `${i18next.t('views.users.errors.email_not_empty')}`,
+    message: () => `${i18next.t('views.users.errors.emailNotEmpty')}`,
   })
-  @IsUserAlreadyExist({
-    message: () => `${i18next.t('views.users.errors.email_already_exists')}`,
+  @IsEntityExist(Models.User, 'email', false, {
+    message: () => `${i18next.t('views.users.errors.emailAlreadyExists')}`,
   }, false)
   email = '';
 
@@ -19,18 +20,18 @@ export default class RegisterUserSchema {
   lastname = '';
 
   @IsNotEmpty({
-    message: () => `${i18next.t('views.users.errors.password_not_empty')}`,
+    message: () => `${i18next.t('views.users.errors.passwordNotEmpty')}`,
   })
   password = '';
 
   @IsNotEmpty({
-    message: () => `${i18next.t('views.users.errors.password_confirmation_not_empty')}`,
+    message: () => `${i18next.t('views.users.errors.passwordConfirmationNotEmpty')}`,
   })
   @IsTheSameAs(
     'password',
     true,
     {
-      message: () => `${i18next.t('views.users.errors.password_confirmation_the_same_as_password')}`,
+      message: () => `${i18next.t('views.users.errors.passwordConfirmationTheSameAsPassword')}`,
     },
   )
   confirm = '';

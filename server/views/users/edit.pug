@@ -1,11 +1,14 @@
 extends ../layouts/application.pug
 
+block header
+  = t('views.users.edit.caption')
+
 block content
-  +formFor(t('views.users.edit.caption'))(class='form-group' novalidate action=route('updateUser', { email: formData.email }) method='post')&attributes(attributes)
-    +input(formData, 'email', t('views.users.email'), errors)(class="string email")
-    +input(formData, 'firstname', t('views.users.firstname'), errors)
-    +input(formData, 'lastname', t('views.users.lastname'), errors)
-    +input(formData, 'role', t('views.users.role'), errors)(readonly)
-    a(href=route('getChangePasswordForm', { email: formData.email }))= t('views.users.edit.change_password')
+  +formFor()(novalidate action=route('updateUser', { email }) method='post')&attributes(attributes)
+    +addInput('input', formData, 'email', t('views.email'), { errors, divClass: 'mb-3' })(type="email")
+    +addInput('input', formData, 'firstname', t('views.users.firstname'), { errors, divClass: 'mb-3' })
+    +addInput('input', formData, 'lastname', t('views.users.lastname'), { errors, divClass: 'mb-3' })
+    +addInput('input', formData, 'role', t('views.users.role'), { errors, divClass: 'mb-3' })(readonly)
+    a(href=route('getUpdatePasswordForm', { email }))= t('views.users.edit.updatePassword')
     +submitFor('put')(value = t('views.edit.submit'))
 

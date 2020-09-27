@@ -1,8 +1,11 @@
 extends ../layouts/application.pug
 
+block header
+  = t('views.taskStatuses.edit.caption')
+
 block content
-  - const formCaption = t('views.taskStatuses.edit.caption')
-  +formFor(formCaption)(action=route('updateTaskStatus', { id: formData.id }) method='post')&attributes(attributes)
-    +input(formData, 'name', t('views.taskStatuses.name'), errors)(
-      placeholder= formData.name)
+  +formFor()(action=route('updateTaskStatus', { id: formData.id }) method='post')&attributes(attributes)
+    .form-row
+      +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-2 mb-3'})(readonly)
+      +addInput('input', formData, 'name', t('views.taskStatuses.name'), { errors, divClass: 'col-md-6 mb-3' })
     +submitFor('put')(value = t('views.edit.submit'))

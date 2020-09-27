@@ -1,12 +1,12 @@
 import i18next from 'i18next';
 import 'reflect-metadata';
 import Models from '../db/models';
-import RegisterUserSchema from './validation/RegisterUserSchema';
-import UpdatePasswordSchema from './validation/UpdatePasswordSchema';
-import UpdateUserSchema from './validation/UpdateUserSchema';
 import NotFoundError from '../errors/NotFoundError';
-import validateData from './validation/helpers';
 import AuthenticationError from '../errors/AutheticationError';
+import UpdatePasswordSchema from './validation/UpdatePasswordSchema';
+import RegisterUserSchema from './validation/RegisterUserSchema';
+import UpdateUserSchema from './validation/UpdateUserSchema';
+import validate from './validation/validate';
 
 const findUserByEmail = async (email) => {
   const user = await Models.User.findOne({ where: { email } });
@@ -17,22 +17,30 @@ const findUserByEmail = async (email) => {
 };
 
 export default (app) => {
-  app.get('/users/new', { name: 'getRegisterUserForm' }, async (request, reply) => {
-    const formData = new RegisterUserSchema();
+  app.route({
+    method: 'GET',
+    url: '/users/register',
+    name: 'getRegisterUserForm',
+    handler: async (request, reply) => {
+      const formData = Models.User.build();
 
-    reply.render('users/register', { formData });
-
-    return reply;
+      reply.render('users/register', { errors: {}, formData });
+      return reply;
+    },
   });
 
   app.route({
     method: 'GET',
     url: '/users/:email/edit',
     name: 'getEditUserForm',
-    preHandler: app.auth([app.verifyLoggedIn]),
+    preHandler: app.auth([
+      app.verifyLoggedIn,
+      app.verifyUserSelf,
+    ], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await findUserByEmail(request.params.email);
-      reply.render('users/edit', { formData: user });
+      const { email } = request.params;
+      const formData = await findUserByEmail(email);
+      reply.render('users/edit', { formData, email });
 
       return reply;
     },
@@ -40,16 +48,16 @@ export default (app) => {
 
   app.route({
     method: 'GET',
-    url: '/users/:email/change_password',
-    name: 'getChangePasswordForm',
-    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
+    url: '/users/:email/updatePassword',
+    name: 'getUpdatePasswordForm',
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const formData = {
         password: '',
         confirm: '',
         oldPassword: '',
       };
-      reply.render('users/changePassword', { formData, email: request.params.email });
+      reply.render('users/updatePassword', { formData, email: request.params.email });
       return reply;
     },
   });
@@ -60,7 +68,6 @@ export default (app) => {
     name: 'getUser',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      // request.log.info(`GET /users/${request.params.email}`);
       const user = await findUserByEmail(request.params.email);
       reply.render('/users/view', { formData: user });
       return reply;
@@ -85,21 +92,28 @@ export default (app) => {
     url: '/users',
     name: 'registerUser',
     preValidation: async (request) => {
-      await validateData({
+      const { formData } = request.body;
+      await validate({
         ClassToValidate: RegisterUserSchema,
-        objectToValidate: request.body.formData,
+        objectToValidate: formData,
         renderData: {
           url: 'users/register',
-          flashMessage: i18next.t('flash.users.create.error'),
+          flashMessage: i18next.t('flash.users.register.error'),
           data: {
-            formData: request.body.formData,
+            formData,
           },
         },
       });
     },
     handler: async (request, reply) => {
-      const user = Models.User.build(request.body.formData);
-      await user.save();
+      const { formData } = request.body;
+      const user = Models.User.build(formData);
+      try {
+        await user.save();
+      } catch (e) {
+        request.log.error(`Error register new user: ${e}`);
+        throw e;
+      }
 
       request.flash('info', i18next.t('flash.users.create.success'));
       reply.redirect(app.reverse('root'));
@@ -112,19 +126,29 @@ export default (app) => {
     url: '/users/:email',
     name: 'updateUser',
     preValidation: async (request) => {
-      await validateData({
+      const { formData } = request.body;
+      await validate({
         ClassToValidate: UpdateUserSchema,
-        objectToValidate: request.body.formData,
+        objectToValidate: formData,
         renderData: {
           url: 'users/edit',
           flashMessage: i18next.t('flash.users.update.error'),
+          data: {
+            formData,
+            email: request.params.email,
+          },
         },
       });
     },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
-      user.update(request.body.formData);
+      try {
+        await user.update(request.body.formData);
+      } catch (e) {
+        request.log.error(`Error register new user: ${e}`);
+        throw e;
+      }
 
       request.flash('info', i18next.t('flash.users.update.success'));
       reply.redirect(app.reverse('getAllUsers'));
@@ -134,23 +158,24 @@ export default (app) => {
 
   app.route({
     method: 'PUT',
-    url: '/users/:email/update_password',
+    url: '/users/:email/updatePassword',
     name: 'updatePassword',
     preValidation: async (request) => {
-      await validateData({
+      const { formData } = request.body;
+      await validate({
         ClassToValidate: UpdatePasswordSchema,
-        objectToValidate: request.body.formData,
+        objectToValidate: formData,
         renderData: {
-          url: 'users/changePassword',
-          flashMessage: i18next.t('flash.users.update_password.error'),
+          url: 'users/updatePassword',
+          flashMessage: i18next.t('flash.users.updatePassword.error'),
           data: {
             email: request.params.email,
-            formData: request.body.formData,
+            formData,
           },
         },
       });
     },
-    preHandler: app.auth([app.verifyUserSelf]),
+    preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
       const { formData } = request.body;
@@ -159,10 +184,15 @@ export default (app) => {
           message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,
         });
       }
-      user.update(request.body.formData);
+      try {
+        await user.update(request.body.formData);
+      } catch (e) {
+        request.log.error(`Error update user password: ${e}`);
+        throw e;
+      }
 
-      request.flash('info', i18next.t('flash.users.update_password.success'));
-      reply.redirect(app.reverse('getEditUserFormUsers', { email: request.email }));
+      request.flash('info', i18next.t('flash.users.updatePassword.success'));
+      reply.redirect(app.reverse('getEditUserForm', { email: request.params.email }));
       return reply;
     },
   });

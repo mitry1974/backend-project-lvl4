@@ -14,48 +14,16 @@ module.exports = (sequelize, DataTypes) => {
   Task.init({
     name: {
       type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          args: true,
-          get msg() {
-            return i18next.t('views.tasks.errors.name_not_empty');
-          },
-        },
-      },
     },
     description: DataTypes.TEXT,
     statusId: {
       type: DataTypes.INTEGER,
-      validate: {
-        notEmpty: {
-          args: true,
-          get msg() {
-            return i18next.t('views.tasks.errors.status_not_empty');
-          },
-        },
-      },
     },
     creatorId: {
       type: DataTypes.INTEGER,
-      validate: {
-        notEmpty: {
-          args: true,
-          get msg() {
-            return i18next.t('views.tasks.errors.creator_not_empty');
-          },
-        },
-      },
     },
     assignedToId: {
       type: DataTypes.INTEGER,
-      validate: {
-        notEmpty: {
-          args: true,
-          get msg() {
-            return i18next.t('views.tasks.errors.assigned_not_empty');
-          },
-        },
-      },
     },
   },
   {

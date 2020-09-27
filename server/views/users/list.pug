@@ -10,11 +10,11 @@ block content
   table.table.table-striped.table-bordered
     thead.thead-dark
       tr
-        th(scope=col)=t('views.users.list.id')
-        th(scope=col)=t('views.users.list.email')
-        th(scope=col)=t('views.users.list.firstname')
-        th(scope=col)=t('views.users.list.lastname')
-        th(scope=col)=t('views.users.list.role')
+        th(scope=col)=t('views.id')
+        th(scope=col)=t('views.email')
+        th(scope=col)=t('views.users.firstname')
+        th(scope=col)=t('views.users.lastname')
+        th(scope=col)=t('views.users.role')
         th(scope=col)
       tbody
         each user in users
@@ -31,5 +31,5 @@ block content
                     i.fas.fa-edit
                 li.list-inline-item
                   a(href=route('deleteUser',
-                    { email: user.email }) data-confirm=t('views.users.list.delete_confirmation') data-method="delete" rel="nofollow")
+                    { email: user.email }) data-confirm=t('views.users.list.deleteConfirmation') data-method="delete" rel="nofollow")
                     i.fas.fa-trash

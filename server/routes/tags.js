@@ -1,5 +1,7 @@
 import i18next from 'i18next';
 import Models from '../db/models';
+import validate from './validation/validate';
+import TagSchema from './validation/TagSchema';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
 
@@ -22,23 +24,66 @@ export default (app) => {
     return reply;
   });
 
-  app.post('/tags', { name: 'createTag' }, async (request, reply) => {
-    try {
-      await Models.Tag.create(request.body.formData);
-    } catch (e) {
-      request.flash('error', i18next.t('flash.tags.create.error'));
-      reply.render('tags/new');
-    }
+  app.route({
+    method: 'POST',
+    url: '/tags',
+    name: 'createTag',
+    preValidation: async (request) => {
+      const { formData } = request.body;
+      await validate({
+        ClassToValidate: TagSchema,
+        objectToValidate: formData,
+        renderData: {
+          url: 'tags/new',
+          flashMessage: i18next.t('flash.tags.create.error'),
+          data: {
+            formData,
+          },
+        },
+      });
+    },
+    handler: async (request, reply) => {
+      try {
+        await Models.Tag.create(request.body.formData);
+      } catch (e) {
+        request.log.error(`Create tag error, ${e}`);
+        throw e;
+      }
 
-    reply.redirect(app.reverse('getAllTags'));
-    return reply;
+      reply.redirect(app.reverse('getAllTags'));
+      return reply;
+    },
   });
 
-  app.put('/tags/:id', { name: 'updateTag' }, async (request, reply) => {
-    const tag = await getTagById(request.params.id);
-    await tag.update(request.body.formData);
-    reply.redirect(app.reverse('getAllTags'));
-    return reply;
+  app.route({
+    method: 'PUT',
+    url: '/tags/:id',
+    name: 'updateTag',
+    preValidation: async (request) => {
+      const { formData } = request.body;
+      await validate({
+        ClassToValidate: TagSchema,
+        objectToValidate: formData,
+        renderData: {
+          url: 'tags/edit',
+          flashMessage: i18next.t('flash.tags.update.error'),
+          data: {
+            formData,
+          },
+        },
+      });
+    },
+    handler: async (request, reply) => {
+      const tag = await getTagById(request.params.id);
+      try {
+        await tag.update(request.body.formData);
+      } catch (e) {
+        request.log.error(`Cant update tag, ${e}`);
+        throw e;
+      }
+      reply.redirect(app.reverse('getAllTags'));
+      return reply;
+    },
   });
 
   app.delete('/tags/:id', { name: 'deleteTag' }, async (request, reply) => {

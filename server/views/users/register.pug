@@ -1,24 +1,17 @@
 extends ../layouts/application.pug
 
+block header
+  = t('views.users.new.caption')
+
 block content
-  +formFor(t('views.users.new.caption'))(class='simple_form_new_user' novalidate action=route('registerUser')  method='post')&attributes(attributes)
-    +input(formData, 'email', errors)(
-      class = "string email"
-      type='email'
-      placeholder= t('views.users.new.email'))
-    +input(formData, 'firstname', errors)(
-      type='firstname'
-      placeholder= t('views.users.new.firstname'))
-    +input(formData, 'lastname', errors)(
-      type='lastname'
-      placeholder= t('views.users.new.lastname'))
-    +input(formdata, 'password', errors)(
-      type='password'
-      placeholder= t('views.users.new.password'))
-    +input(formData, 'confirm', errors)(
-      type='password'
-      placeholder= t('views.users.new.confirm'))
-    +input(formData, 'role', errors)(
-      type='hidden')
-    +submit(value = t('views.users.new.submit'))
+  +formFor()(novalidate action=route('registerUser')  method='post')&attributes(attributes)
+    .form-row
+      +addInput('input', formData, 'email', t('views.email'), { errors , divClass: 'col-md-3 mb-3'})(type='email')
+      +addInput('input', formData, 'firstname', t('views.users.firstname'), { errors , divClass: 'col-md-4 mb-3'})
+      +addInput('input', formData, 'lastname', t('views.users.lastname'), { errors , divClass: 'col-md-5 mb-3'})
+    .form-row
+      +addInput('input', formData, 'password', t('views.password'), { errors , divClass: 'col-md-5 mb-3'})(type='password')
+      +addInput('input', formData, 'confirm', t('views.users.confirm'), { errors , divClass: 'col-md-5 mb-3'})(type='password')
+      +addInput('input', formData, 'role', t('views.users.role'), { errors , divClass: 'col-md-2 mb-3'})(readonly)
+    +submit(value= t('views.edit.submit'))
 

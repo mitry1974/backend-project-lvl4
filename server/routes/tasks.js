@@ -2,23 +2,13 @@ import i18next from 'i18next';
 import Sequelize from 'sequelize';
 import _ from 'lodash';
 import Models from '../db/models';
-import ValidationError from '../errors/ValidationError';
 import NotFoundError from '../errors/NotFoundError';
+import parseValidationErrors from '../lib/parseValidationErrors';
+import validate from './validation/validate';
+import CreateTaskSchema from './validation/CreateTaskSchema';
+import UpdateTaskSchema from './validation/UpdateTaskSchema';
 
 const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
-
-const parseErrors = (e) => {
-  const errorsData = e.errors.reduce((acc, error) => {
-    const { path, message } = error;
-    if (!acc[path]) {
-      acc[path] = '';
-    }
-    acc[path] += message;
-    return acc;
-  }, {});
-
-  return errorsData;
-};
 
 const getTasksAssociatedData = async () => {
   const data = {};
@@ -119,6 +109,22 @@ export default (app) => {
     method: 'POST',
     url: '/tasks',
     name: 'createTask',
+    preValidation: async (request) => {
+      const { formData } = request.body;
+      const data = await getTasksAssociatedData();
+      await validate({
+        ClassToValidate: CreateTaskSchema,
+        objectToValidate: formData,
+        renderData: {
+          url: 'tasks/new',
+          flashMessage: i18next.t('flash.tasks.create.error'),
+          data: {
+            formData,
+            ...data,
+          },
+        },
+      });
+    },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const { formData } = request.body;
@@ -127,13 +133,7 @@ export default (app) => {
       try {
         await task.save();
       } catch (e) {
-        if (e instanceof Sequelize.ValidationError) {
-          const errors = parseErrors(e);
-          const data = await getTasksAssociatedData();
-          request.flash('error', i18next.t('flash.tasks.create.error'));
-          reply.code(400).render('tasks/new', { errors, ...data });
-          return reply;
-        }
+        request.log.error(`Task create error, ${e}`);
         throw e;
       }
       request.flash('info', i18next.t('flash.tasks.create.success'));
@@ -146,12 +146,32 @@ export default (app) => {
     method: 'PUT',
     url: '/tasks/:id',
     name: 'updateTask',
+    preValidation: async (request) => {
+      const { formData } = request.body;
+      const data = await getTasksAssociatedData();
+      await validate({
+        ClassToValidate: UpdateTaskSchema,
+        objectToValidate: formData,
+        renderData: {
+          url: 'tasks/edit',
+          flashMessage: i18next.t('flash.tasks.update.error'),
+          data: {
+            formData,
+            email: request.params.email,
+            ...data,
+          },
+        },
+      });
+    },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const { formData } = request.body;
 
       const task = await findTaskById(request.params.id);
       try {
+        if (!formData.tagsId) {
+          formData.tagsId = [];
+        }
         await task.update(formData, { include: Models.Tag });
         await task.setTags(formData.tagsId);
 
@@ -159,13 +179,7 @@ export default (app) => {
         reply.redirect(app.reverse('getAllTasks'));
         return reply;
       } catch (e) {
-        if (e instanceof Sequelize.ValidationError) {
-          const errors = parseErrors(e);
-          const data = await getTasksAssociatedData();
-          request.flash('error', i18next.t('flash.tasks.create.error'));
-          reply.code(400).render('tasks/new', { errors, ...data });
-          return reply;
-        }
+        request.log.error(`Task update error, ${e}`);
         throw e;
       }
     },

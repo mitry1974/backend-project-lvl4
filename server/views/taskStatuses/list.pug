@@ -10,7 +10,7 @@ block content
   table.table.table-striped.table-bordered
     thead.thead-dark
       tr
-        th(scope=col)=t('views.taskStatuses.list.id')
+        th(scope=col)=t('views.id')
         th(scope=col)=t('views.taskStatuses.list.name')
         th
       tbody
@@ -25,7 +25,7 @@ block content
                     i.fas.fa-edit
                 li.list-inline-item
                   a(href=route('deleteTaskStatus',
-                    { id: ts.id }) data-confirm=t('views.taskStatuses.list.delete_confirmation') data-method="delete" rel="nofollow")
+                    { id: ts.id }) data-confirm=t('views.taskStatuses.list.deleteConfirmation') data-method="delete" rel="nofollow")
                     i.fas.fa-trash
 
 

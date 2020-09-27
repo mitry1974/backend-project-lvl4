@@ -17,11 +17,9 @@ export default (app) => {
       || (error instanceof AuthorizationError)
       || (error instanceof ValidationError)
       || (error instanceof NotFoundError)) {
-      error.proceed(request, reply);
-    } else {
-      request.log.error(`Main error handler: ${error}`);
-      rollbar.error(error, request);
-      reply.status(500);
+      return error.proceed(request, reply);
     }
+    request.log.error(`Global error handler error, ${error}`);
+    throw error;
   });
 };

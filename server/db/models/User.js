@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       defaultValue: '',
+      allowNull: false,
       unique: true,
     },
     firstname: {
@@ -25,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    confirm: {
+      type: DataTypes.VIRTUAL,
+      allowNull: false,
       defaultValue: '',
     },
     salt: {
@@ -32,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     role: {
       type: DataTypes.STRING,
+      allowNull: false,
       defaultValue: 'user',
     },
   }, {
@@ -53,8 +61,10 @@ module.exports = (sequelize, DataTypes) => {
 
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
+      console.log(`setSaltAndPassword, user: ${user.email}, password: ${user.password}`);
       user.salt = User.generateSalt(); // eslint-disable-line
       user.password = User.encryptPassword(user.password, user.salt); // eslint-disable-line
+      console.log(`setSaltAndPassword, db password: ${user.password}`);
     }
   };
 
@@ -62,7 +72,9 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(setSaltAndPassword);
 
   User.prototype.checkPassword = function checkPassword(password) {
-    return User.encryptPassword(password, this.salt) === this.password;
+    const encryptedPassword = User.encryptPassword(password, this.salt);
+    console.log(`checkPassword, current password = ${this.password}, password to check = ${encryptedPassword}`);
+    return encryptedPassword === this.password;
   };
 
   User.prototype.toString = function toString() {

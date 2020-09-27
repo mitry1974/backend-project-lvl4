@@ -1,15 +1,20 @@
 import { registerDecorator } from 'class-validator';
-import Models from '../../db/models';
 
-export function IsUserAlreadyExist(validationOptions, shouldBe) {
-  return function _IsUserAlreadyExist(object, propertyName) {
+export function IsEntityExist(model, property, shouldBe, validationOptions) {
+  return function _IsEntityAlreadyExist(object, propertyName) {
     registerDecorator({
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [],
       validator: {
-        validate: async (email) => shouldBe === !!await Models.User.findOne({ where: { email } }),
+        validate: async (value, args) => {
+          const entityToFind = await model.findOne({ where: { [property]: value } });
+          if (entityToFind && entityToFind.id === parseInt(args.object.id, 10)) {
+            return true;
+          }
+          return (shouldBe === !!entityToFind);
+        },
       },
     });
   };

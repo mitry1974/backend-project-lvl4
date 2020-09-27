@@ -1,23 +1,12 @@
 import i18next from 'i18next';
 import Models from '../db/models';
-import LoginSchema from './validation/LoginSchema';
-import validateData from './validation/helpers';
 import AuthenticationError from '../errors/AutheticationError';
-
-const doRedirect = (
-  {
-    route, message, app, request, reply,
-  },
-) => {
-  request.flash('info', i18next.t(message));
-  reply.redirect(app.reverse(route));
-  return reply;
-};
+import LoginSchema from './validation/LoginSchema';
+import validate from './validation/validate';
 
 export default (app) => {
   app.get('/session/new', { name: 'getLoginForm' }, async (request, reply) => {
-    const formData = new LoginSchema();
-    reply.render('session/login', { formData });
+    reply.render('session/login', { formData: { email: '', password: '' } });
     return reply;
   });
 
@@ -26,14 +15,15 @@ export default (app) => {
     url: '/session',
     name: 'login',
     preValidation: async (request) => {
-      await validateData({
+      const { formData } = request.body;
+      await validate({
         ClassToValidate: LoginSchema,
-        objectToValidate: request.body.formData,
+        objectToValidate: formData,
         renderData: {
           url: 'session/login',
           flashMessage: i18next.t('flash.session.create.error'),
           data: {
-            formData: request.body.formData,
+            formData,
           },
         },
       });
@@ -49,21 +39,18 @@ export default (app) => {
 
       request.session.set('userId', user.id);
 
-      return doRedirect(
-        {
-          route: 'root', message: 'flash.session.create.success', app, request, reply,
-        },
-      );
+      request.flash('info', i18next.t('flash.session.create.success'));
+      reply.redirect(app.reverse('root'));
+      return reply;
     },
   });
 
   app.delete('/session/logout', { name: 'logout' }, async (request, reply) => {
     request.session.set('userId', null);
     request.session.delete();
-    return doRedirect(
-      {
-        route: 'root', message: 'flash.session.delete.success', app, request, reply,
-      },
-    );
+
+    request.flash('info', i18next.t('flash.session.delete.success'));
+    reply.redirect(app.reverse('root'));
+    return reply;
   });
 };

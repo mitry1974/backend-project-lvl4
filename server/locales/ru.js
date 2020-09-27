@@ -11,7 +11,7 @@ export default {
       session: {
         create: {
           success: 'Вы залогинены',
-          error: 'Неправильный емейл или пароль',
+          error: 'Ошибка логина',
         },
         delete: {
           success: 'Вы разлогинены',
@@ -40,14 +40,18 @@ export default {
           success: 'Тэг создан',
           error: 'Ошибка создания тэга',
         },
+        update: {
+          success: 'Тэг изменён',
+          error: 'Ошибка изменения тэга',
+        },
       },
       users: {
-        not_found: 'Пользователь не найден',
-        create: {
-          error: 'Не удалось зарегистрировать',
+        notFound: 'Пользователь не найден',
+        register: {
+          error: 'Не удалось зарегистрировать нового пользователя',
           success: 'Пользователь успешно зарегистрирован',
         },
-        update_password: {
+        updatePassword: {
           error: 'Не удалось обновить пароль пользователя',
           success: 'Пароль пользователя успешно обновлен',
         },
@@ -113,20 +117,21 @@ export default {
       taskStatuses: {
         name: 'Название',
         errors: {
-          name_not_empty: 'Статус не может быть пустым',
+          nameNotEmpty: 'Статус не может быть пустым',
+          nameNotExist: 'Такой статус уже существует',
         },
         list: {
           caption: 'Статусы задач',
           name: 'Название',
-          delete_confirmation: 'Вы уверены?',
+          deleteConfirmation: 'Вы уверены?',
         },
-        new: {
+        create: {
           caption: 'Новый статус',
           name: 'Введите статус',
           submit: 'Создать',
         },
         edit: {
-          caption: 'Изменить',
+          caption: 'Изменить статус',
         },
       },
       session: {
@@ -137,10 +142,11 @@ export default {
       },
       tasks: {
         errors: {
-          name_not_empty: 'Название задачи не может быть пустым',
-          status_not_empty: 'Статус задачи не может быть пустым',
-          assigned_not_empty: 'Id исполнителя задачи не может быть пустым',
-          creator_not_empty: 'Id создателя задачи не может быть пустым',
+          nameNotEmpty: 'Название задачи не может быть пустым',
+          statusNotEmpty: 'Статус задачи не может быть пустым',
+          assignedNotEmpty: 'Id исполнителя задачи не может быть пустым',
+          creatorNotEmpty: 'Id создателя задачи не может быть пустым',
+          taskNameAlreadyExist: 'Название задачи должно быть уникально',
         },
         name: 'Название',
         description: 'Описание',
@@ -165,7 +171,7 @@ export default {
         name: 'Тэг',
         list: {
           caption: 'Список тэгов',
-          delete_confirmation: 'Вы уверены что хотите удалить тэг?',
+          deleteConfirmation: 'Вы уверены что хотите удалить тэг?',
         },
         edit: {
           caption: 'Редактировать тэг',
@@ -173,16 +179,20 @@ export default {
         create: {
           caption: 'Создать тэг',
         },
+        errors: {
+          tagAlreadyExists: 'Тэг с таким значением уже существует',
+          tagNotEmpty: 'Значение тэга не может быть пустым',
+        },
       },
       users: {
         errors: {
-          email_already_exists: 'Пользователь уже зарегистрирован',
-          email_not_empty: 'Email не может быть пустым',
-          email_not_email: 'Введите правильный e-mail адрес',
-          old_password_not_empty: 'Текущий пароль не может быть пустым',
-          password_not_empty: 'Пароль не может быть пустым',
-          password_confirmation_not_empty: 'Подтверждение пароля не может быть пустым',
-          password_confirmation_the_same_as_password: 'Подтверждение пароля должно совпадать с паролем',
+          emailAlreadyExists: 'Пользователь уже зарегистрирован',
+          emailNotEmpty: 'Email не может быть пустым',
+          emailNotEmail: 'Введите правильный e-mail адрес',
+          oldPasswordNotEmpty: 'Текущий пароль не может быть пустым',
+          passwordNotEmpty: 'Пароль не может быть пустым',
+          passwordConfirmationNotEmpty: 'Подтверждение пароля не может быть пустым',
+          passwordConfirmationTheSameAsPassword: 'Подтверждение пароля должно совпадать с паролем',
         },
         firstname: 'Имя',
         lastname: 'Фамилия',
@@ -193,7 +203,7 @@ export default {
           delete: 'Удалить',
           add: 'Добавить',
           edit: 'Редактировать',
-          delete_confirmation: 'Вы уверены?',
+          deleteConfirmation: 'Вы уверены?',
         },
         new: {
           caption: 'Новый пользователь',
@@ -202,11 +212,11 @@ export default {
         },
         edit: {
           caption: 'Редактировать',
-          change_password: 'Изменить пароль',
+          updatePassword: 'Изменить пароль',
         },
-        change_password: {
+        changePassword: {
           caption: 'Изменить пароль',
-          old_password: 'Текущий пароль',
+          oldPassword: 'Текущий пароль',
         },
       },
       welcome: {

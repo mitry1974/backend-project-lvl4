@@ -6,8 +6,12 @@ export default async function validateAndProcessErrors({
   ClassToValidate, objectToValidate, renderData,
 }) {
   const formData = plainToClass(ClassToValidate, objectToValidate);
-  const errors = await validate(formData);
-  if (errors.length !== 0) {
+  const rawErrors = await validate(formData);
+  if (rawErrors.length !== 0) {
+    const errors = {};
+    rawErrors.forEach((error) => {
+      errors[error.property] = Object.values(error.constraints).join(', ');
+    });
     throw new ValidationError({
       message: `Validating ${JSON.stringify(formData)}, errors: ${JSON.stringify(errors)}}`,
       errors,
