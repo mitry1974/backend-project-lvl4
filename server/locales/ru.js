@@ -102,6 +102,7 @@ export default {
         deleteTask: 'Удалить задачу',
         addTask: 'Добавить задачу',
         editTask: 'Редактировать задачу',
+        viewTask: 'Просмотр задачи',
         deleteTag: 'Удалить тэг',
         addTag: 'Добавить тэг',
         editTag: 'Редактировать тэг',
@@ -156,6 +157,7 @@ export default {
         tags: 'Тэги',
         createdAt: 'Дата создания',
         showSelfTasks: 'Только мои задачи',
+        deleteConfirmation: 'Вы уверены, что хотите удалить задачу?',
         list: {
           caption: 'Задачи',
         },

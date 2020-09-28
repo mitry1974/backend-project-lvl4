@@ -1,9 +1,8 @@
 import i18next from 'i18next';
 
 export default class StatusCodeError extends Error {
-  constructor(message, statusCode, redirectPath) {
+  constructor(message, redirectPath) {
     super(i18next.t(message));
-    this.statusCode = statusCode;
     this.redirectPath = redirectPath;
   }
 

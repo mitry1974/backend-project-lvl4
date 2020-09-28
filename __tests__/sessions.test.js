@@ -22,8 +22,7 @@ describe('test sessions routes', () => {
       password: '123456',
     };
     const { status } = await login({ app, formData: loginData });
-
-    expect(status).toBe(401);
+    expect(status).toBe(302);
   });
 
   test('Test login with invalid email', async () => {
@@ -32,7 +31,6 @@ describe('test sessions routes', () => {
       password: '123456',
     };
     const { status } = await login({ app, formData: loginData });
-
     expect(status).toBe(400);
   });
 
@@ -52,6 +50,9 @@ describe('test sessions routes', () => {
     expect(cookie.session).toBeFalsy();
   });
 
-  describe('Test logout route', () => {
+  test('Test logout route', async () => {
+    const getResponse = await request(app.server)
+      .get('/session/new');
+    expect(getResponse.status).toBe(200);
   });
 });

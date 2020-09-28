@@ -15,28 +15,28 @@ const testLoginData = {
 
 const testTaskData = {
   task1: {
-    id: 1,
+    id: 0,
     name: 'Task1',
     description: 'Description of that task',
     statusId: 1,
     creatorId: 1,
-    assignedToId: 2,
+    assignedToId: 0,
   },
   task2: {
-    id: 2,
+    id: 1,
     name: 'Task1',
     description: 'Description of second task',
     statusId: 1,
     creatorId: 1,
-    assignedToId: 4,
+    assignedToId: 1,
   },
   task3: {
-    id: 3,
+    id: 2,
     name: 'Task3',
     description: 'Description of third task',
     statusId: 1,
     creatorId: 1,
-    assignedToId: 5,
+    assignedToId: 2,
   },
 };
 

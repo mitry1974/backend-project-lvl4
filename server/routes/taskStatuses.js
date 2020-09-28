@@ -9,6 +9,7 @@ export default (app) => {
     method: 'GET',
     url: '/taskStatuses/new',
     name: 'getNewTaskStatusForm',
+    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       reply.render('/taskStatuses/new', { formData: { name: '' } });
       return reply;
@@ -19,6 +20,7 @@ export default (app) => {
     method: 'GET',
     url: '/taskStatuses/:id/edit',
     name: 'getEditTaskStatusForm',
+    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
       if (!ts) {

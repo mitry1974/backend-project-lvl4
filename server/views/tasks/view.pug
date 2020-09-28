@@ -5,7 +5,7 @@ block nav-items
 
 block content
   - const caption = t('views.tasks.view.caption')
-  +formFor(caption)(novalidate action=route('updateTask', { id: formData.id }) method='post')&attributes(attributes)
+  +formFor(caption)(novalidate action=route('getAllTasks' ) method='get')&attributes(attributes)
     .form-row
       +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-2 mb-3'})(readonly)
       +addInput('input', formData, 'createdAt', t('views.tasks.createdAt'), { errors, divClass: 'col-md-4 mb-3' })(value=formData.createdAt.toLocaleString() readonly)

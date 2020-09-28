@@ -144,7 +144,7 @@ export default (app) => {
 
   app.route({
     method: 'PUT',
-    url: '/tasks/:id',
+    url: '/tasks/:id/:email',
     name: 'updateTask',
     preValidation: async (request) => {
       const { formData } = request.body;
@@ -187,9 +187,9 @@ export default (app) => {
 
   app.route({
     method: 'DELETE',
-    url: '/task:id',
+    url: '/task:id/:email',
     name: 'deleteTask',
-    preHandler: app.auth([app.verifyLoggedIn]),
+    preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const task = await findTaskById(request.params.id);
       if (!task) {

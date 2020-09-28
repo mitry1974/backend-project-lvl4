@@ -19,7 +19,9 @@ export default (app) => {
       || (error instanceof NotFoundError)) {
       return error.proceed(request, reply);
     }
-    request.log.error(`Global error handler error, ${error}`);
+    const logMessage = `Global error handler error, ${error}`;
+    request.log.error(logMessage);
+    rollbar.log(logMessage);
     throw error;
   });
 };

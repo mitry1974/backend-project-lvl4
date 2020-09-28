@@ -12,22 +12,35 @@ export default (app) => {
     return reply;
   });
 
-  app.get('/tags/createTag', { name: 'getNewTagForm' }, async (request, reply) => {
-    const formData = Models.Tag.build();
-    reply.render('tags/new', { formData });
-    return reply;
+  app.route({
+    method: 'GET',
+    url: '/tags/createTag',
+    name: 'getNewTagForm',
+    preHandler: app.auth([app.verifyLoggedIn]),
+    handler: async (request, reply) => {
+      const formData = Models.Tag.build();
+      reply.render('tags/new', { formData });
+      return reply;
+    },
   });
 
-  app.get('/tags/:id/editTag', { name: 'getEditTagForm' }, async (request, reply) => {
-    const formData = await getTagById(request.params.id);
-    reply.render('tags/edit', { formData });
-    return reply;
+  app.route({
+    method: 'GET',
+    url: '/tags/:id/editTag',
+    name: 'getEditTagForm',
+    preHandler: app.auth([app.verifyLoggedIn]),
+    handler: async (request, reply) => {
+      const formData = await getTagById(request.params.id);
+      reply.render('tags/edit', { formData });
+      return reply;
+    },
   });
 
   app.route({
     method: 'POST',
     url: '/tags',
     name: 'createTag',
+    preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
       await validate({
@@ -59,6 +72,7 @@ export default (app) => {
     method: 'PUT',
     url: '/tags/:id',
     name: 'updateTag',
+    preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
       await validate({
@@ -86,16 +100,22 @@ export default (app) => {
     },
   });
 
-  app.delete('/tags/:id', { name: 'deleteTag' }, async (request, reply) => {
-    const tag = await getTagById(request.params.id);
-    try {
-      await tag.destroy();
-    } catch (e) {
-      request.flash('error', i18next.t('flash.tags.delete.error'));
+  app.route({
+    method: 'DELETE',
+    url: '/tags/:id',
+    name: 'deleteTag',
+    preHandler: app.auth([app.verifyLoggedIn]),
+    handler: async (request, reply) => {
+      const tag = await getTagById(request.params.id);
+      try {
+        await tag.destroy();
+      } catch (e) {
+        request.flash('error', i18next.t('flash.tags.delete.error'));
+        reply.redirect(app.reverse('getAllTags'));
+      }
+      request.flash('info', i18next.t('flash.tags.delete.success'));
       reply.redirect(app.reverse('getAllTags'));
-    }
-    request.flash('info', i18next.t('flash.tags.delete.success'));
-    reply.redirect(app.reverse('getAllTags'));
-    return reply;
+      return reply;
+    },
   });
 };

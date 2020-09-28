@@ -86,16 +86,22 @@ block content
           td
             ul.list-inline.m-0
               li.list-inline-item
+                a(href=route('getTask', { id: task.id })
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title=t('views.tooltips.viewTask'))
+                  i.fas.fa-eye
+              li.list-inline-item
                 a(href=route('getEditTaskForm', { id: task.id })
                   data-toggle="tooltip"
                   data-placement="top"
                   title=t('views.tooltips.editTask'))
                   i.fas.fa-edit
               li.list-inline-item
-                a(href=route('deleteTask', { id: task.id })
+                a(href=route('deleteTask', { id: task.id, email: task.creator.email })
                   data-toggle="tooltip"
                   data-placement="top"
                   title=t('views.tooltips.deleteTask')
-                  data-confirm=t('views.users.list.deleteConfirmation')
+                  data-confirm=t('views.tasks.deleteConfirmation')
                   data-method="delete" rel="nofollow")
                   i.fas.fa-trash

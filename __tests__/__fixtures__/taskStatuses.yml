@@ -1,10 +1,13 @@
 fixtures:
   - model: TaskStatus
     data:
+      "id": "0"
       "name": "status1"
   - model: TaskStatus
     data:
+      "id": "1"
       "name": "status2"
   - model: TaskStatus
     data:
+      "id": "2"
       "name": "status3"

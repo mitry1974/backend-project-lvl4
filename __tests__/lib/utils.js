@@ -17,11 +17,14 @@ const loadFixtures = async () => {
     await Models.TaskStatus.sync({ force: true });
     await Models.Tag.sync({ force: true });
     await Models.Task.sync({ force: true });
-    const fixturesPath = path.resolve(__dirname, '../__fixtures__');
+    await Models.TaskTags.sync({ force: true });
 
-    await fixtures.loadFile(path.resolve(fixturesPath, '*.yml'), Models);
+    const fixturesPath = path.resolve(__dirname, '../__fixtures__');
+    const fixturesFiles = ['users.yml', 'tags.yml', 'taskStatuses.yml', 'tasks.yml']
+      .map((filename) => path.resolve(fixturesPath, filename));
+    await fixtures.loadFiles(fixturesFiles, Models);
   } catch (err) {
-    console.log(`error!!! ${err}, Load fixtures error, clear database`);
+    console.log(`Load fixtures error - ${err.message}`);
     throw err;
   }
 };

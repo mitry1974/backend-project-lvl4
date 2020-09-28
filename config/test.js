@@ -3,7 +3,7 @@ module.exports = {
     dialect: 'sqlite',
     storage: ':memory:',
     operatorsAliases: 1,
-    logging: false,
+    logging: false, // console.log,
   },
   SESSION_KEY: process.env.SESSION_KEY,
   ROLLBAR_KEY: process.env.ROLLBAR_KEY,

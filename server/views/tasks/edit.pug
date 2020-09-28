@@ -7,7 +7,7 @@ block header
   = t('views.tasks.edit.caption')
 
 block content
-  +formFor()(novalidate action=route('updateTask', { id: formData.id }) method='post' readonly)&attributes(attributes)
+  +formFor()(novalidate action=route('updateTask', { id: formData.id, email: formData.creator.email }) method='post' readonly)&attributes(attributes)
     .form-row
       +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-2 mb-3'})(readonly)
       +addInput('input', formData, 'createdAt', t('views.tasks.createdAt'), { errors, divClass: 'col-md-4 mb-3' })(

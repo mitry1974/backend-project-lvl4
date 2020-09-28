@@ -61,10 +61,8 @@ module.exports = (sequelize, DataTypes) => {
 
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      console.log(`setSaltAndPassword, user: ${user.email}, password: ${user.password}`);
       user.salt = User.generateSalt(); // eslint-disable-line
       user.password = User.encryptPassword(user.password, user.salt); // eslint-disable-line
-      console.log(`setSaltAndPassword, db password: ${user.password}`);
     }
   };
 
@@ -73,7 +71,6 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.checkPassword = function checkPassword(password) {
     const encryptedPassword = User.encryptPassword(password, this.salt);
-    console.log(`checkPassword, current password = ${this.password}, password to check = ${encryptedPassword}`);
     return encryptedPassword === this.password;
   };
 

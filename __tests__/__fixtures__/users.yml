@@ -1,6 +1,7 @@
 fixtures:
   - model: User
     data:
+      "id": "0"
       "firstname": "User1 firstname"
       "lastname": "User1 lastname"
       "email": "user1@fakedomain.com"
@@ -8,6 +9,7 @@ fixtures:
       "role": "user"
   - model: User
     data:
+      "id": "1"
       "firstname": "User2 firstname"
       "lastname": "User2 lastname"
       "email": "user2@fakedomain.com"
@@ -15,6 +17,7 @@ fixtures:
       "role": "user"
   - model: User
     data:
+      "id": "2"
       "firstname": "Admin firstname"
       "lastname": "Admin lastname"
       "email": "admin@fakedomain.com"

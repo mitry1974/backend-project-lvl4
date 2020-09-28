@@ -33,10 +33,7 @@ export default (app) => {
     method: 'GET',
     url: '/users/:email/edit',
     name: 'getEditUserForm',
-    preHandler: app.auth([
-      app.verifyLoggedIn,
-      app.verifyUserSelf,
-    ], { relation: 'and' }),
+    preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const { email } = request.params;
       const formData = await findUserByEmail(email);
@@ -66,7 +63,7 @@ export default (app) => {
     method: 'GET',
     url: '/users/:email',
     name: 'getUser',
-    preHandler: app.auth([app.verifyLoggedIn]),
+    preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
       reply.render('/users/view', { formData: user });
@@ -78,7 +75,6 @@ export default (app) => {
     method: 'GET',
     url: '/users',
     name: 'getAllUsers',
-    preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       // request.log.info('GET /users');
       const users = await Models.User.findAll();
