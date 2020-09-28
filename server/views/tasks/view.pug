@@ -1,5 +1,8 @@
 extends ../layouts/application.pug
 
+block nav-items
+  +tasksNavItems
+
 block content
   - const caption = t('views.tasks.view.caption')
   +formFor(caption)(novalidate action=route('updateTask', { id: formData.id }) method='post')&attributes(attributes)
