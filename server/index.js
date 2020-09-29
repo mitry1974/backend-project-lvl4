@@ -3,7 +3,7 @@ import fastify from 'fastify';
 import i18next from 'i18next';
 import pug from 'pug';
 import path from 'path';
-import config from 'config';
+import dbconfig from '../dbconfig';
 import fastifyFlash from 'fastify-flash';
 import fastifyAuth from 'fastify-auth';
 import fastifySession from 'fastify-secure-session';
@@ -32,7 +32,7 @@ const registerPlugins = async (app) => {
   app.register(fastifyFormbody);
 
   app.register(fastifySession, {
-    secret: app.config.get('SESSION_KEY'),
+    secret: process.env.SESSION_KEY,
     cookie: {
       path: '/',
     },
@@ -46,12 +46,7 @@ const registerPlugins = async (app) => {
   app.register(fastifyFlash);
 
   let initData = null;
-  if (app.config.db.use_env_variable) {
-    initData = process.env[app.config.db.use_env_variable];
-  } else {
-    initData = app.config.db;
-  }
-  const sequelize = new Sequelize(initData);
+  const sequelize = new Sequelize(dbconfig);
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
   app.addHook('onClose', async () => {
@@ -138,8 +133,6 @@ export default async () => {
   // const app = fastify({ logger });
   const app = fastify();
   app.decorate('i18n', i18next);
-
-  app.decorate('config', config);
 
   setupViews(app);
   await registerPlugins(app);

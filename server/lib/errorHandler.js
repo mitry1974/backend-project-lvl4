@@ -7,7 +7,7 @@ import NotFoundError from '../errors/NotFoundError';
 export default (app) => {
   const rollbar = new Rollbar(
     {
-      accessToken: app.config.get('ROLLBAR_KEY'),
+      accessToken: process.env.ROLLBAR_KEY,
       captureUncaught: true,
       captureUnhandledRejections: true,
     },

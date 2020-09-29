@@ -5,7 +5,7 @@ db-setup:
 	make migrations && make seeds
 
 freshdb:
-	rm -rf ./db.sqlite && make db-setup
+	rm -rf ./db.sqlite && NODE_ENV=development make db-setup
 
 build:
 	npm run build
