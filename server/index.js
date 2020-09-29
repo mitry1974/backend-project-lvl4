@@ -3,7 +3,6 @@ import fastify from 'fastify';
 import i18next from 'i18next';
 import pug from 'pug';
 import path from 'path';
-import dbconfig from '../dbconfig';
 import fastifyFlash from 'fastify-flash';
 import fastifyAuth from 'fastify-auth';
 import fastifySession from 'fastify-secure-session';
@@ -15,6 +14,7 @@ import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
 
 import webpackConfig from '../webpack.config';
+import dbconfig from '../dbconfig';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import Models from './db/models';
@@ -45,7 +45,6 @@ const registerPlugins = async (app) => {
 
   app.register(fastifyFlash);
 
-  let initData = null;
   const sequelize = new Sequelize(dbconfig);
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
