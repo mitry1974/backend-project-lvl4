@@ -13,17 +13,21 @@ const getAllTaskStatuses = async ({ app }) => {
   return { getAllResponse };
 };
 
-const updateTaskStatus = async ({ app, id, formData }) => {
+const updateTaskStatus = async ({
+  app, id, formData, cookie,
+}) => {
   const updateResponse = await request(app.server)
     .put(app.reverse('updateTaskStatus', { id }))
+    .set('cookie', cookie)
     .send({ formData });
 
   return { updateResponse };
 };
 
-const deleteTaskStatus = async ({ app, id }) => {
+const deleteTaskStatus = async ({ app, id, cookie }) => {
   const deleteResponse = await request(app.server)
-    .delete(app.reverse('deleteTaskStatus', { id }));
+    .delete(app.reverse('deleteTaskStatus', { id }))
+    .set('cookie', cookie);
   return { deleteResponse };
 };
 

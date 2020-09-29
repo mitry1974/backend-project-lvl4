@@ -129,14 +129,14 @@ const setupLocalization = () => i18next.init({
 
 export default async () => {
   await setupLocalization();
-  const app = fastify({
-    logger: {
-      level: 'debug',
-      prettyPrint: !isProduction,
-      timestamp: !isDevelopment,
-      base: null,
-    },
-  });
+  // const logger = {
+  //   level: 'info',
+  //   prettyPrint: !isProduction,
+  //   timestamp: !isDevelopment,
+  //   base: null,
+  // };
+  // const app = fastify({ logger });
+  const app = fastify();
   app.decorate('i18n', i18next);
 
   app.decorate('config', config);

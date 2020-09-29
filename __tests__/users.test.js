@@ -39,7 +39,7 @@ describe('test users', () => {
   describe('http', () => {
     test('Get new user page', async () => {
       const res = await request(app.server)
-        .get('/users/new');
+        .get(app.reverse('getRegisterUserForm'));
       expect(res).toHaveHTTPStatus(200);
     });
   });
@@ -69,84 +69,32 @@ describe('test users', () => {
   });
 
   describe('Read user tests', () => {
-    test('Get all users not logged in, should fail', async () => {
+    test('Get all users', async () => {
       const { getResponse } = await getAllUsers({ app, cookie: '' });
-      expect(getResponse.status).toBe(403);
+      expect(getResponse.status).toBe(200);
     });
 
-    const getAllUsersTestData = [
-      {
-        loginData: testLoginData.user1,
-        statusCode: 403,
-      },
-      {
-        loginData: testLoginData.admin,
-        statusCode: 200,
-      },
-    ];
-
-    test.each(getAllUsersTestData)(' test getAllUsers', async ({ loginData, statusCode }) => {
-      const { cookie } = await login({ app, formData: loginData });
-
-      const { getResponse } = await getAllUsers({ app, cookie });
-      expect(getResponse.status).toBe(statusCode);
-    });
-
-    test('Get user data not logged in, should fail', async () => {
+    test('Get user data', async () => {
       const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user1.email });
-      expect(getResponse.status).toBe(403);
-    });
-
-    const getUserTestData = [
-      {
-        loginData: testLoginData.admin,
-        emailToGet: 'wrong@email',
-        statusCode: 404,
-      },
-      {
-        loginData: testLoginData.admin,
-        emailToGet: 'unknown@email.com',
-        statusCode: 404,
-      },
-      {
-        loginData: testLoginData.user1,
-        emailToGet: testLoginData.user2.email,
-        statusCode: 403,
-      },
-      {
-        loginData: testLoginData.admin,
-        emailToGet: testLoginData.user1.email,
-        statusCode: 200,
-      },
-      {
-        loginData: testLoginData.user1,
-        emailToGet: testLoginData.user1.email,
-        statusCode: 200,
-      },
-    ];
-
-    test.each(getUserTestData)('Test getUser api with different data', async ({ loginData, emailToGet, statusCode }) => {
-      const { cookie } = await login({ app, formData: loginData });
-      const { getResponse } = await getUser({ app, email: emailToGet, cookie });
-      expect(getResponse.status).toBe(statusCode);
+      expect(getResponse.status).toBe(302);
     });
   });
 
   describe('Update user tests', () => {
     const testUpdateSuccessData = [
       {
+        loginData: testLoginData.admin,
+        emailToUpdate: testLoginData.user1.email,
+        newData: generateFakeUserRegisterData({ role: 'user' }),
+      },
+      {
+        loginData: testLoginData.admin,
         emailToUpdate: testLoginData.admin.email,
-        loginData: testLoginData.admin,
         newData: generateFakeUserRegisterData({ role: 'admin' }),
       },
       {
-        emailToUpdate: testLoginData.user1.email,
-        loginData: testLoginData.user1,
-        newData: generateFakeUserRegisterData({ role: 'admin' }),
-      },
-      {
-        emailToUpdate: testLoginData.user1.email,
-        loginData: testLoginData.admin,
+        loginData: testLoginData.user2,
+        emailToUpdate: testLoginData.user2.email,
         newData: generateFakeUserRegisterData({ role: 'user' }),
       },
     ];
@@ -175,8 +123,8 @@ describe('test users', () => {
         emailWhoDelete: testLoginData.admin.email,
         emailToDelete: testLoginData.user1.email,
       }, {
-        emailWhoDelete: testLoginData.user1.email,
-        emailToDelete: testLoginData.user1.email,
+        emailWhoDelete: testLoginData.user2.email,
+        emailToDelete: testLoginData.user2.email,
       },
     ];
 
@@ -192,17 +140,17 @@ describe('test users', () => {
     test('Delete by not logged in user, should fail', async () => {
       const emailToDelete = testLoginData.admin.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
-      expect(deleteResponse.status).toBe(403);
+      expect(deleteResponse.status).toBe(302);
       const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 
-    test('Delete with logged in user, user can\'t delete foreign user, fail', async () => {
+    test('Delete with logged in user, user cant delete foreign user, fail', async () => {
       const { cookie } = await login({ app, formData: testLoginData.user1 });
 
       const emailToDelete = testLoginData.admin.email;
       const { deleteResponse } = await deleteUser({ app, email: emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(403);
+      expect(deleteResponse.status).toBe(302);
       const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });

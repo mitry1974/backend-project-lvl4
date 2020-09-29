@@ -5,7 +5,9 @@ block header
 
 block content
   +formFor()(novalidate action=route('updateUser', { email }) method='post')&attributes(attributes)
-    +addInput('input', formData, 'email', t('views.email'), { errors, divClass: 'mb-3' })(type="email")
+    .form-row
+      +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-1 mb-3' })(readonly)
+      +addInput('input', formData, 'email', t('views.email'), { errors, divClass: 'col-md-11 mb-3' })(type="email")
     +addInput('input', formData, 'firstname', t('views.users.firstname'), { errors, divClass: 'mb-3' })
     +addInput('input', formData, 'lastname', t('views.users.lastname'), { errors, divClass: 'mb-3' })
     +addInput('input', formData, 'role', t('views.users.role'), { errors, divClass: 'mb-3' })(readonly)

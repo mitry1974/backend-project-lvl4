@@ -19,10 +19,8 @@ const loadFixtures = async () => {
     await Models.Task.sync({ force: true });
     await Models.TaskTags.sync({ force: true });
 
-    const fixturesPath = path.resolve(__dirname, '../__fixtures__');
-    const fixturesFiles = ['users.yml', 'tags.yml', 'taskStatuses.yml', 'tasks.yml']
-      .map((filename) => path.resolve(fixturesPath, filename));
-    await fixtures.loadFiles(fixturesFiles, Models);
+    const fixturesFilename = path.resolve(__dirname, '../__fixtures__/fixtures.yml');
+    await fixtures.loadFile(fixturesFilename, Models);
   } catch (err) {
     console.log(`Load fixtures error - ${err.message}`);
     throw err;

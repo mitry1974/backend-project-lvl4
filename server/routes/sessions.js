@@ -32,6 +32,7 @@ export default (app) => {
       const { formData } = request.body;
       const user = await Models.User.findOne({ where: { email: formData.email } });
       if (!user || !(await user.checkPassword(formData.password))) {
+        request.log.error(`login with email ${formData.email} failed`);
         throw new AuthenticationError({
           message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,
         });
@@ -40,6 +41,7 @@ export default (app) => {
       request.session.set('userId', user.id);
 
       request.flash('info', i18next.t('flash.session.create.success'));
+      request.log.info(`login with email ${formData.email} succeeded`);
       reply.redirect(app.reverse('root'));
       return reply;
     },
