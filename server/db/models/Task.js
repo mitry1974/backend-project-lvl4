@@ -1,15 +1,15 @@
 const { Model } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-  class Task extends Model {
-    static associate(models) {
-      this.belongsTo(models.TaskStatus, { foreignKey: 'statusId', as: 'status' });
-      this.belongsTo(models.User, { foreignKey: 'creatorId', as: 'creator' });
-      this.belongsTo(models.User, { foreignKey: 'assignedToId', as: 'assignedTo' });
-      this.belongsToMany(models.Tag, { through: 'TaskTags', as: 'tags', foreignKey: 'taskId' });
-    }
+class Task extends Model {
+  static associate(models) {
+    this.belongsTo(models.TaskStatus, { foreignKey: 'statusId', as: 'status' });
+    this.belongsTo(models.User, { foreignKey: 'creatorId', as: 'creator' });
+    this.belongsTo(models.User, { foreignKey: 'assignedToId', as: 'assignedTo' });
+    this.belongsToMany(models.Tag, { through: 'TaskTags', as: 'tags', foreignKey: 'taskId' });
   }
+}
 
+module.exports = (sequelize, DataTypes) => {
   Task.init({
     name: {
       type: DataTypes.STRING,
