@@ -1,4 +1,3 @@
-const i18next = require('i18next');
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {

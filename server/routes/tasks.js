@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import _ from 'lodash';
 import Models from '../db/models';
 import NotFoundError from '../errors/NotFoundError';
 import validate from './validation/validate';
