@@ -123,14 +123,14 @@ const setupLocalization = () => i18next.init({
 
 export default async () => {
   await setupLocalization();
-  // const logger = {
-  //   level: 'info',
-  //   prettyPrint: !isProduction,
-  //   timestamp: !isDevelopment,
-  //   base: null,
-  // };
-  // const app = fastify({ logger });
-  const app = fastify();
+  const logger = {
+    level: 'info',
+    prettyPrint: !isProduction,
+    timestamp: !isDevelopment,
+    base: null,
+  };
+  const app = fastify({ logger });
+  // const app = fastify();
   app.decorate('i18n', i18next);
 
   setupViews(app);
@@ -138,7 +138,7 @@ export default async () => {
   setupStaticAssets(app);
   setupHooks(app);
 
-  setupErrorHandler(app);
+  // setupErrorHandler(app);
 
   await app.ready();
   return app;
