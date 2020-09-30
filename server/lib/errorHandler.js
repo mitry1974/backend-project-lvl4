@@ -1,8 +1,8 @@
 import Rollbar from 'rollbar';
-import AuthorizationError from '../errors/AuthorizationError';
-import ValidationError from '../errors/ValidationError';
-import AutheticationError from '../errors/AutheticationError';
-import NotFoundError from '../errors/NotFoundError';
+import AuthorizationError from '../errors/AuthorizationError.js';
+import ValidationError from '../errors/ValidationError.js';
+import AutheticationError from '../errors/AutheticationError.js';
+import NotFoundError from '../errors/NotFoundError.js';
 
 export default (app) => {
   const rollbar = new Rollbar(

@@ -1,10 +1,14 @@
-const webpack = require('webpack');
-const path = require('path');
-const autoprefixer = require('autoprefixer');
+import webpack from 'webpack';
+import path from 'path';
+import autoprefixer from 'autoprefixer';
+import { dirname  } from 'path';
+import { fileURLToPath  } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const mode = process.env.NODE_ENV || 'development';
 
-module.exports = {
+export default {
   mode,
   devtool: 'source-map',
   entry: path.join(__dirname, 'client', 'index.js'),

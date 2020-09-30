@@ -1,4 +1,8 @@
-const path = require('path');
+import path from 'path';
+import { dirname  } from 'path';
+import { fileURLToPath  } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const env = process.env.NODE_ENV || 'production';
 const storage = path.join(__dirname, './db.sqlite');
@@ -22,4 +26,4 @@ const config = {
   },
 };
 const dbconfig = config[env];
-module.exports = dbconfig;
+export default dbconfig;

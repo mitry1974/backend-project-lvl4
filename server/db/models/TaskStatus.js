@@ -1,20 +1,11 @@
-const { Model } = require('sequelize');
-
-module.exports = (sequelize, DataTypes) => {
-  class TaskStatus extends Model {
-    // static associate(models) {
-    //   // define association here
-    // }
-  }
-
-  TaskStatus.init({
+export default (sequelize, DataTypes) => {
+  const TaskStatus = sequelize.define('TaskStatus', {
     name: {
       type: DataTypes.STRING,
       unique: true,
       allowNull: false,
     },
   }, {
-    sequelize,
     modelName: 'TaskStatus',
   });
 

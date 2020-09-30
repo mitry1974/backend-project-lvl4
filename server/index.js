@@ -12,24 +12,29 @@ import fastifyReverse from 'fastify-reverse-routes';
 import fastifyPointOfView from 'point-of-view';
 import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
+import { dirname  } from 'path';
+import { fileURLToPath  } from 'url';
 
-import webpackConfig from '../webpack.config';
-import dbconfig from '../dbconfig';
-import getHelpers from './helpers';
-import ru from './locales/ru';
-import Models from './db/models';
-import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
-import setupErrorHandler from './lib/errorHandler';
+import webpackConfig from '../webpack.config.js';
+import dbconfig from '../dbconfig.js';
+import getHelpers from './helpers/index.js';
+import ru from './locales/ru.js';
+import Models from './db/models/index.js';
+import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth.js';
+import setupErrorHandler from './lib/errorHandler.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
+
 const registerPlugins = async (app) => {
-  app.register(fastifyMethodOverride);
   // app.register(fastifyErrorPage);
   app.register(fastifyReverse);
   app.register(fastifyFormbody);
+  app.register(fastifyMethodOverride);
 
   app.register(fastifySession, {
     secret: process.env.SESSION_KEY,

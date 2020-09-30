@@ -1,15 +1,7 @@
-const crypto = require('crypto');
-const { Model } = require('sequelize');
+import crypto from 'crypto';
 
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate(models) {
-      this.hasMany(models.Task, { foreignKey: 'creatorId' });
-      this.hasOne(models.Task, { foreignKey: 'assignedToId' });
-    }
-  }
-
-  User.init({
+export default (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
       defaultValue: '',
@@ -46,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+
+  User.associate = (models) => {
+    this.hasMany(models.Task, { foreignKey: 'creatorId' });
+    this.hasOne(models.Task, { foreignKey: 'assignedToId' });
+  };
 
   User.generateSalt = function generateSalt() {
     return crypto.randomBytes(16).toString('base64');

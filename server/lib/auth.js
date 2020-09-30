@@ -1,4 +1,4 @@
-import AuthorizationError from '../errors/AuthorizationError';
+import AuthorizationError from '../errors/AuthorizationError.js';
 
 export async function verifyAdmin(request) {
   if (request.currentUser.role !== 'admin') {
