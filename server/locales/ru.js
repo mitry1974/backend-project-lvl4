@@ -119,7 +119,7 @@ export default {
         name: 'Название',
         errors: {
           nameNotEmpty: 'Статус не может быть пустым',
-          nameNotExist: 'Такой статус уже существует',
+          nameExists: 'Такой статус уже существует',
         },
         list: {
           caption: 'Статусы задач',
@@ -147,7 +147,7 @@ export default {
           statusNotEmpty: 'Статус задачи не может быть пустым',
           assignedNotEmpty: 'Id исполнителя задачи не может быть пустым',
           creatorNotEmpty: 'Id создателя задачи не может быть пустым',
-          taskNameAlreadyExist: 'Название задачи должно быть уникально',
+          nameExist: 'Название задачи должно быть уникально',
         },
         name: 'Название',
         description: 'Описание',
