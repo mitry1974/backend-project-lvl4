@@ -1,9 +1,7 @@
 import i18next from 'i18next';
-import Models from '../db/models';
-import NotFoundError from '../errors/NotFoundError';
-import validate from './validation/validate';
-import CreateTaskSchema from './validation/CreateTaskSchema';
-import UpdateTaskSchema from './validation/UpdateTaskSchema';
+import Models from '../db/models/index.js';
+import NotFoundError from '../errors/NotFoundError.js';
+import { validateAndRender } from './validation/index.js';
 
 const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
 
@@ -109,18 +107,14 @@ export default (app) => {
     preValidation: async (request) => {
       const { formData } = request.body;
       const data = await getTasksAssociatedData();
-      await validate({
-        ClassToValidate: CreateTaskSchema,
-        objectToValidate: formData,
-        renderData: {
+      await validateAndRender(app, 'taskSchema', i18next.t('flash.tasks.create.error'),
+        {
           url: 'tasks/new',
-          flashMessage: i18next.t('flash.tasks.create.error'),
           data: {
             formData,
             ...data,
           },
-        },
-      });
+        });
     },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
@@ -146,19 +140,14 @@ export default (app) => {
     preValidation: async (request) => {
       const { formData } = request.body;
       const data = await getTasksAssociatedData();
-      await validate({
-        ClassToValidate: UpdateTaskSchema,
-        objectToValidate: formData,
-        renderData: {
+      await validateAndRender(app, 'taskSchema', i18next.t('flash.tasks.update.error'),
+        {
           url: 'tasks/edit',
-          flashMessage: i18next.t('flash.tasks.update.error'),
           data: {
             formData,
-            email: request.params.email,
             ...data,
           },
-        },
-      });
+        });
     },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {

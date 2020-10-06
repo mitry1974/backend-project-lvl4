@@ -1,8 +1,16 @@
 import i18next from 'i18next';
-import Models from '../db/models';
-import NotFoundError from '../errors/NotFoundError';
-import validate from './validation/validate';
-import TaskStatusSchema from './validation/TaskStatusSchema';
+import Models from '../db/models/index.js';
+import NotFoundError from '../errors/NotFoundError.js';
+import { validateAndRender } from './validation/index.js';
+
+const validateTaskStatus = (app, formData, flashMessage, url) => validateAndRender(app, 'taskStatusSchema',
+  {
+    url,
+    flashMessage,
+    data: {
+      formData,
+    },
+  });
 
 export default (app) => {
   app.route({
@@ -49,17 +57,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: TaskStatusSchema,
-        objectToValidate: formData,
-        renderData: {
-          url: 'taskStatuses/new',
-          flashMessage: i18next.t('flash.taskStatuses.create.error'),
-          data: {
-            formData,
-          },
-        },
-      });
+      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.create.error', 'taskStatuses/new'));
     },
     handler: async (request, reply) => {
       const { formData } = request.body;
@@ -84,17 +82,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: TaskStatusSchema,
-        objectToValidate: formData,
-        renderData: {
-          url: 'taskStatuses/edit',
-          flashMessage: i18next.t('flash.taskStatuses.update.error'),
-          data: {
-            formData,
-          },
-        },
-      });
+      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.update.error', 'taskStatuses/edit'));
     },
     handler: async (request, reply) => {
       const { formData } = request.body;

@@ -1,8 +1,16 @@
 import i18next from 'i18next';
-import Models from '../db/models';
-import AuthenticationError from '../errors/AutheticationError';
-import LoginSchema from './validation/LoginSchema';
-import validate from './validation/validate';
+import Models from '../db/models/index.js';
+import AuthenticationError from '../errors/AutheticationError.js';
+import { validateAndRender } from './validation/index.js';
+
+const validateSession = async (app, formData, flashMessage, url) => validateAndRender(app, 'loginSchema',
+  {
+    url,
+    flashMessage,
+    data: {
+      formData,
+    },
+  });
 
 export default (app) => {
   app.get('/session/new', { name: 'getLoginForm' }, async (request, reply) => {
@@ -16,17 +24,7 @@ export default (app) => {
     name: 'login',
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: LoginSchema,
-        objectToValidate: formData,
-        renderData: {
-          url: 'session/login',
-          flashMessage: i18next.t('flash.session.create.error'),
-          data: {
-            formData,
-          },
-        },
-      });
+      await validateSession(app, formData, i18next.t('flash.session.create.error'), 'session/login');
     },
     handler: async (request, reply) => {
       const { formData } = request.body;

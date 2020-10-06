@@ -1,12 +1,9 @@
 import i18next from 'i18next';
 import 'reflect-metadata';
-import Models from '../db/models';
-import NotFoundError from '../errors/NotFoundError';
-import AuthenticationError from '../errors/AutheticationError';
-import UpdatePasswordSchema from './validation/UpdatePasswordSchema';
-import RegisterUserSchema from './validation/RegisterUserSchema';
-import UpdateUserSchema from './validation/UpdateUserSchema';
-import validate from './validation/validate';
+import Models from '../db/models/index.js';
+import NotFoundError from '../errors/NotFoundError.js';
+import AuthenticationError from '../errors/AutheticationError.js';
+import { validateAndRender } from './validation/index.js';
 
 const findUserByEmail = async (email) => {
   const user = await Models.User.findOne({ where: { email } });
@@ -89,17 +86,14 @@ export default (app) => {
     name: 'registerUser',
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: RegisterUserSchema,
-        objectToValidate: formData,
-        renderData: {
+      await validateAndRender(app, 'registerUserSchema',
+        {
           url: 'users/register',
           flashMessage: i18next.t('flash.users.register.error'),
           data: {
             formData,
           },
-        },
-      });
+        });
     },
     handler: async (request, reply) => {
       const { formData } = request.body;
@@ -123,18 +117,15 @@ export default (app) => {
     name: 'updateUser',
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: UpdateUserSchema,
-        objectToValidate: formData,
-        renderData: {
+      await validateAndRender(app, 'updateUserSchema',
+        {
           url: 'users/edit',
           flashMessage: i18next.t('flash.users.update.error'),
           data: {
             formData,
             email: request.params.email,
           },
-        },
-      });
+        });
     },
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
@@ -158,18 +149,15 @@ export default (app) => {
     name: 'updatePassword',
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: UpdatePasswordSchema,
-        objectToValidate: formData,
-        renderData: {
+      await validateAndRender(app, 'updatePasswordSchema',
+        {
           url: 'users/updatePassword',
           flashMessage: i18next.t('flash.users.updatePassword.error'),
           data: {
             email: request.params.email,
             formData,
           },
-        },
-      });
+        });
     },
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {

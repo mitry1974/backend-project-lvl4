@@ -1,9 +1,9 @@
-import welcome from './welcome';
-import users from './users';
-import sessions from './sessions';
-import taskStatuses from './taskStatuses';
-import tasks from './tasks';
-import tags from './tags';
+import welcome from './welcome.js';
+import users from './users.js';
+import sessions from './sessions.js';
+import taskStatuses from './taskStatuses.js';
+import tasks from './tasks.js';
+import tags from './tags.js';
 
 const routes = [welcome, users, sessions, taskStatuses, tasks, tags];
 

@@ -1,9 +1,17 @@
 import i18next from 'i18next';
-import Models from '../db/models';
-import validate from './validation/validate';
-import TagSchema from './validation/TagSchema';
+import Models from '../db/models/index.js';
+import { validateAndRender } from './validation/index.js';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
+
+const validateTag = async (app, formData, flashMessage, url) => validateAndRender(app, 'taskStatusSchema',
+  {
+    url,
+    flashMessage,
+    data: {
+      formData,
+    },
+  });
 
 export default (app) => {
   app.get('/tags', { name: 'getAllTags' }, async (request, reply) => {
@@ -43,17 +51,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: TagSchema,
-        objectToValidate: formData,
-        renderData: {
-          url: 'tags/new',
-          flashMessage: i18next.t('flash.tags.create.error'),
-          data: {
-            formData,
-          },
-        },
-      });
+      await validateTag(app, formData, i18next.t('flash.tags.create.error'), 'tags/new');
     },
     handler: async (request, reply) => {
       try {
@@ -75,17 +73,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validate({
-        ClassToValidate: TagSchema,
-        objectToValidate: formData,
-        renderData: {
-          url: 'tags/edit',
-          flashMessage: i18next.t('flash.tags.update.error'),
-          data: {
-            formData,
-          },
-        },
-      });
+      await validateTag(app, formData, i18next.t('flash.tags.update.error'), 'tags/edit');
     },
     handler: async (request, reply) => {
       const tag = await getTagById(request.params.id);
