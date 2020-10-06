@@ -31,7 +31,7 @@ describe('test sessions routes', () => {
       password: '123456',
     };
     const { status } = await login({ app, formData: loginData });
-    expect(status).toBe(400);
+    expect(status).toBe(302);
   });
 
   test('Test login with valid login data', async () => {

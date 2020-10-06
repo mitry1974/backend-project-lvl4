@@ -54,7 +54,7 @@ describe('test users', () => {
     });
 
     test('Create user with wrong email', async () => {
-      const formData = generateFakeUserRegisterData({ role: 'user', email: 'wrong@email' });
+      const formData = generateFakeUserRegisterData({ role: 'user', email: 'wrong' });
       const { createResponse } = await createUser({ app, formData });
       expect(createResponse.status).toBe(400);
       const createdUser = await Models.User.findOne({ where: { email: formData.email } });

@@ -12,14 +12,22 @@ import fastifyReverse from 'fastify-reverse-routes';
 import fastifyPointOfView from 'point-of-view';
 import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
+import dotenv from 'dotenv';
+import Ajv from 'ajv';
+import ajvErrors from 'ajv-errors';
 
 import webpackConfig from '../webpack.config';
+import routes from './routes';
 import dbconfig from '../dbconfig';
 import getHelpers from './helpers';
 import ru from './locales/ru';
 import Models from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
+import { addSchemas, addKeywords, validate } from './routes/validation';
+
+const envpath = path.join(__dirname, '..', '.env');
+dotenv.config({ path: envpath });
 
 const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
@@ -30,6 +38,7 @@ const registerPlugins = async (app) => {
   // app.register(fastifyErrorPage);
   app.register(fastifyReverse);
   app.register(fastifyFormbody);
+  app.register(fastifyMethodOverride.default);
 
   app.register(fastifySession, {
     secret: process.env.SESSION_KEY,
@@ -44,7 +53,6 @@ const registerPlugins = async (app) => {
   app.decorate('verifyLoggedIn', verifyLoggedIn);
 
   app.register(fastifyFlash);
-
   const sequelize = new Sequelize(dbconfig);
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
@@ -52,7 +60,7 @@ const registerPlugins = async (app) => {
     await app.sequelize.close();
   });
 
-  app.register(import('./routes'));
+  app.register(routes);
 };
 
 const setupStaticAssets = (app) => {
@@ -121,8 +129,17 @@ const setupLocalization = () => i18next.init({
   },
 });
 
+const setupValidation = (app) => {
+  const ajv = new Ajv({ allErrors: true, jsonPointers: true, $data: true });
+  ajvErrors(ajv);
+  app.decorate('ajv', ajv);
+  addSchemas(app);
+  addKeywords(app);
+  app.decorate('validate', validate);
+};
+
 export default async () => {
-  await setupLocalization();
+  setupLocalization();
   // const logger = {
   //   level: 'info',
   //   prettyPrint: !isProduction,
@@ -131,6 +148,7 @@ export default async () => {
   // };
   // const app = fastify({ logger });
   const app = fastify();
+  setupValidation(app);
   app.decorate('i18n', i18next);
 
   setupViews(app);

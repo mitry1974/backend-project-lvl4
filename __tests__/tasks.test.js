@@ -21,12 +21,12 @@ const generateFakeTaskData = (options) => {
 describe('test users', () => {
   let app = null;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     expect.extend(matchers);
     app = await createTestApp();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     app.close();
     app = null;
   });

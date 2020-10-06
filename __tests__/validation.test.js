@@ -1,4 +1,4 @@
-import { createTestApp } from './lib/utils.js';
+import { createTestApp } from './lib/utils';
 
 describe('Test validation', () => {
   let app = null;
@@ -58,9 +58,9 @@ describe('Test validation', () => {
       const errors = await app.validate(app, 'updateUserSchema', updateUserData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
-      expect(keys.length).toBe(3);
-      expect(keys[1]).toBe('email');
-      expect(keys[2]).toBe('role');
+      expect(keys.length).toBe(2);
+      expect(keys[0]).toBe('email');
+      expect(keys[1]).toBe('role');
     });
 
     test('Login with good data', async () => {
