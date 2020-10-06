@@ -1,16 +1,17 @@
 export default class ValidationError extends Error {
   constructor(
     {
-      message, errors, renderData,
+      errors, renderData,
     },
   ) {
+    const message = `Validation error: validated ${renderData.formdata}, errors: ${JSON.stringify(errors, null, '\t')}`;
     super(message);
     this.validationErrors = errors;
     this.renderData = renderData;
   }
 
   proceed(request, reply) {
-    request.log.error(`Validation error: ${this.message}, errors: ${JSON.stringify(this.validationErrors, null, '\t')}`);
+    request.log.error('this.message');
 
     request.flash('error', this.renderData.flashMessage);
 
