@@ -1,9 +1,9 @@
 import i18next from 'i18next';
 import 'reflect-metadata';
-import Models from '../db/models/index.js';
-import NotFoundError from '../errors/NotFoundError.js';
-import AuthenticationError from '../errors/AutheticationError.js';
-import { validateAndRender } from './validation/index.js';
+import Models from '../db/models';
+import NotFoundError from '../errors/NotFoundError';
+import AuthenticationError from '../errors/AutheticationError';
+import { validateAndRender } from './validation';
 
 const findUserByEmail = async (email) => {
   const user = await Models.User.findOne({ where: { email } });
@@ -105,7 +105,7 @@ export default (app) => {
         throw e;
       }
 
-      request.flash('info', i18next.t('flash.users.create.success'));
+      request.flash('info', i18next.t('flash.users.register.success'));
       reply.redirect(app.reverse('root'));
       return reply;
     },
