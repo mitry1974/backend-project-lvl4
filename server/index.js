@@ -53,7 +53,13 @@ const registerPlugins = async (app) => {
   app.decorate('verifyLoggedIn', verifyLoggedIn);
 
   app.register(fastifyFlash);
-  const sequelize = new Sequelize(dbconfig);
+  console.log(`------------------------>Database config: ${dbconfig}`);
+  let sequelize;
+  if (dbconfig.use_env_variable) {
+    sequelize = new Sequelize(process.env[dbconfig.use_env_variable]);
+  } else {
+    sequelize = new Sequelize(dbconfig);
+  }
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
   app.addHook('onClose', async () => {

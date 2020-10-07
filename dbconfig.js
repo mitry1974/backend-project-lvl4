@@ -6,6 +6,8 @@ dotenv.config({ path: envpath });
 const env = process.env.NODE_ENV || 'production';
 const storage = path.join(__dirname, './db.sqlite');
 
+console.log(`env: ${env}, DATABASE URL: ${process.env.DATABASE_URL}`);
+
 const config = {
   development: {
     dialect: 'sqlite',
