@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && npx webpack-cli -p && NODE_ENV=production npx babel server --out-dir dist/server && babel config --out-dir dist/config && cp webpack.config.js package.json dist && cp -r server/views dist/server/ && npm run migrations:run && npm run seeds:run",
+    "build": "npm run clean && npx webpack-cli -p && NODE_ENV=production npx babel server --out-dir dist/server && npx babel dbconfig.js --out-dir dist/ && cp webpack.config.js package.json dist && cp -r server/views dist/server/ && npm run migrations:run && npm run seeds:run",
     "start": "NODE_ENV=production NODE_CONFIG_DIR=./dist/config cd ./dist && node -r dotenv/config server/bin/server.js",
     "start:dev:client": "NODE_ENV=development npx webpack-dev-server ",
     "start:dev:server": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js",
