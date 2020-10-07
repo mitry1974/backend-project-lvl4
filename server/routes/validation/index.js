@@ -1,8 +1,7 @@
 import Ajv from 'ajv';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import Models from '../../db/models/index.js';
-import ValidationError from '../../errors/ValidationError.js';
+import Models from '../../db/models/index';
+import ValidationError from '../../errors/ValidationError';
 
 const addSchemas = (app) => {
   const schemas = [
@@ -10,9 +9,8 @@ const addSchemas = (app) => {
     'tagSchema.js', 'taskStatusSchema.js', 'updatePasswordSchema.js',
     'updateUserSchema.js',
   ];
-  const dirname = path.dirname(fileURLToPath(import.meta.url));
   schemas.map(async (schemaFilename) => {
-    const schemaPathname = path.resolve(dirname, schemaFilename);
+    const schemaPathname = path.resolve(__dirname, schemaFilename);
     const addSchema = await import(schemaPathname);
     addSchema.default(app);
   });
@@ -53,7 +51,6 @@ const addKeywords = (app) => {
 
 const validate = async (app, schemaName, data) => {
   try {
-    const schemas = app.getSchemas();
     const schema = app.getSchemas()[schemaName];
     await app.ajv.validate(schema, data);
     return null;

@@ -2,7 +2,7 @@ export default (app) => app.addSchema({
   $id: 'updateUserSchema',
   type: 'object',
   $async: true,
-  required: ['id', 'email', 'role'],
+  required: ['email', 'role'],
   properties: {
     email: {
       format: 'email',
