@@ -1,7 +1,7 @@
 import i18next from 'i18next';
-import Models from '../db/models/index.js';
-import NotFoundError from '../errors/NotFoundError.js';
-import { validateAndRender } from './validation/index.js';
+import Models from '../db/models/index';
+import NotFoundError from '../errors/NotFoundError';
+import { validateAndRender } from './validation';
 
 const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
 
@@ -40,6 +40,19 @@ const getTasksFilter = (request) => {
   }
 
   return filter;
+};
+
+const validateTask = async (app, formData, flashMessage, url) => {
+  const data = await getTasksAssociatedData();
+  return validateAndRender(app, 'taskSchema',
+    {
+      url,
+      flashMessage,
+      data: {
+        formData,
+        ...data,
+      },
+    });
 };
 
 export default (app) => {
@@ -97,6 +110,7 @@ export default (app) => {
     handler: async (request, reply) => {
       const task = await findTaskById(request.params.id);
       reply.render('tasks/view', { formData: task });
+      return reply;
     },
   });
 
@@ -106,15 +120,7 @@ export default (app) => {
     name: 'createTask',
     preValidation: async (request) => {
       const { formData } = request.body;
-      const data = await getTasksAssociatedData();
-      await validateAndRender(app, 'taskSchema', i18next.t('flash.tasks.create.error'),
-        {
-          url: 'tasks/new',
-          data: {
-            formData,
-            ...data,
-          },
-        });
+      await validateTask(app, formData, i18next.t('flash.tasks.create.error'), 'tasks/new');
     },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
@@ -139,15 +145,7 @@ export default (app) => {
     name: 'updateTask',
     preValidation: async (request) => {
       const { formData } = request.body;
-      const data = await getTasksAssociatedData();
-      await validateAndRender(app, 'taskSchema', i18next.t('flash.tasks.update.error'),
-        {
-          url: 'tasks/edit',
-          data: {
-            formData,
-            ...data,
-          },
-        });
+      await validateTask(app, formData, i18next.t('flash.tasks.update.error'), 'tasks/edit');
     },
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
