@@ -1,7 +1,7 @@
 import i18next from 'i18next';
-import Models from '../db/models/index.js';
-import AuthenticationError from '../errors/AutheticationError.js';
-import { validateAndRender } from './validation/index.js';
+import Models from '../db/models';
+import AuthenticationError from '../errors/AutheticationError';
+import { validateAndRender } from './validation';
 
 const validateSession = async (app, formData, flashMessage, url) => validateAndRender(app, 'loginSchema',
   {

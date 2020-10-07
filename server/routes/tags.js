@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import Models from '../db/models/index.js';
-import { validateAndRender } from './validation/index.js';
+import Models from '../db/models';
+import { validateAndRender } from './validation';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
 

@@ -1,7 +1,7 @@
 import i18next from 'i18next';
-import Models from '../db/models/index.js';
-import NotFoundError from '../errors/NotFoundError.js';
-import { validateAndRender } from './validation/index.js';
+import Models from '../db/models';
+import NotFoundError from '../errors/NotFoundError';
+import { validateAndRender } from './validation';
 
 const validateTaskStatus = (app, formData, flashMessage, url) => validateAndRender(app, 'taskStatusSchema',
   {
