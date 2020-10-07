@@ -11,7 +11,7 @@ export default class ValidationError extends Error {
   }
 
   proceed(request, reply) {
-    request.log.error('this.message');
+    request.log.error(`${this.message}`);
 
     request.flash('error', this.renderData.flashMessage);
 
