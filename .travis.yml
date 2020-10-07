@@ -1,6 +1,7 @@
-env:
-  global:
-    - CC_TEST_REPORTER_ID=cd6b7686d19fc24ae4c1b59707dc88623aef3e75042263ced84a3073c5c195d0
+addons:
+  code_climate:
+    repo_token:
+      secure: "LzcWqoWBqFY1k0dkXdw2z7GSXn0FOb3k6xnHBOt6xiInjNHKwR1ZOHuOGVcn/jyt/akgnSYR5RKenkj3xyy+9wnd2troV+XeTFDsKXxdXtold+sLXDPIPRhBUcjxJuHee+4J0kUS5XAjfG7ybzEB0HbMJjSZXuLTurLRt3FpG+vb99MTSRsUmM1Ix/MZ9wtIfVv0NSXhHdmeXktnjfYDBOGVt68gjilbHoRuigRQJEVmSg1sIHEZ8au/gqoC4BKMWmw6Scp6GH+F/CMVQ6r9Dhg3cbFEb6sO/rRmFWsvjvfOGF4xWjKylnq/56nq5gDkLkVhx088Cek6xz/pqtfaxduvmbA5uq+p79Xdy9nBt/jpEPepf62YF0I41KubGi4x9trYzg3Vvfx3rZciwFOanEwJWbQKNDKmoLHfayMURW8zhQsY20r6PAn54NECdfcV7mimNsXWG6g+bF5jtbkiKo4iC0xqKcy+moRwz6BEwrgXgk65ZMJ8+XxADcD22omDWwF5EqDq1X145OEGo8lmLieDIqtrQxRv4IHGlwG2KGqGGr8cd6wEgZVDWu5ZJ9VDPjk0sG+sr9OyEb8r1VvPWHr5NbkPRApMGQRyvq1Scjw0HGSkbn/pTguMBL7TPIhE5HXjeTH4QSk9nBqrY1dyzv4WYIqOd0sTzas8OX8nqu8="
 language: node_js
 node_js:
   - 12.4
@@ -9,9 +10,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - make lint
   - make test
-  # - bundle exec rspec
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
