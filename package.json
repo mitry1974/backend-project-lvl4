@@ -16,6 +16,7 @@
     "start:dev": "npx concurrently npm:start:dev:client npm:start:dev:server",
     "start:dev:inspect": "npx concurrently npm:start:dev:client npm:start:dev:server:inspect",
     "test": "npx jest",
+    "test-coverage": "npx jest --collectCoverage",
     "test:watch": "npx jest --watch",
     "migrations:run": "npx sequelize db:migrate",
     "seeds:run": "npx sequelize db:seed:all"
