@@ -8,6 +8,7 @@ before_script:
 script:
   - make test
 after_script:
+  - vendor/bin/test-reporter
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
 notifications:
