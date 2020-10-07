@@ -1,5 +1,8 @@
 const path = require('path');
+const dotenv = require('dotenv');
 
+const envpath = path.join(__dirname, '.env');
+dotenv.config({ path: envpath });
 const env = process.env.NODE_ENV || 'production';
 const storage = path.join(__dirname, './db.sqlite');
 
@@ -12,7 +15,7 @@ const config = {
   production: {
     use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
-    logging: false,
+    logging: console.log,
   },
   test: {
     dialect: 'sqlite',
