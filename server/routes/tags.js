@@ -100,6 +100,7 @@ export default (app) => {
       } catch (e) {
         request.flash('error', i18next.t('flash.tags.delete.error'));
         reply.redirect(app.reverse('getAllTags'));
+        return reply;
       }
       request.flash('info', i18next.t('flash.tags.delete.success'));
       reply.redirect(app.reverse('getAllTags'));

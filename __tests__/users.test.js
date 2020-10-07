@@ -4,7 +4,7 @@ import faker from 'faker';
 import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import {
-  createUser, deleteUser, updateUser, getUser, getAllUsers,
+  createUser, deleteUser, updateUser, getUser, getAllUsers, updatePassword,
 } from './lib/testHelpers/users';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
@@ -41,6 +41,14 @@ describe('test users', () => {
       const res = await request(app.server)
         .get(app.reverse('getRegisterUserForm'));
       expect(res).toHaveHTTPStatus(200);
+    });
+
+    test('Get edit user page', async () => {
+      const { cookie } = await login({ app, formData: testLoginData.user1 });
+      const res = await request(app.server)
+        .get(app.reverse('getEditUserForm', { email: testLoginData.user1.email }))
+        .set('cookie', cookie);
+      expect(res).toHaveHTTPStatus(302);
     });
   });
 
@@ -115,6 +123,25 @@ describe('test users', () => {
       expect(findedUser.lastName).toEqual(newData.lastName);
       expect(findedUser.email).toEqual(newData.email);
     });
+
+    test('Update user password', async () => {
+      const loginData = testLoginData.user2;
+      const { cookie } = await login({ app, formData: loginData });
+
+      const { updateResponse } = await updatePassword(
+        {
+          app,
+          emailToUpdate: testLoginData.user2.email,
+          formData: {
+            oldPassword: testLoginData.user2.password,
+            password: '1234',
+            confirm: '1234',
+          },
+          cookie,
+        },
+      );
+      expect(updateResponse.status).toBe(302);
+    });
   });
 
   describe('Delete user tests', () => {
@@ -128,7 +155,7 @@ describe('test users', () => {
       },
     ];
 
-    test.each(succedData)('Testing succeded data', async ({ emailWhoDelete, emailToDelete }) => {
+    test.each(succedData)('Delete user, testing succeded data', async ({ emailWhoDelete, emailToDelete }) => {
       const { cookie } = await login({ app, formData: { email: emailWhoDelete, password: '123456' } });
 
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
@@ -149,10 +176,18 @@ describe('test users', () => {
       const { cookie } = await login({ app, formData: testLoginData.user1 });
 
       const emailToDelete = testLoginData.admin.email;
-      const { deleteResponse } = await deleteUser({ app, email: emailToDelete, cookie });
+      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
       const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
+    });
+
+    test('Delete user with wrong email', async () => {
+      const { cookie } = await login({ app, formData: testLoginData.admin });
+
+      const emailToDelete = 'unknown@email.com';
+      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
+      expect(deleteResponse.status).toBe(302);
     });
   });
 });

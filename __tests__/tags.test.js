@@ -17,6 +17,22 @@ describe('test TaskStatus route', () => {
     await app.close();
   });
 
+  test('Get new tag form', async () => {
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const getResponse = await request(app.server)
+      .get(app.reverse('getNewTagForm'))
+      .set('cookie', cookie);
+    expect(getResponse.status).toBe(200);
+  });
+
+  test('Get edit tag form', async () => {
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const getResponse = await request(app.server)
+      .get(app.reverse('getEditTagForm', { id: 1 }))
+      .set('cookie', cookie);
+    expect(getResponse.status).toBe(200);
+  });
+
   test('Test create new tag', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const formData = { name: 'tag4' };
@@ -57,5 +73,14 @@ describe('test TaskStatus route', () => {
     expect(deleteResponse.status).toBe(302);
     const tag = await Models.Tag.findOne({ where: { id } });
     expect(tag).toBeNull();
+  });
+
+  test('Test delete Tag, wrong id', async () => {
+    const id = 200;
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const deleteResponse = await request(app.server)
+      .delete(app.reverse('deleteTag', { id }))
+      .set('cookie', cookie);
+    expect(deleteResponse.status).toBe(302);
   });
 });

@@ -1,4 +1,5 @@
 import matchers from 'jest-supertest-matchers';
+import request from 'supertest';
 import { createTestApp } from './lib/utils';
 import {
   createTaskStatus, getAllTaskStatuses, deleteTaskStatus, updateTaskStatus,
@@ -17,6 +18,22 @@ describe('test TaskStatus route', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  test('Get new taskStatus form', async () => {
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const getResponse = await request(app.server)
+      .get(app.reverse('getNewTaskStatusForm'))
+      .set('cookie', cookie);
+    expect(getResponse.status).toBe(200);
+  });
+
+  test('Get edit taskstatus form', async () => {
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const getResponse = await request(app.server)
+      .get(app.reverse('getEditTaskStatusForm', { id: 1 }))
+      .set('cookie', cookie);
+    expect(getResponse.status).toBe(200);
   });
 
   test('Test create new TaskStatus', async () => {
@@ -50,5 +67,12 @@ describe('test TaskStatus route', () => {
     expect(deleteResponse.status).toBe(302);
     const ts = await Models.TaskStatus.findOne({ where: { id } });
     expect(ts).toBeNull();
+  });
+
+  test('Test delete TaskStatus wrong id', async () => {
+    const id = 2000;
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
+    expect(deleteResponse.status).toBe(302);
   });
 });

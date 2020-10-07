@@ -9,7 +9,7 @@ const createUser = async ({ app, formData }) => {
 
 const deleteUser = async ({ app, emailToDelete, cookie }) => {
   const deleteResponse = await request(app.server)
-    .delete(`/users/${emailToDelete}`)
+    .delete(app.reverse('deleteUser', { email: emailToDelete }))
     .set('Cookie', cookie);
   return { deleteResponse };
 };
@@ -21,6 +21,19 @@ const updateUser = async (
 ) => {
   const updateResponse = await request(app.server)
     .put(`/users/${emailToUpdate}`)
+    .set('cookie', cookie)
+    .send({ formData });
+
+  return { updateResponse };
+};
+
+const updatePassword = async (
+  {
+    app, emailToUpdate, formData, cookie,
+  },
+) => {
+  const updateResponse = await request(app.server)
+    .put(app.reverse('updatePassword', { email: emailToUpdate }))
     .set('cookie', cookie)
     .send({ formData });
 
@@ -43,5 +56,5 @@ const getAllUsers = async ({ app, cookie }) => {
 };
 
 export {
-  createUser, deleteUser, updateUser, getUser, getAllUsers,
+  createUser, deleteUser, updateUser, getUser, getAllUsers, updatePassword,
 };

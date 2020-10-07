@@ -188,9 +188,6 @@ export default (app) => {
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
-      if (!user) {
-        throw new NotFoundError();
-      }
 
       try {
         await user.destroy();

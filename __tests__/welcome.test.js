@@ -16,6 +16,12 @@ describe('test welcome route', () => {
     expect(res).toHaveHTTPStatus(200);
   });
 
+  test('Testing server about page', async () => {
+    const res = await request(app.server)
+      .get('/about');
+    expect(res).toHaveHTTPStatus(200);
+  });
+
   afterAll(async () => {
     await app.close();
   });

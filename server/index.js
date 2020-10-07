@@ -140,14 +140,14 @@ const setupValidation = (app) => {
 
 export default async () => {
   setupLocalization();
-  // const logger = {
-  //   level: 'info',
-  //   prettyPrint: !isProduction,
-  //   timestamp: !isDevelopment,
-  //   base: null,
-  // };
-  // const app = fastify({ logger });
-  const app = fastify();
+  const logger = {
+    level: 'info',
+    prettyPrint: !isProduction,
+    timestamp: !isDevelopment,
+    base: null,
+  };
+  const app = fastify({ logger });
+  // const app = fastify();
   setupValidation(app);
   app.decorate('i18n', i18next);
 
