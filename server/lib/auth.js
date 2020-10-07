@@ -2,7 +2,7 @@ import AuthorizationError from '../errors/AuthorizationError';
 
 export async function verifyAdmin(request) {
   if (request.currentUser.role !== 'admin') {
-    request.log.error('User should has admin rights!');
+    request.log.error('User should has admin access rights!');
     throw new AuthorizationError();
   }
 }
