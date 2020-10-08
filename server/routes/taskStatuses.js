@@ -57,7 +57,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.create.error', 'taskStatuses/new'));
+      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.create.error'), 'taskStatuses/new');
     },
     handler: async (request, reply) => {
       const { formData } = request.body;
@@ -82,7 +82,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     preValidation: async (request) => {
       const { formData } = request.body;
-      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.update.error', 'taskStatuses/edit'));
+      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.update.error'), 'taskStatuses/edit');
     },
     handler: async (request, reply) => {
       const { formData } = request.body;

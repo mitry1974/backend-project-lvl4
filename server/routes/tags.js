@@ -4,7 +4,7 @@ import { validateAndRender } from './validation';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
 
-const validateTag = async (app, formData, flashMessage, url) => validateAndRender(app, 'taskStatusSchema',
+const validateTag = async (app, formData, flashMessage, url) => validateAndRender(app, 'tagSchema',
   {
     url,
     flashMessage,
