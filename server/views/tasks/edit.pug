@@ -7,13 +7,14 @@ block header
   = t('views.tasks.edit.caption')
 
 block content
-  +formFor()(novalidate action=route('updateTask', { id: formData.id, email: formData.creator.email }) method='post' readonly)&attributes(attributes)
+  +formFor()(novalidate action=route('updateTask', { id: formData.id, email: task.creator.email }) method='post' readonly)&attributes(attributes)
     .form-row
       +addInput('input', formData, 'id', t('views.id'), { errors, divClass: 'col-md-2 mb-3'})(readonly)
       +addInput('input', formData, 'createdAt', t('views.tasks.createdAt'), { errors, divClass: 'col-md-4 mb-3' })(
-        value=formData.createdAt.toLocaleString()
+        value=task.createdAt.toLocaleString()
         readonly)
-      +addInput('input', formData, 'creator', t('views.tasks.creator'), { errors, divClass: 'col-md-6 mb-3' })(value=formData.creator.toString() readonly)
+      +addInput('input', formData, '', t('views.tasks.creator'), { errors, divClass: 'col-md-6 mb-3' })(value=task.creator.toString() readonly)
+      +addInput('input', formData, 'creatorId', '', { errors, divClass: 'col-md-6 mb-3' })(type="hidden")
     .form-row
       +addInput('input', formData, 'name', t('views.tasks.name'), { errors, divClass: 'col-md-5 mb-3' })
       +addInput('select', formData, 'assignedToId', t('views.tasks.assigned'), { errors, divClass: 'col-md-5 mb-3', values: users, compareBy: 'id' })

@@ -44,6 +44,7 @@ const getTasksFilter = (request) => {
 
 const validateTask = async (app, formData, flashMessage, url) => {
   const data = await getTasksAssociatedData();
+  const task = await findTaskById(formData.id);
   return validateAndRender(app, 'taskSchema',
     {
       url,
@@ -51,9 +52,19 @@ const validateTask = async (app, formData, flashMessage, url) => {
       data: {
         formData,
         ...data,
+        task,
       },
     });
 };
+
+const formDataFromTask = async (task) => ({
+  id: task.id,
+  name: task.name,
+  creatorId: task.creatorId,
+  assignedToId: task.assignedToId,
+  statusId: task.statusId,
+  tagsId: (await task.getTags()).map((v) => v.id),
+});
 
 export default (app) => {
   app.route({
@@ -76,8 +87,8 @@ export default (app) => {
     handler: async (request, reply) => {
       const data = await getTasksAssociatedData();
       const task = await findTaskById(request.params.id);
-      task.tagsId = (await task.getTags()).map((v) => v.id);
-      reply.render('tasks/edit', { formData: task, ...data });
+      const formData = await formDataFromTask(task);
+      reply.render('tasks/edit', { formData, ...data, task });
       return reply;
     },
   });

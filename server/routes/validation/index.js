@@ -40,7 +40,7 @@ const addKeywords = (app) => {
     validate: async function isEntityExists(schema, value, parentSchema, currentPath, dataObject) {
       const model = Models[schema.model];
       const entity = await model.findOne({ where: { [schema.findBy]: value } });
-      if (entity && entity.id === dataObject.id) {
+      if (entity && entity.id === parseInt(dataObject.id, 10)) {
         return true;
       }
       const isEntityFound = !!entity;

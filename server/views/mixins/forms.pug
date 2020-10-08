@@ -27,7 +27,8 @@ mixin inputHeader(mixinName, entity, propertyName, labelText, options)
     const feedbackClass = errorText ? 'invalid-feedback' : 'valid_feedback'
     const feedbackValue = errorText || ''
   div(class=divClass)
-    label(for=propertyName)= `${labelText}:`
+    if(labelText != '')
+      label(for=propertyName)= `${labelText}:`
     +#{mixinName}(entity, propertyName, inputClass, inputOptions)&attributes(attributes)
     div(class=feedbackClass)= feedbackValue
 
