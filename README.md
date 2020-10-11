@@ -13,9 +13,9 @@ Taskman - это упрощенный менеджер задач, являющ�
 
 Для того чтобы запустить приложение локально:
 
-git clone....
-make install
-make db-setup
-make debug
+* git clone....
+* make install
+* make db-setup
+* make debug
 
 Выполнение тестов - make test
