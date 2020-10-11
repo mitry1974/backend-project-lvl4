@@ -5,4 +5,11 @@ block content
     .display-4= t('views.welcome.index.hello')
     p.lead= t('views.welcome.index.description')
     hr
-    a.btn.btn-primary.btn-lg(href=route('login'))= t('layouts.application.register')
+    p.lead= t('views.welcome.index.header')
+      ul
+        li= t('views.welcome.index.registerUser')
+        li= t('views.welcome.index.loginSystem')
+        li= t('views.welcome.index.createTask')
+        li= t('views.welcome.index.editTask')
+        li= t('views.welcome.index.findTask')
+
