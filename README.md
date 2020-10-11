@@ -4,7 +4,7 @@
 
 Taskman - это упрощенный менеджер задач, являющийся заключительным проектом обучения по профессии backebd node.js на портале [Hexlet](http://hexlet.io). 
 Пользователь приложения может регистрироваться, входить в систему, воздавать и редактировать задачи.
-В приложении использовались: node.js, javascript, fastify, sequelize, git, sqlite3, postgresql.
+В приложении использовались: node.js, javascript, fastify, ajv, sequelize, git, sqlite3, postgresql.
 Среда разработки - vim.
 
 Приложение доступно на Heroku по [адресу](https://backend-project-lvl4-hexlet.herokuapp.com/).
