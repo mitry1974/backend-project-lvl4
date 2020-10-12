@@ -1,16 +1,7 @@
 import i18next from 'i18next';
 import Models from '../db/models';
 import AuthenticationError from '../errors/AutheticationError';
-import { validateAndRender } from './validation';
-
-const validateSession = async (app, formData, flashMessage, url) => validateAndRender(app, 'loginSchema',
-  {
-    url,
-    flashMessage,
-    data: {
-      formData,
-    },
-  });
+import { validateBody } from './validation';
 
 export default (app) => {
   app.get('/session/new', { name: 'getLoginForm' }, async (request, reply) => {
@@ -22,10 +13,12 @@ export default (app) => {
     method: 'POST',
     url: '/session',
     name: 'login',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateSession(app, formData, i18next.t('flash.session.create.error'), 'session/login');
+    config: {
+      flashMessage: 'flash.session.create.error',
+      template: `${'session/login'}`,
+      schemaName: 'loginSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
       const user = await Models.User.findOne({ where: { email: formData.email } });

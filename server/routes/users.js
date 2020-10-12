@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import Models from '../db/models';
 import NotFoundError from '../errors/NotFoundError';
 import AuthenticationError from '../errors/AutheticationError';
-import { validateAndRender } from './validation';
+import { validateBody } from './validation';
 
 const findUserByEmail = async (email) => {
   const user = await Models.User.findOne({ where: { email } });
@@ -73,7 +73,6 @@ export default (app) => {
     url: '/users',
     name: 'getAllUsers',
     handler: async (request, reply) => {
-      // request.log.info('GET /users');
       const users = await Models.User.findAll();
       reply.render('/users/list', { users });
       return reply;
@@ -84,17 +83,12 @@ export default (app) => {
     method: 'POST',
     url: '/users',
     name: 'registerUser',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateAndRender(app, 'registerUserSchema',
-        {
-          url: 'users/register',
-          flashMessage: i18next.t('flash.users.register.error'),
-          data: {
-            formData,
-          },
-        });
+    config: {
+      flashMessage: 'flash.users.register.error',
+      template: `${'users/register'}`,
+      schemaName: 'registerUserSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
       const user = Models.User.build(formData);
@@ -115,18 +109,12 @@ export default (app) => {
     method: 'PUT',
     url: '/users/:email',
     name: 'updateUser',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateAndRender(app, 'updateUserSchema',
-        {
-          url: 'users/edit',
-          flashMessage: i18next.t('flash.users.update.error'),
-          data: {
-            formData,
-            email: request.params.email,
-          },
-        });
+    config: {
+      flashMessage: 'flash.users.update.error',
+      template: `${'users/edit'}`,
+      schemaName: 'updateUserSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
@@ -147,18 +135,12 @@ export default (app) => {
     method: 'PUT',
     url: '/users/:email/updatePassword',
     name: 'updatePassword',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateAndRender(app, 'updatePasswordSchema',
-        {
-          url: 'users/updatePassword',
-          flashMessage: i18next.t('flash.users.updatePassword.error'),
-          data: {
-            email: request.params.email,
-            formData,
-          },
-        });
+    config: {
+      flashMessage: 'flash.users.updatePassword.error',
+      template: `${'users/updatePassword'}`,
+      schemaName: 'updatePasswordSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);

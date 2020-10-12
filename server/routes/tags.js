@@ -1,17 +1,8 @@
 import i18next from 'i18next';
 import Models from '../db/models';
-import { validateAndRender } from './validation';
+import { validateBody } from './validation';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
-
-const validateTag = async (app, formData, flashMessage, url) => validateAndRender(app, 'tagSchema',
-  {
-    url,
-    flashMessage,
-    data: {
-      formData,
-    },
-  });
 
 export default (app) => {
   app.get('/tags', { name: 'getAllTags' }, async (request, reply) => {
@@ -49,10 +40,12 @@ export default (app) => {
     url: '/tags',
     name: 'createTag',
     preHandler: app.auth([app.verifyLoggedIn]),
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTag(app, formData, i18next.t('flash.tags.create.error'), 'tags/new');
+    config: {
+      flashMessage: 'flash.tags.create.error',
+      template: `${'tags/new'}`,
+      schemaName: 'tagSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       try {
         await Models.Tag.create(request.body.formData);
@@ -71,10 +64,12 @@ export default (app) => {
     url: '/tags/:id',
     name: 'updateTag',
     preHandler: app.auth([app.verifyLoggedIn]),
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTag(app, formData, i18next.t('flash.tags.update.error'), 'tags/edit');
+    config: {
+      flashMessage: 'flash.tags.update.error',
+      template: `${'tags/edit'}`,
+      schemaName: 'tagSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const tag = await getTagById(request.params.id);
       try {
