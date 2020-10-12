@@ -35,7 +35,7 @@ const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 const registerPlugins = async (app) => {
-  // app.register(fastifyMethodOverride);
+  app.register(fastifyMethodOverride);
   app.register(fastifyErrorPage);
   app.register(fastifyReverse);
   app.register(fastifyFormbody);
