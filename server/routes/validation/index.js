@@ -1,7 +1,6 @@
-import Ajv from 'ajv';
 import path from 'path';
+import i18next from 'i18next';
 import Models from '../../db/models/index';
-import ValidationError from '../../errors/ValidationError';
 
 const addSchemas = (app) => {
   const schemas = [
@@ -49,39 +48,72 @@ const addKeywords = (app) => {
   });
 };
 
+const parseAjvErrors = (ajvErrors) => {
+  if (ajvErrors) {
+    const errors = {};
+    ajvErrors.forEach((error) => {
+      const key = error.dataPath.replace(/^[/]+|[/]+$/g, '');
+      const currentMessage = errors[key];
+      if (currentMessage) {
+        errors[key] = [currentMessage, error.message].join('; ');
+      } else {
+        errors[key] = error.message;
+      }
+    });
+    return errors;
+  }
+  return null;
+};
+
 const validate = async (app, schemaName, data) => {
   try {
     const schema = app.getSchemas()[schemaName];
     await app.ajv.validate(schema, data);
     return null;
   } catch (e) {
-    if (e instanceof Ajv.ValidationError) {
-      const errors = {};
-      e.errors.forEach((error) => {
-        const key = error.dataPath.replace(/^[/]+|[/]+$/g, '');
-        const currentMessage = errors[key];
-        if (currentMessage) {
-          errors[key] = [currentMessage, error.message].join('; ');
-        } else {
-          errors[key] = error.message;
-        }
-      });
-      return errors;
-    }
-    throw e;
+    return parseAjvErrors(e.errors);
   }
 };
 
-const validateAndRender = async (app, schemaName, renderData) => {
-  const errors = await validate(app, schemaName, renderData.data.formData);
+const renderWithErrors = ({
+  request, reply, url, flashMessage, renderData,
+}) => {
+  request.log.error(`Validation error: validated ${JSON.stringify(renderData.formData)}, errors: ${JSON.stringify(renderData.errors, null, '\t')}`);
+  request.flash('error', flashMessage);
+  reply.code(400).render(url, renderData);
+  return reply;
+};
+
+const formatValidationErrorString = (formData, errors) => `Validation error: validated ${JSON.stringify(formData)}, errors: ${JSON.stringify(errors, null, '\t')}`;
+
+const replyRender = ({
+  request, reply, flashMessage, template, data,
+}) => {
+  request.flash('error', i18next.t(flashMessage));
+  reply.code(400).render(template, { ...data });
+  return reply;
+};
+
+const validateBody = async (app, request, reply, renderData = {}) => {
+  const { formData } = request.body;
+  const { schemaName, flashMessage, template } = reply.context.config;
+  const errors = await validate(app, schemaName, formData);
   if (errors) {
-    throw new ValidationError({
-      errors,
-      renderData,
+    request.log.error(formatValidationErrorString(formData, errors));
+    return replyRender({
+      request, reply, flashMessage, template, data: { formData, errors, renderData },
     });
   }
+  return true;
 };
 
 export {
-  addSchemas, addKeywords, validate, validateAndRender,
+  addSchemas,
+  addKeywords,
+  parseAjvErrors,
+  renderWithErrors,
+  validate,
+  formatValidationErrorString,
+  replyRender,
+  validateBody,
 };

@@ -1,16 +1,7 @@
 import i18next from 'i18next';
 import Models from '../db/models';
 import NotFoundError from '../errors/NotFoundError';
-import { validateAndRender } from './validation';
-
-const validateTaskStatus = (app, formData, flashMessage, url) => validateAndRender(app, 'taskStatusSchema',
-  {
-    url,
-    flashMessage,
-    data: {
-      formData,
-    },
-  });
+import { validateBody } from './validation';
 
 export default (app) => {
   app.route({
@@ -55,10 +46,12 @@ export default (app) => {
     url: '/taskStatuses',
     name: 'createTaskStatus',
     preHandler: app.auth([app.verifyLoggedIn]),
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.create.error'), 'taskStatuses/new');
+    config: {
+      flashMessage: 'flash.taskStatuses.create.error',
+      template: 'taskStatuses/new',
+      schemaName: 'taskStatusSchema',
     },
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
       const ts = Models.TaskStatus.build(formData);
@@ -79,11 +72,13 @@ export default (app) => {
     method: 'PUT',
     url: '/taskStatuses/:id',
     name: 'updateTaskStatus',
-    preHandler: app.auth([app.verifyLoggedIn]),
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTaskStatus(app, formData, i18next.t('flash.taskStatuses.update.error'), 'taskStatuses/edit');
+    config: {
+      flashMessage: 'flash.taskStatuses.update.error',
+      template: 'taskStatuses/edit',
+      schemaName: 'taskStatusSchema',
     },
+    preHandler: app.auth([app.verifyLoggedIn]),
+    preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });

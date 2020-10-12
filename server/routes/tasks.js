@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import Models from '../db/models/index';
 import NotFoundError from '../errors/NotFoundError';
-import { validateAndRender } from './validation';
+import { validateBody } from './validation';
 
 const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
 
@@ -42,21 +42,6 @@ const getTasksFilter = (request) => {
   return filter;
 };
 
-const validateTask = async (app, formData, flashMessage, url) => {
-  const data = await getTasksAssociatedData();
-  const task = await findTaskById(formData.id);
-  return validateAndRender(app, 'taskSchema',
-    {
-      url,
-      flashMessage,
-      data: {
-        formData,
-        ...data,
-        task,
-      },
-    });
-};
-
 const formDataFromTask = async (task) => ({
   id: task.id,
   name: task.name,
@@ -65,6 +50,12 @@ const formDataFromTask = async (task) => ({
   statusId: task.statusId,
   tagsId: (await task.getTags()).map((v) => v.id),
 });
+
+const validateTaskBody = async (app, request, reply) => {
+  const data = await getTasksAssociatedData();
+  const task = await findTaskById(request.body.formData.id);
+  return validateBody(app, request, reply, { ...data, task });
+};
 
 export default (app) => {
   app.route({
@@ -129,10 +120,12 @@ export default (app) => {
     method: 'POST',
     url: '/tasks',
     name: 'createTask',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTask(app, formData, i18next.t('flash.tasks.create.error'), 'tasks/new');
+    config: {
+      flashMessage: 'flash.tasks.create.error',
+      template: `${'tasks/create'}`,
+      schemaName: 'tasksSchema',
     },
+    preValidation: async (request, reply) => validateTaskBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const { formData } = request.body;
@@ -154,10 +147,12 @@ export default (app) => {
     method: 'PUT',
     url: '/tasks/:id/:email',
     name: 'updateTask',
-    preValidation: async (request) => {
-      const { formData } = request.body;
-      await validateTask(app, formData, i18next.t('flash.tasks.update.error'), 'tasks/edit');
+    config: {
+      flashMessage: 'flash.tasks.update.error',
+      template: `${'tasks/edit'}`,
+      schemaName: 'tasksSchema',
     },
+    preValidation: async (request, reply) => validateTaskBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const { formData } = request.body;

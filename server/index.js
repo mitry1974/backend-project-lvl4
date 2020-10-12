@@ -15,6 +15,7 @@ import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
+import fastifyErrorPage from 'fastify-error-page';
 
 import webpackConfig from '../webpack.config';
 import routes from './routes';
@@ -24,7 +25,7 @@ import ru from './locales/ru';
 import Models from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
-import { addSchemas, addKeywords, validate } from './routes/validation';
+import { addSchemas, addKeywords } from './routes/validation';
 
 const envpath = path.join(__dirname, '..', '.env');
 dotenv.config({ path: envpath });
@@ -34,11 +35,10 @@ const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 const registerPlugins = async (app) => {
-  app.register(fastifyMethodOverride);
-  // app.register(fastifyErrorPage);
+  // app.register(fastifyMethodOverride);
+  app.register(fastifyErrorPage);
   app.register(fastifyReverse);
   app.register(fastifyFormbody);
-  app.register(fastifyMethodOverride.default);
 
   app.register(fastifySession, {
     secret: process.env.SESSION_KEY,
@@ -140,7 +140,6 @@ const setupValidation = (app) => {
   app.decorate('ajv', ajv);
   addSchemas(app);
   addKeywords(app);
-  app.decorate('validate', validate);
 };
 
 export default async () => {
