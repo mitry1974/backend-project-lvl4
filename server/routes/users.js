@@ -1,17 +1,9 @@
-import i18next from 'i18next';
 import 'reflect-metadata';
 import Models from '../db/models';
-import NotFoundError from '../errors/NotFoundError';
-import AuthenticationError from '../errors/AutheticationError';
 import { validateBody } from './validation';
+import redirect from '../lib/redirect';
 
-const findUserByEmail = async (email) => {
-  const user = await Models.User.findOne({ where: { email } });
-  if (!user) {
-    throw new NotFoundError();
-  }
-  return user;
-};
+const findUserByEmail = async (email) => Models.User.findOne({ where: { email } });
 
 export default (app) => {
   app.route({
@@ -96,12 +88,14 @@ export default (app) => {
         await user.save();
       } catch (e) {
         request.log.error(`Error register new user: ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.users.register.error' }, url: app.reverse('getRegisterUserForm'),
+        });
       }
 
-      request.flash('info', i18next.t('flash.users.register.success'));
-      reply.redirect(app.reverse('root'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.users.register.success' }, url: app.reverse('root'),
+      });
     },
   });
 
@@ -121,13 +115,15 @@ export default (app) => {
       try {
         await user.update(request.body.formData);
       } catch (e) {
-        request.log.error(`Error register new user: ${e}`);
-        throw e;
+        request.log.error(`Error updating user: ${e}`);
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.users.update.error' }, url: app.reverse('getAllUsers'),
+        });
       }
 
-      request.flash('info', i18next.t('flash.users.update.success'));
-      reply.redirect(app.reverse('getAllUsers'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.users.update.success' }, url: app.reverse('getAllUsers'),
+      });
     },
   });
 
@@ -146,20 +142,25 @@ export default (app) => {
       const user = await findUserByEmail(request.params.email);
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {
-        throw new AuthenticationError({
-          message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,
+        const url = app.reverse('getLoginForm');
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
       try {
         await user.update(request.body.formData);
       } catch (e) {
-        request.log.error(`Error update user password: ${e}`);
-        throw e;
+        request.log.error(`Error updating user password: ${e}`);
+        const url = app.reverse('getEditUserForm', { email: request.params.email });
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
+        });
       }
 
-      request.flash('info', i18next.t('flash.users.updatePassword.success'));
-      reply.redirect(app.reverse('getEditUserForm', { email: request.params.email }));
-      return reply;
+      const url = app.reverse('getEditUserForm', { email: request.params.email });
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.users.updatePassword.success' }, url,
+      });
     },
   });
 
@@ -174,13 +175,15 @@ export default (app) => {
       try {
         await user.destroy();
       } catch (e) {
-        request.flash('error', i18next.t('flash.users.delete.error'));
-        reply.redirect(app.reverse('getAllUsers'));
+        request.log.error(`Error deleting user: ${e}`);
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
+        });
       }
 
-      request.flash('info', i18next.t('flash.users.delete.success'));
-      reply.redirect(app.reverse('getAllUsers'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.users.delete.success' }, url: app.reverse('getAllUsers'),
+      });
     },
   });
 };

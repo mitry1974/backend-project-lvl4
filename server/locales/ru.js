@@ -79,6 +79,11 @@ export default {
         },
       },
     },
+    auth: {
+      userNotAdmin: 'Пользователь должен быть администратором',
+      userNotTheSame: 'Эту операцию можно выполнить только над собственными данными',
+      userNotLoggedIn: 'Необходим логин',
+    },
     layouts: {
       application: {
         about: 'Возможности',
@@ -236,6 +241,10 @@ export default {
           editTask: 'Редактировать задачу',
           findTask: 'Искать задачу по различным полям',
         },
+      },
+      error: {
+        hello: 'Случилось страшное...',
+        body: 'Ошибка:',
       },
     },
     taskStatusValues: {

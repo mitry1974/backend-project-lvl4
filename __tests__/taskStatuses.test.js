@@ -37,8 +37,9 @@ describe('test TaskStatus route', () => {
   });
 
   test('Test create new TaskStatus', async () => {
+    const { cookie } = await login({ app, formData: testLoginData.user2 });
     const formData = { name: 'status4' };
-    const { createResponse } = await createTaskStatus({ app, formData });
+    const { createResponse } = await createTaskStatus({ app, formData, cookie });
     expect(createResponse.status).toBe(302);
     const ts = Models.TaskStatus.findOne({ where: { name: formData.name } });
     expect(ts).not.toBeNull();

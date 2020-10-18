@@ -1,4 +1,5 @@
 import { createTestApp } from './lib/utils';
+import { validate } from '../server/routes/validation';
 
 describe('Test validation', () => {
   let app = null;
@@ -18,7 +19,7 @@ describe('Test validation', () => {
         confirm: '1234567',
         role: 'user',
       };
-      const errors = await app.validate(app, 'registerUserSchema', registerUserData);
+      const errors = await validate(app, 'registerUserSchema', registerUserData);
       expect(errors).toBeNull();
     });
 
@@ -30,7 +31,7 @@ describe('Test validation', () => {
         role: '',
       };
 
-      const errors = await app.validate(app, 'registerUserSchema', registerUserData);
+      const errors = await validate(app, 'registerUserSchema', registerUserData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(3);
@@ -46,7 +47,7 @@ describe('Test validation', () => {
         role: 'user',
       };
 
-      const errors = await app.validate(app, 'updateUserSchema', updateUserData);
+      const errors = await validate(app, 'updateUserSchema', updateUserData);
       expect(errors).toBeNull();
     });
 
@@ -55,7 +56,7 @@ describe('Test validation', () => {
         email: 'email',
         role: '',
       };
-      const errors = await app.validate(app, 'updateUserSchema', updateUserData);
+      const errors = await validate(app, 'updateUserSchema', updateUserData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(2);
@@ -68,7 +69,7 @@ describe('Test validation', () => {
         email: 'admin@fakedomain.com',
         password: 'password',
       };
-      const errors = await app.validate(app, 'loginSchema', loginData);
+      const errors = await validate(app, 'loginSchema', loginData);
       expect(errors).toBeNull();
     });
 
@@ -77,7 +78,7 @@ describe('Test validation', () => {
         email: 'email',
         password: '',
       };
-      const errors = await app.validate(app, 'loginSchema', loginData);
+      const errors = await validate(app, 'loginSchema', loginData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(2);
@@ -89,7 +90,7 @@ describe('Test validation', () => {
         password: '123456',
         confirm: '123456',
       };
-      const errors = await app.validate(app, 'updatePasswordSchema', updatePasswordData);
+      const errors = await validate(app, 'updatePasswordSchema', updatePasswordData);
       expect(errors).toBeNull();
     });
 
@@ -99,7 +100,7 @@ describe('Test validation', () => {
         password: '',
         confirm: '123456',
       };
-      const errors = await app.validate(app, 'updatePasswordSchema', updatePasswordData);
+      const errors = await validate(app, 'updatePasswordSchema', updatePasswordData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(3);
@@ -114,7 +115,7 @@ describe('Test validation', () => {
       const tagData = {
         name: 'Javascript',
       };
-      const errors = await app.validate(app, 'tagSchema', tagData);
+      const errors = await validate(app, 'tagSchema', tagData);
       expect(errors).toBeNull();
     });
 
@@ -122,7 +123,7 @@ describe('Test validation', () => {
       const tagData = {
         name: 'tag1',
       };
-      const errors = await app.validate(app, 'tagSchema', tagData);
+      const errors = await validate(app, 'tagSchema', tagData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(1);
@@ -132,7 +133,7 @@ describe('Test validation', () => {
       const tagData = {
         name: '',
       };
-      const errors = await app.validate(app, 'tagSchema', tagData);
+      const errors = await validate(app, 'tagSchema', tagData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(1);
@@ -144,7 +145,7 @@ describe('Test validation', () => {
       const statusData = {
         name: 'archived',
       };
-      const errors = await app.validate(app, 'taskStatusSchema', statusData);
+      const errors = await validate(app, 'taskStatusSchema', statusData);
       expect(errors).toBeNull();
     });
 
@@ -152,7 +153,7 @@ describe('Test validation', () => {
       const statusData = {
         name: 'status1',
       };
-      const errors = await app.validate(app, 'taskStatusSchema', statusData);
+      const errors = await validate(app, 'taskStatusSchema', statusData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(1);
@@ -162,7 +163,7 @@ describe('Test validation', () => {
       const statusData = {
         name: '',
       };
-      const errors = await app.validate(app, 'taskStatusSchema', statusData);
+      const errors = await validate(app, 'taskStatusSchema', statusData);
       expect(errors).not.toBeNull();
       const keys = Object.keys(errors);
       expect(keys.length).toBe(1);
@@ -177,7 +178,7 @@ describe('Test validation', () => {
         assignedToId: 1,
         statusId: 1,
       };
-      const errors = await app.validate(app, 'taskSchema', taskData);
+      const errors = await validate(app, 'taskSchema', taskData);
       expect(errors).toBeNull();
     });
 
@@ -188,7 +189,7 @@ describe('Test validation', () => {
         assignedToId: 1,
         statusId: 1,
       };
-      const errors = await app.validate(app, 'taskSchema', taskData);
+      const errors = await validate(app, 'taskSchema', taskData);
       expect(errors).not.toBeNull();
     });
 
@@ -199,7 +200,7 @@ describe('Test validation', () => {
         assignedToId: 1,
         statusId: 1,
       };
-      const errors = await app.validate(app, 'taskSchema', taskData);
+      const errors = await validate(app, 'taskSchema', taskData);
       expect(errors).not.toBeNull();
     });
   });

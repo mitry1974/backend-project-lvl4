@@ -1,8 +1,9 @@
 import request from 'supertest';
 
-const createTaskStatus = async ({ app, formData }) => {
+const createTaskStatus = async ({ app, formData, cookie }) => {
   const createResponse = await request(app.server)
     .post(app.reverse('createTaskStatus'))
+    .set('cookie', cookie)
     .send({ formData });
   return { createResponse };
 };

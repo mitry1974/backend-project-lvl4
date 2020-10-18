@@ -15,12 +15,12 @@ import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
-import fastifyErrorPage from 'fastify-error-page';
+import qs from 'qs';
 
 import webpackConfig from '../webpack.config';
 import routes from './routes';
 import dbconfig from '../dbconfig';
-import getHelpers from './helpers';
+import getHelpers from './lib/helpers';
 import ru from './locales/ru';
 import Models from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
@@ -34,25 +34,25 @@ const env = process.env.NODE_ENV;
 const isProduction = env === 'production';
 const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
-const registerPlugins = async (app) => {
-  app.register(fastifyMethodOverride);
-  app.register(fastifyErrorPage);
-  app.register(fastifyReverse);
-  app.register(fastifyFormbody);
 
-  app.register(fastifySession, {
+const registerPlugins = async (app) => {
+  await app.register(fastifyMethodOverride);
+  await app.register(fastifyReverse.plugin);
+  await app.register(fastifyFormbody, { parser: (str) => qs.parse(str) });
+
+  await app.register(fastifySession, {
     secret: process.env.SESSION_KEY,
     cookie: {
       path: '/',
     },
   });
 
-  app.register(fastifyAuth);
   app.decorate('verifyAdmin', verifyAdmin);
   app.decorate('verifyUserSelf', verifyUserSelf);
   app.decorate('verifyLoggedIn', verifyLoggedIn);
+  await app.register(fastifyAuth);
 
-  app.register(fastifyFlash);
+  await app.register(fastifyFlash);
   let sequelize;
   if (dbconfig.use_env_variable) {
     sequelize = new Sequelize(process.env[dbconfig.use_env_variable]);
@@ -65,7 +65,11 @@ const registerPlugins = async (app) => {
     await app.sequelize.close();
   });
 
-  app.register(routes);
+  app.addHook('onError', async (request, reply, error) => {
+    console.log(`On error, error: ${error}`);
+  });
+
+  routes(app);
 };
 
 const setupStaticAssets = (app) => {
@@ -110,7 +114,7 @@ const setupHooks = (app) => {
 
   app.addHook('preHandler', async (req) => {
     const userId = req.session.get('userId');
-    if (userId) {
+    if (userId !== undefined) {
       const currentUser = await Models.User.findOne({ where: { id: userId } });
       if (currentUser) {
         req.currentUser = currentUser;
@@ -144,14 +148,15 @@ const setupValidation = (app) => {
 
 export default async () => {
   setupLocalization();
-  const logger = {
-    level: 'info',
-    prettyPrint: !isProduction,
-    timestamp: !isDevelopment,
-    base: null,
-  };
-  const app = fastify({ logger });
-  // const app = fastify();
+  // const logger = {
+  //   level: 'trace',
+  //   prettyPrint: !isProduction,
+  //   timestamp: !isDevelopment,
+  //   base: null,
+  // };
+  // const app = fastify({ logger });
+  const app = fastify();
+  setupErrorHandler(app);
   setupValidation(app);
   app.decorate('i18n', i18next);
 
@@ -159,8 +164,6 @@ export default async () => {
   await registerPlugins(app);
   setupStaticAssets(app);
   setupHooks(app);
-
-  setupErrorHandler(app);
 
   await app.ready();
   return app;
