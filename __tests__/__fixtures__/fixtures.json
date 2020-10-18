@@ -1,0 +1,143 @@
+[
+  {
+    "model": "User",
+    "data": {
+      "id": "0",
+      "firstname": "Admin firstname",
+      "lastname": "Admin lastname",
+      "email": "admin@fakedomain.com",
+      "password": "123456",
+      "role": "admin"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": "1",
+      "firstname": "User1 firstname",
+      "lastname": "User1 lastname",
+      "email": "user1@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": "2",
+      "firstname": "User2 firstname",
+      "lastname": "User2 lastname",
+      "email": "user2@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": "3",
+      "firstname": "User3 firstname",
+      "lastname": "User3 lastname",
+      "email": "user3@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": "4",
+      "firstname": "User4 firstname",
+      "lastname": "User4 lastname",
+      "email": "user4@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
+    "model": "User",
+    "data": {
+      "id": "5",
+      "firstname": "User5 firstname",
+      "lastname": "User5 lastname",
+      "email": "user5@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
+    "model": "Tag",
+    "data": {
+      "id": "0",
+      "name": "tag1"
+    }
+  },
+  {
+  "model": "Tag",
+    "data": {
+      "id": "1",
+      "name": "tag2"
+    }
+  },
+  {
+  "model": "Tag" ,
+    "data": {
+      "id": "2",
+      "name": "tag3"
+    }
+  },
+  {
+  "model": "TaskStatus",
+    "data": {
+      "id": "0",
+      "name": "status1"
+    }
+  },
+  {
+  "model": "TaskStatus",
+    "data": {
+      "id": "1",
+      "name": "status2"
+    }
+  },
+  {
+  "model": "TaskStatus",
+    "data": {
+      "id": "2",
+      "name": "status3"
+    }
+  },
+  {
+  "model": "Task" ,
+    "data": {
+      "id": "0",
+      "name": "Task0",
+      "description": "Description of that task",
+      "statusId": "1",
+      "creatorId": "1",
+      "assignedToId": "2"
+    }
+  },
+  {
+  "model": "Task",
+    "data": {
+      "id": "1",
+      "name": "Task1",
+      "description": "Description of second task",
+      "statusId": "1",
+      "creatorId": "1",
+      "assignedToId": "0"
+    }
+  },
+  {
+  "model": "Task",
+    "data": {
+      "id": "2",
+      "name": "Task3",
+      "description": "Description of third task",
+      "statusId": "1",
+      "creatorId": "1",
+      "assignedToId": "2"
+    }
+  }
+]
