@@ -62,10 +62,6 @@ const registerPlugins = async (app) => {
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
 
-  app.addHook('onClose', async () => {
-    await app.sequelize.close();
-  });
-
   routes(app);
 };
 
@@ -106,6 +102,10 @@ const setupViews = (app) => {
 };
 
 const setupHooks = (app) => {
+  app.addHook('onClose', async () => {
+    await app.sequelize.close();
+  });
+
   app.decorateRequest('currentUser', null);
   app.decorateRequest('signedIn', false);
 
