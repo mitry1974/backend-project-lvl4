@@ -21,13 +21,13 @@ const generateFakeTaskData = (options) => {
 describe('test users', () => {
   let app = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     expect.extend(matchers);
     app = await createTestApp();
   });
 
-  afterEach(() => {
-    app.close();
+  afterAll(async () => {
+    await app.close();
     app = null;
   });
 
@@ -81,7 +81,7 @@ describe('test users', () => {
 
   test('Delete task', async () => {
     const id = 1;
-    const { cookie } = await login({ app, formData: testLoginData.user2 });
+    const { cookie } = await login({ app, formData: testLoginData.admin });
     const deleteResponse = await request(app.server)
       .delete(app.reverse('deleteTask', { id, email: testLoginData.user2.email }))
       .set('cookie', cookie);

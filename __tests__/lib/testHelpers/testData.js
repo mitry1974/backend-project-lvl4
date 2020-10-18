@@ -11,6 +11,22 @@ const testLoginData = {
     email: 'user2@fakedomain.com',
     password: '123456',
   },
+  user3: {
+    email: 'user3@fakedomain.com',
+    password: '123456',
+  },
+  user4: {
+    email: 'user4@fakedomain.com',
+    password: '123456',
+  },
+  user5: {
+    email: 'user5@fakedomain.com',
+    password: '123456',
+  },
+  user6: {
+    email: 'user6@fakedomain.com',
+    password: '123456',
+  },
 };
 
 const testTaskData = {

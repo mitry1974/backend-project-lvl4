@@ -1,6 +1,6 @@
-import i18next from 'i18next';
 import Models from '../db/models';
 import { validateBody } from './validation';
+import redirect from '../lib/redirect';
 
 const getTagById = (id) => Models.Tag.findByPk(id);
 
@@ -50,12 +50,14 @@ export default (app) => {
       try {
         await Models.Tag.create(request.body.formData);
       } catch (e) {
-        request.log.error(`Create tag error, ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tags.create.error' }, url: app.reverse('getAllTags'),
+        });
       }
 
-      reply.redirect(app.reverse('getAllTags'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tags.create.success' }, url: app.reverse('getAllTags'),
+      });
     },
   });
 
@@ -75,11 +77,13 @@ export default (app) => {
       try {
         await tag.update(request.body.formData);
       } catch (e) {
-        request.log.error(`Cant update tag, ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tags.update.error' }, url: app.reverse('getAllTags'),
+        });
       }
-      reply.redirect(app.reverse('getAllTags'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tags.update.success' }, url: app.reverse('getAllTags'),
+      });
     },
   });
 
@@ -93,13 +97,14 @@ export default (app) => {
       try {
         await tag.destroy();
       } catch (e) {
-        request.flash('error', i18next.t('flash.tags.delete.error'));
-        reply.redirect(app.reverse('getAllTags'));
-        return reply;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tags.delete.error' }, url: app.reverse('getAllTags'),
+        });
       }
-      request.flash('info', i18next.t('flash.tags.delete.success'));
-      reply.redirect(app.reverse('getAllTags'));
-      return reply;
+
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tags.delete.success' }, url: app.reverse('getAllTags'),
+      });
     },
   });
 };

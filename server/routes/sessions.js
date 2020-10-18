@@ -1,7 +1,6 @@
-import i18next from 'i18next';
 import Models from '../db/models';
-import AuthenticationError from '../errors/AutheticationError';
 import { validateBody } from './validation';
+import redirect from '../lib/redirect';
 
 export default (app) => {
   app.get('/session/new', { name: 'getLoginForm' }, async (request, reply) => {
@@ -24,17 +23,15 @@ export default (app) => {
       const user = await Models.User.findOne({ where: { email: formData.email } });
       if (!user || !(await user.checkPassword(formData.password))) {
         request.log.error(`login with email ${formData.email} failed`);
-        throw new AuthenticationError({
-          message: `POST: /sessions, data: ${JSON.stringify(request.body.formData)}, user not authenticated}`,
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.session.create.error' }, url: '/session/new',
         });
       }
 
       request.session.set('userId', user.id);
-
-      request.flash('info', i18next.t('flash.session.create.success'));
-      request.log.info(`login with email ${formData.email} succeeded`);
-      reply.redirect(app.reverse('root'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.session.create.success' }, url: app.reverse('root'),
+      });
     },
   });
 
@@ -42,8 +39,8 @@ export default (app) => {
     request.session.set('userId', null);
     request.session.delete();
 
-    request.flash('info', i18next.t('flash.session.delete.success'));
-    reply.redirect(app.reverse('root'));
-    return reply;
+    return redirect({
+      request, reply, flash: { type: 'info', message: 'flash.session.delete.success' }, url: app.reverse('root'),
+    });
   });
 };

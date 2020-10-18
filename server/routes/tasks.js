@@ -1,7 +1,6 @@
-import i18next from 'i18next';
 import Models from '../db/models/index';
-import NotFoundError from '../errors/NotFoundError';
 import { validateBody } from './validation';
+import redirect from '../lib/redirect';
 
 const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
 
@@ -135,11 +134,14 @@ export default (app) => {
         await task.save();
       } catch (e) {
         request.log.error(`Task create error, ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tasks.cupdatereate.error' }, url: app.reverse('getAllTasks'),
+        });
       }
-      request.flash('info', i18next.t('flash.tasks.create.success'));
-      reply.redirect(app.reverse('getAllTasks'));
-      return reply;
+
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tasks.create.success' }, url: app.reverse('getAllTasks'),
+      });
     },
   });
 
@@ -158,20 +160,29 @@ export default (app) => {
       const { formData } = request.body;
 
       const task = await findTaskById(request.params.id);
+      if (!task) {
+        request.log.error(`Error updating task, task with id ${request.params.id} not found`);
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tasks.update.error' }, url: app.reverse('getAllTasks'),
+        });
+      }
+
       try {
         if (!formData.tagsId) {
           formData.tagsId = [];
         }
         await task.update(formData, { include: Models.Tag });
         await task.setTags(formData.tagsId);
-
-        request.flash('info', i18next.t('flash.tasks.update.success'));
-        reply.redirect(app.reverse('getAllTasks'));
-        return reply;
       } catch (e) {
         request.log.error(`Task update error, ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tasks.update.error' }, url: app.reverse('getAllTasks'),
+        });
       }
+
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tasks.update.success' }, url: app.reverse('getAllTasks'),
+      });
     },
   });
 
@@ -183,14 +194,24 @@ export default (app) => {
     handler: async (request, reply) => {
       const task = await findTaskById(request.params.id);
       if (!task) {
-        throw new NotFoundError();
+        request.log.error(`Error deleting task, task with id ${request.params.id} not found`);
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tasks.delete.error' }, url: app.reverse('getAllTasks'),
+        });
       }
 
-      await task.destroy();
+      try {
+        await task.destroy();
+      } catch (e) {
+        request.log.error(`Error deleting task: ${e}`);
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.tasks.delete.error' }, url: app.reverse('getAllTasks'),
+        });
+      }
 
-      request.flash('info', i18next.t('flash.tasks.delete.success'));
-      reply.redirect(app.reverse('getAllTasks'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.tasks.delete.success' }, url: app.reverse('getAllTasks'),
+      });
     },
   });
 };

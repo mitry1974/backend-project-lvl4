@@ -7,4 +7,4 @@ import tags from './tags';
 
 const routes = [welcome, users, sessions, taskStatuses, tasks, tags];
 
-export default async (app) => routes.forEach((f) => f(app));
+export default (app) => routes.forEach((f) => f(app));

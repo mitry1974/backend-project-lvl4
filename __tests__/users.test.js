@@ -26,12 +26,12 @@ const generateFakeUserRegisterData = (options) => {
 describe('test users', () => {
   let app = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     expect.extend(matchers);
     app = await createTestApp();
   });
 
-  afterEach(() => {
+  afterAll(() => {
     app.close();
     app = null;
   });
@@ -48,7 +48,7 @@ describe('test users', () => {
       const res = await request(app.server)
         .get(app.reverse('getEditUserForm', { email: testLoginData.user1.email }))
         .set('cookie', cookie);
-      expect(res).toHaveHTTPStatus(302);
+      expect(res).toHaveHTTPStatus(200);
     });
   });
 
@@ -82,9 +82,15 @@ describe('test users', () => {
       expect(getResponse.status).toBe(200);
     });
 
-    test('Get user data', async () => {
+    test('Get user data, not logged in', async () => {
       const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user1.email });
       expect(getResponse.status).toBe(302);
+    });
+
+    test('Get user data, logged in', async () => {
+      const { cookie } = await login({ app, formData: testLoginData.user1 });
+      const { getResponse } = await getUser({ app, cookie, email: testLoginData.user1.email });
+      expect(getResponse.status).toBe(200);
     });
   });
 
@@ -165,17 +171,17 @@ describe('test users', () => {
     });
 
     test('Delete by not logged in user, should fail', async () => {
-      const emailToDelete = testLoginData.admin.email;
+      const emailToDelete = testLoginData.user5.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
       expect(deleteResponse.status).toBe(302);
       const user = await Models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 
-    test('Delete with logged in user, user cant delete foreign user, fail', async () => {
-      const { cookie } = await login({ app, formData: testLoginData.user1 });
+    test('Delete with logged in user, user cant delete another user, fail', async () => {
+      const { cookie } = await login({ app, formData: testLoginData.user3 });
 
-      const emailToDelete = testLoginData.admin.email;
+      const emailToDelete = testLoginData.user5.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
       const user = await Models.User.findOne({ where: { email: emailToDelete } });

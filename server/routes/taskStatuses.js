@@ -1,7 +1,6 @@
-import i18next from 'i18next';
 import Models from '../db/models';
-import NotFoundError from '../errors/NotFoundError';
 import { validateBody } from './validation';
+import redirect from '../lib/redirect';
 
 export default (app) => {
   app.route({
@@ -22,9 +21,6 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
-      if (!ts) {
-        throw new NotFoundError();
-      }
       reply.render('/taskStatuses/edit', { formData: ts });
       return reply;
     },
@@ -62,9 +58,9 @@ export default (app) => {
         throw e;
       }
 
-      request.flash('info', i18next.t('flash.taskStatuses.create.success'));
-      reply.redirect(app.reverse('getAllTaskStatuses'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.taskStatuses.create.success' }, url: app.reverse('getAllTaskStatuses'),
+      });
     },
   });
 
@@ -82,9 +78,6 @@ export default (app) => {
     handler: async (request, reply) => {
       const { formData } = request.body;
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
-      if (!ts) {
-        throw new NotFoundError();
-      }
       try {
         await ts.update(formData);
       } catch (e) {
@@ -92,9 +85,9 @@ export default (app) => {
         throw e;
       }
 
-      request.flash('info', i18next.t('flash.taskStatuses.update.success'));
-      reply.redirect(app.reverse('getAllTaskStatuses'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.taskStatuses.update.success' }, url: app.reverse('getAllTaskStatuses'),
+      });
     },
   });
 
@@ -106,19 +99,23 @@ export default (app) => {
     handler: async (request, reply) => {
       const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
       if (!ts) {
-        throw new NotFoundError();
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.error' }, url: app.reverse('getAllTaskStatuses'),
+        });
       }
 
       try {
         await ts.destroy();
       } catch (e) {
         request.log.error(`Delete task status error, ${e}`);
-        throw e;
+        return redirect({
+          request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.error' }, url: app.reverse('getAllTaskStatuses'),
+        });
       }
 
-      request.flash('info', i18next.t('flash.taskStatuses.delete.success'));
-      reply.redirect(app.reverse('getAllTaskStatuses'));
-      return reply;
+      return redirect({
+        request, reply, flash: { type: 'info', message: 'flash.taskStatuses.delete.success' }, url: app.reverse('getAllTaskStatuses'),
+      });
     },
   });
 };
