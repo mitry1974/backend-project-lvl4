@@ -61,12 +61,9 @@ const registerPlugins = async (app) => {
   }
   app.decorate('sequelize', sequelize);
   await sequelize.authenticate();
+
   app.addHook('onClose', async () => {
     await app.sequelize.close();
-  });
-
-  app.addHook('onError', async (request, reply, error) => {
-    console.log(`On error, error: ${error}`);
   });
 
   routes(app);
