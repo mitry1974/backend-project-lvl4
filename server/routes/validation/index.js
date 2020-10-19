@@ -92,7 +92,7 @@ const validateBody = async (app, request, reply, renderData = {}) => {
   if (errors) {
     request.log.error(formatValidationErrorString(formData, errors));
     return replyRender({
-      request, reply, flashMessage, template, data: { formData, errors, renderData },
+      request, reply, flashMessage, template, data: { formData, errors, ...renderData },
     });
   }
   return true;
