@@ -20,13 +20,10 @@ test-coverage:
 	npm run test-coverage
 
 test-watch:
-	npm run test:watch
-
-start-dev:
-	npm run start:dev
+	npm run test-watch
 
 debug:
-	npm run start:dev:inspect
+	npm run start-debug
 
 start:
 	npm run start
@@ -35,4 +32,4 @@ migrations:
 	npm run migrations:run
 
 seeds:
-	npm run seeds:run
+	npm run seeds-run
