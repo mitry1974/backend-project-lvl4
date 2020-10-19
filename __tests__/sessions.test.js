@@ -16,7 +16,7 @@ describe('test sessions routes', () => {
     app.close();
   });
 
-  test('Test login with missing email', async () => {
+  test('Login with missing email', async () => {
     const loginData = {
       email: 'missing@email.ru',
       password: '123456',
@@ -25,7 +25,7 @@ describe('test sessions routes', () => {
     expect(status).toBe(302);
   });
 
-  test('Test login with invalid email', async () => {
+  test('Login with invalid email', async () => {
     const loginData = {
       email: 'wrong@email',
       password: '123456',
@@ -34,13 +34,13 @@ describe('test sessions routes', () => {
     expect(status).toBe(302);
   });
 
-  test('Test login with valid login data', async () => {
+  test('Login with valid login data', async () => {
     const { status } = await login({ app, formData: testLoginData.admin });
 
     expect(status).toBe(302);
   });
 
-  test('Test logout', async () => {
+  test('Logout', async () => {
     const { status } = await login({ app, formData: testLoginData.user1 });
     expect(status).toBe(302);
 
@@ -50,7 +50,7 @@ describe('test sessions routes', () => {
     expect(cookie.session).toBeFalsy();
   });
 
-  test('Test logout route', async () => {
+  test('Logout route', async () => {
     const getResponse = await request(app.server)
       .get('/session/new');
     expect(getResponse.status).toBe(200);

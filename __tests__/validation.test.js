@@ -84,7 +84,7 @@ describe('Test validation', () => {
       expect(keys.length).toBe(2);
     });
 
-    test('Test update password schema with good data', async () => {
+    test('Update password schema with good data', async () => {
       const updatePasswordData = {
         oldPassword: 'password',
         password: '123456',
@@ -94,7 +94,7 @@ describe('Test validation', () => {
       expect(errors).toBeNull();
     });
 
-    test('Test update password schema with wrong data', async () => {
+    test('Update password schema with wrong data', async () => {
       const updatePasswordData = {
         oldPassword: '',
         password: '',
@@ -110,8 +110,8 @@ describe('Test validation', () => {
     });
   });
 
-  describe('Test tag schemas', () => {
-    test('Test tag schemas with good data', async () => {
+  describe('Tag schemas', () => {
+    test('Tag schemas with good data', async () => {
       const tagData = {
         name: 'Javascript',
       };
@@ -119,7 +119,7 @@ describe('Test validation', () => {
       expect(errors).toBeNull();
     });
 
-    test('Test tag schemas with existing key', async () => {
+    test('Tag schemas with existing key', async () => {
       const tagData = {
         name: 'tag1',
       };
@@ -129,7 +129,7 @@ describe('Test validation', () => {
       expect(keys.length).toBe(1);
     });
 
-    test('Test tag schemas with zero length key', async () => {
+    test('Tag schemas with zero length key', async () => {
       const tagData = {
         name: '',
       };
@@ -140,8 +140,8 @@ describe('Test validation', () => {
     });
   });
 
-  describe('Test status schemas', () => {
-    test('Test status schema with good data', async () => {
+  describe('Status schemas', () => {
+    test('Status schema with good data', async () => {
       const statusData = {
         name: 'archived',
       };
@@ -149,7 +149,7 @@ describe('Test validation', () => {
       expect(errors).toBeNull();
     });
 
-    test('Test status schema with existing key', async () => {
+    test('Status schema with existing key', async () => {
       const statusData = {
         name: 'status1',
       };
@@ -159,7 +159,7 @@ describe('Test validation', () => {
       expect(keys.length).toBe(1);
     });
 
-    test('Test tag schemas with zero length key', async () => {
+    test('Tag schemas with zero length key', async () => {
       const statusData = {
         name: '',
       };
@@ -171,7 +171,7 @@ describe('Test validation', () => {
   });
 
   describe('Test task schemas', () => {
-    test('Test task schema with good data', async () => {
+    test('Task schema with good data', async () => {
       const taskData = {
         name: 'Task20',
         creatorId: 1,
@@ -182,7 +182,7 @@ describe('Test validation', () => {
       expect(errors).toBeNull();
     });
 
-    test('Test task schema with existing name', async () => {
+    test('Task schema with existing name', async () => {
       const taskData = {
         name: 'Task1',
         creatorId: 1,
@@ -193,7 +193,7 @@ describe('Test validation', () => {
       expect(errors).not.toBeNull();
     });
 
-    test('Test task schema with empty name', async () => {
+    test('Task schema with empty name', async () => {
       const taskData = {
         name: '',
         creatorId: 1,

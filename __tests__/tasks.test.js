@@ -18,7 +18,7 @@ const generateFakeTaskData = (options) => {
   return { ...generated, ...options };
 };
 
-describe('test users', () => {
+describe('test tasks', () => {
   let app = null;
 
   beforeAll(async () => {
@@ -54,7 +54,7 @@ describe('test users', () => {
     expect(createdTask).not.toBeNull();
   });
 
-  test('Test all tasks page loading', async () => {
+  test('Tasks page loading', async () => {
     const getAllResponse = await request(app.server)
       .get(app.reverse('getAllTasks'));
     expect(getAllResponse).toHaveHTTPStatus(200);
