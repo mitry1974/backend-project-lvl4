@@ -10,7 +10,7 @@ const config = {
   development: {
     dialect: 'sqlite',
     storage,
-    logging: console.log,
+    logging: false,
   },
   production: {
     use_env_variable: 'DATABASE_URL',
