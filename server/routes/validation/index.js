@@ -1,6 +1,6 @@
 import path from 'path';
-import i18next from 'i18next';
 import Models from '../../db/models/index';
+import replyRender from '../../lib/replyRender';
 
 const addSchemas = (app) => {
   const schemas = [
@@ -77,14 +77,6 @@ const validate = async (app, schemaName, data) => {
 
 const formatValidationErrorString = (formData, errors) => `Validation error: validated ${JSON.stringify(formData)}, errors: ${JSON.stringify(errors, null, '\t')}`;
 
-const replyRender = ({
-  request, reply, flashMessage, template, data,
-}) => {
-  request.flash('error', i18next.t(flashMessage));
-  reply.code(400).render(template, { ...data });
-  return reply;
-};
-
 const validateBody = async (app, request, reply, renderData = {}) => {
   const { formData } = request.body;
   const { schemaName, flashMessage, template } = reply.context.config;
@@ -104,6 +96,5 @@ export {
   parseAjvErrors,
   validate,
   formatValidationErrorString,
-  replyRender,
   validateBody,
 };
