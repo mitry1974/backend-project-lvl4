@@ -10,7 +10,6 @@ import fastifyStatic from 'fastify-static';
 import fastifyFormbody from 'fastify-formbody';
 import fastifyReverse from 'fastify-reverse-routes';
 import fastifyPointOfView from 'point-of-view';
-import fastifyMethodOverride from 'fastify-method-override';
 import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
 import Ajv from 'ajv';
@@ -26,6 +25,7 @@ import Models from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 import { addSchemas, addKeywords } from './routes/validation';
+import fastifyMethodOverride from './fastify-method-override/src';
 
 const envpath = path.join(__dirname, '..', '.env');
 dotenv.config({ path: envpath });
