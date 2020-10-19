@@ -15,6 +15,7 @@ import dotenv from 'dotenv';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import qs from 'qs';
+import fastifyMethodOverride from 'fastify-method-override';
 
 import webpackConfig from '../webpack.config';
 import routes from './routes';
@@ -25,7 +26,6 @@ import Models from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 import { addSchemas, addKeywords } from './routes/validation';
-import fastifyMethodOverride from './fastify-method-override/src';
 
 const envpath = path.join(__dirname, '..', '.env');
 dotenv.config({ path: envpath });
