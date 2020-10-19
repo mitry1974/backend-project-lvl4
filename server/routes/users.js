@@ -56,7 +56,6 @@ export default (app) => {
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
       reply.render('/users/view', { formData: user });
-      return reply;
     },
   });
 
@@ -108,7 +107,9 @@ export default (app) => {
       template: `${'users/edit'}`,
       schemaName: 'updateUserSchema',
     },
-    preValidation: async (request, reply) => validateBody(app, request, reply),
+    preValidation: async (request, reply) => validateBody(
+      app, request, reply, { email: request.params.email },
+    ),
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
       const user = await findUserByEmail(request.params.email);
