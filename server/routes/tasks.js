@@ -44,6 +44,7 @@ const getTasksFilter = (request) => {
 const formDataFromTask = async (task) => ({
   id: task.id,
   name: task.name,
+  description: task.description,
   creatorId: task.creatorId,
   assignedToId: task.assignedToId,
   statusId: task.statusId,
