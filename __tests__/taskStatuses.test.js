@@ -36,7 +36,7 @@ describe('test TaskStatus route', () => {
     expect(getResponse.status).toBe(200);
   });
 
-  test('Test create new TaskStatus', async () => {
+  test('Create new TaskStatus', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const formData = { name: 'status4' };
     const { createResponse } = await createTaskStatus({ app, formData, cookie });
@@ -45,12 +45,12 @@ describe('test TaskStatus route', () => {
     expect(ts).not.toBeNull();
   });
 
-  test('get all TaskStatuses', async () => {
+  test('Get all TaskStatuses', async () => {
     const { getAllResponse } = await getAllTaskStatuses({ app });
     expect(getAllResponse.status).toBe(200);
   });
 
-  test('Test update TaskStatus', async () => {
+  test('Update TaskStatus', async () => {
     const id = 1;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { updateResponse } = await updateTaskStatus({
@@ -61,7 +61,7 @@ describe('test TaskStatus route', () => {
     expect(ts.name).toBe('updated');
   });
 
-  test('Test delete TaskSatus', async () => {
+  test('Delete TaskSatus', async () => {
     const id = 2;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
@@ -70,7 +70,7 @@ describe('test TaskStatus route', () => {
     expect(ts).toBeNull();
   });
 
-  test('Test delete TaskStatus wrong id', async () => {
+  test('Delete TaskStatus wrong id', async () => {
     const id = 2000;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
