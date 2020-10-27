@@ -29,7 +29,7 @@ start:
 	npm run start
 
 migrations:
-	npm run migrations:run
+	npm run migrations-run
 
 seeds:
 	npm run seeds-run
