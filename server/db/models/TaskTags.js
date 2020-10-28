@@ -1,14 +1,5 @@
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-  class TaskTags extends Model {
-    static associate(models) {
-      this.belongsTo(models.Task, { foreignKey: 'taskId' });
-      this.belongsTo(models.Tag, { foreignKey: 'tagId' });
-    }
-  }
-
-  TaskTags.init({
+  const TaskTags = sequelize.define('TaskTags', {
     taskId: DataTypes.INTEGER,
     tagId: DataTypes.INTEGER,
   }, {
@@ -16,5 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'TaskTags',
     timestamps: false,
   });
+
+  TaskTags.associate = (models) => {
+    TaskTags.belongsTo(models.Task, { foreignKey: 'taskId' });
+    TaskTags.belongsTo(models.Tag, { foreignKey: 'tagId' });
+  };
   return TaskTags;
 };
