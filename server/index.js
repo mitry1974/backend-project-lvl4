@@ -10,19 +10,19 @@ import fastifyStatic from 'fastify-static';
 import fastifyFormbody from 'fastify-formbody';
 import fastifyReverse from 'fastify-reverse-routes';
 import fastifyPointOfView from 'point-of-view';
-import Sequelize from 'sequelize';
 import dotenv from 'dotenv';
 import Ajv from 'ajv';
 import ajvErrors from 'ajv-errors';
 import qs from 'qs';
 import fastifyMethodOverride from 'fastify-method-override';
+import fastifySequelize from 'fastify-sequelize';
 
 import webpackConfig from '../webpack.config';
 import routes from './routes';
 import dbconfig from '../dbconfig';
 import getHelpers from './lib/helpers';
 import ru from './locales/ru';
-import Models from './db/models';
+import initializeModels from './db/models';
 import { verifyAdmin, verifyUserSelf, verifyLoggedIn } from './lib/auth';
 import setupErrorHandler from './lib/errorHandler';
 import { addSchemas, addKeywords } from './routes/validation';
@@ -36,11 +36,14 @@ const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 
 const registerPlugins = async (app) => {
-  await app.register(fastifyMethodOverride);
-  await app.register(fastifyReverse.plugin);
-  await app.register(fastifyFormbody, { parser: (str) => qs.parse(str) });
+  await app.register(fastifySequelize, dbconfig);
+  initializeModels(app.db);
 
-  await app.register(fastifySession, {
+  app.register(fastifyMethodOverride);
+  app.register(fastifyReverse.plugin);
+  app.register(fastifyFormbody, { parser: (str) => qs.parse(str) });
+
+  app.register(fastifySession, {
     secret: process.env.SESSION_KEY,
     cookie: {
       path: '/',
@@ -52,15 +55,7 @@ const registerPlugins = async (app) => {
   app.decorate('verifyLoggedIn', verifyLoggedIn);
   await app.register(fastifyAuth);
 
-  await app.register(fastifyFlash);
-  let sequelize;
-  if (dbconfig.use_env_variable) {
-    sequelize = new Sequelize(process.env[dbconfig.use_env_variable]);
-  } else {
-    sequelize = new Sequelize(dbconfig);
-  }
-  app.decorate('sequelize', sequelize);
-  await sequelize.authenticate();
+  app.register(fastifyFlash);
 
   routes(app);
 };
@@ -110,9 +105,10 @@ const setupHooks = (app) => {
   app.decorateRequest('signedIn', false);
 
   app.addHook('preHandler', async (req) => {
+    const { models } = app.db;
     const userId = req.session.get('userId');
     if (userId !== undefined) {
-      const currentUser = await Models.User.findOne({ where: { id: userId } });
+      const currentUser = await models.User.findOne({ where: { id: userId } });
       if (currentUser) {
         req.currentUser = currentUser;
         req.signedIn = true;
@@ -121,7 +117,7 @@ const setupHooks = (app) => {
       req.session.set('userId', null);
     }
     req.signedIn = false;
-    req.currentUser = Models.Guest.build();
+    req.currentUser = models.Guest.build();
   });
 };
 
@@ -161,7 +157,5 @@ export default async () => {
   await registerPlugins(app);
   setupStaticAssets(app);
   setupHooks(app);
-
-  await app.ready();
   return app;
 };
