@@ -1,7 +1,6 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
-import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import {
   createUser, deleteUser, updateUser, getUser, getAllUsers, updatePassword,
@@ -57,7 +56,7 @@ describe('test users', () => {
       const formData = generateFakeUserRegisterData({ role: 'user' });
       const { createResponse } = await createUser({ app, formData });
       expect(createResponse.status).toBe(302);
-      const createdUser = await Models.User.findOne({ where: { email: formData.email } });
+      const createdUser = await app.db.models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).not.toBeNull();
     });
 
@@ -65,7 +64,7 @@ describe('test users', () => {
       const formData = generateFakeUserRegisterData({ role: 'user', email: 'wrong' });
       const { createResponse } = await createUser({ app, formData });
       expect(createResponse.status).toBe(400);
-      const createdUser = await Models.User.findOne({ where: { email: formData.email } });
+      const createdUser = await app.db.models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).toBeNull();
     });
 
@@ -123,7 +122,7 @@ describe('test users', () => {
       );
       expect(updateResponse.status).toBe(302);
 
-      const findedUser = await Models.User.findOne({ where: { email: newData.email } });
+      const findedUser = await app.db.models.User.findOne({ where: { email: newData.email } });
       expect(findedUser).not.toBeNull();
       expect(findedUser.firstName).toEqual(newData.firstName);
       expect(findedUser.lastName).toEqual(newData.lastName);
@@ -166,7 +165,7 @@ describe('test users', () => {
 
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeFalsy();
     });
 
@@ -174,7 +173,7 @@ describe('test users', () => {
       const emailToDelete = testLoginData.user5.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
       expect(deleteResponse.status).toBe(302);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 
@@ -184,7 +183,7 @@ describe('test users', () => {
       const emailToDelete = testLoginData.user5.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
       expect(deleteResponse.status).toBe(302);
-      const user = await Models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
 

@@ -1,7 +1,6 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
-import Models from '../server/db/models';
 import { createTestApp } from './lib/utils';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
@@ -37,7 +36,7 @@ describe('test tasks', () => {
       .post('/tasks')
       .send({ formData });
     expect(response).toHaveHTTPStatus(302);
-    const createdUser = await Models.Task.findOne({ where: { name: formData.name } });
+    const createdUser = await app.db.models.Task.findOne({ where: { name: formData.name } });
     expect(createdUser).toBeNull();
   });
 
@@ -50,7 +49,7 @@ describe('test tasks', () => {
       .send({ formData: taskData });
     expect(response).toHaveHTTPStatus(302);
 
-    const createdTask = await Models.Task.findOne({ where: { name: taskData.name } });
+    const createdTask = await app.db.models.Task.findOne({ where: { name: taskData.name } });
     expect(createdTask).not.toBeNull();
   });
 
@@ -75,7 +74,7 @@ describe('test tasks', () => {
       .set('cookie', cookie)
       .send({ formData });
     expect(response).toHaveHTTPStatus(302);
-    const updatedTask = Models.Task.findOne({ where: { id } });
+    const updatedTask = app.db.models.Task.findOne({ where: { id } });
     expect(updatedTask).not.toBeNull();
   });
 
@@ -86,7 +85,7 @@ describe('test tasks', () => {
       .delete(app.reverse('deleteTask', { id, email: testLoginData.user2.email }))
       .set('cookie', cookie);
     expect(deleteResponse).toHaveHTTPStatus(302);
-    const deletedTask = await Models.Task.findOne({ where: { id } });
+    const deletedTask = await app.db.models.Task.findOne({ where: { id } });
     expect(deletedTask).toBeNull();
   });
 });

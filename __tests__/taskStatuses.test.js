@@ -4,7 +4,6 @@ import { createTestApp } from './lib/utils';
 import {
   createTaskStatus, getAllTaskStatuses, deleteTaskStatus, updateTaskStatus,
 } from './lib/testHelpers/taskStatuses';
-import Models from '../server/db/models';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
 
@@ -41,7 +40,7 @@ describe('test TaskStatus route', () => {
     const formData = { name: 'status4' };
     const { createResponse } = await createTaskStatus({ app, formData, cookie });
     expect(createResponse.status).toBe(302);
-    const ts = Models.TaskStatus.findOne({ where: { name: formData.name } });
+    const ts = app.db.models.TaskStatus.findOne({ where: { name: formData.name } });
     expect(ts).not.toBeNull();
   });
 
@@ -57,7 +56,7 @@ describe('test TaskStatus route', () => {
       app, id, formData: { name: 'updated' }, cookie,
     });
     expect(updateResponse.status).toBe(302);
-    const ts = await Models.TaskStatus.findOne({ where: { id } });
+    const ts = await app.db.models.TaskStatus.findOne({ where: { id } });
     expect(ts.name).toBe('updated');
   });
 
@@ -66,7 +65,7 @@ describe('test TaskStatus route', () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
     expect(deleteResponse.status).toBe(302);
-    const ts = await Models.TaskStatus.findOne({ where: { id } });
+    const ts = await app.db.models.TaskStatus.findOne({ where: { id } });
     expect(ts).toBeNull();
   });
 
