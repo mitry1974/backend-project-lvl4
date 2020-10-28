@@ -1,6 +1,5 @@
 import * as path from 'path';
 import fixtures from 'sequelize-fixtures';
-import Models from '../../server/db/models';
 import getApp from '../../server';
 
 const clearDb = async () => {
@@ -11,16 +10,17 @@ const clearDb = async () => {
   // }
 };
 
-const loadFixtures = async () => {
+const loadFixtures = async (app) => {
   try {
-    await Models.User.sync({ force: true });
-    await Models.TaskStatus.sync({ force: true });
-    await Models.Tag.sync({ force: true });
-    await Models.Task.sync({ force: true });
-    await Models.TaskTags.sync({ force: true });
+    const { models } = app.db;
+    await models.User.sync({ force: true });
+    await models.TaskStatus.sync({ force: true });
+    await models.Tag.sync({ force: true });
+    await models.Task.sync({ force: true });
+    await models.TaskTags.sync({ force: true });
 
     const fixturesFilename = path.resolve(__dirname, '../__fixtures__/fixtures.json');
-    await fixtures.loadFile(fixturesFilename, Models);
+    await fixtures.loadFile(fixturesFilename, models);
   } catch (err) {
     console.log(`Load fixtures error - ${err.message}`);
     throw err;
@@ -29,7 +29,7 @@ const loadFixtures = async () => {
 
 const createTestApp = async () => {
   const app = await getApp();
-  await loadFixtures();
+  await loadFixtures(app);
   await app.listen();
   return app;
 };
