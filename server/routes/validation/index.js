@@ -1,5 +1,4 @@
 import path from 'path';
-import Models from '../../db/models/index';
 import replyRender from '../../lib/replyRender';
 
 const addSchemas = (app) => {
@@ -37,7 +36,7 @@ const addKeywords = (app) => {
     errors: false,
     async: true,
     validate: async function isEntityExists(schema, value, parentSchema, currentPath, dataObject) {
-      const model = Models[schema.model];
+      const model = app.db.models[schema.model];
       const entity = await model.findOne({ where: { [schema.findBy]: value } });
       if (entity && entity.id === parseInt(dataObject.id, 10)) {
         return true;

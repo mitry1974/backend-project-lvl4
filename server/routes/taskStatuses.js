@@ -1,4 +1,3 @@
-import Models from '../db/models';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
 
@@ -20,7 +19,7 @@ export default (app) => {
     name: 'getEditTaskStatusForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
+      const ts = await app.db.models.TaskStatus.findOne({ where: { id: request.params.id } });
       reply.render('/taskStatuses/edit', { formData: ts });
       return reply;
     },
@@ -31,7 +30,7 @@ export default (app) => {
     url: '/taskStatuses',
     name: 'getAllTaskStatuses',
     handler: async (request, reply) => {
-      const taskStatuses = await Models.TaskStatus.findAll();
+      const taskStatuses = await app.db.models.TaskStatus.findAll();
       reply.render('/taskStatuses/list', { taskStatuses });
       return reply;
     },
@@ -50,7 +49,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
-      const ts = Models.TaskStatus.build(formData);
+      const ts = app.db.models.TaskStatus.build(formData);
       try {
         await ts.save();
       } catch (e) {
@@ -77,7 +76,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
-      const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
+      const ts = await app.db.models.TaskStatus.findOne({ where: { id: request.params.id } });
       try {
         await ts.update(formData);
       } catch (e) {
@@ -97,7 +96,7 @@ export default (app) => {
     name: 'deleteTaskStatus',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const ts = await Models.TaskStatus.findOne({ where: { id: request.params.id } });
+      const ts = await app.db.models.TaskStatus.findOne({ where: { id: request.params.id } });
       if (!ts) {
         return redirect({
           request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.error' }, url: app.reverse('getAllTaskStatuses'),

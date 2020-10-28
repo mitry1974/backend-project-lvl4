@@ -1,19 +1,19 @@
-import Models from '../db/models/index';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
 
-const findTaskById = (id) => Models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
+const findTaskById = (app, id) => app.db.models.Task.findByPk(id, { include: ['status', 'creator', 'assignedTo', 'tags'] });
 
-const getTasksAssociatedData = async () => {
+const getTasksAssociatedData = async (app) => {
   const data = {};
-  data.statuses = await Models.TaskStatus.findAll();
-  data.users = await Models.User.findAll();
-  data.tags = await Models.Tag.findAll();
+  const { models } = app.db;
+  data.statuses = await models.TaskStatus.findAll();
+  data.users = await models.User.findAll();
+  data.tags = await models.Tag.findAll();
 
   return data;
 };
 
-const getTasksFilter = (request) => {
+const getTasksFilter = (app, request) => {
   const {
     tagId = '', statusId = '', assignedToId = '', selfTasks = '',
   } = request.query;
@@ -28,7 +28,7 @@ const getTasksFilter = (request) => {
 
   if (tagId) {
     filter.include.push({
-      model: Models.Tag,
+      model: app.db.models.Tag,
       as: 'tags',
       where: { id: tagId },
     });
@@ -52,8 +52,8 @@ const formDataFromTask = async (task) => ({
 });
 
 const validateTaskBody = async (app, request, reply) => {
-  const data = await getTasksAssociatedData();
-  const task = await findTaskById(request.body.formData.id);
+  const data = await getTasksAssociatedData(app);
+  const task = await findTaskById(app, request.body.formData.id);
   return validateBody(app, request, reply, { ...data, task });
 };
 
@@ -77,7 +77,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
       const data = await getTasksAssociatedData();
-      const task = await findTaskById(request.params.id);
+      const task = await findTaskById(app, request.params.id);
       const formData = await formDataFromTask(task);
       reply.render('tasks/edit', { formData, ...data, task });
       return reply;
@@ -89,15 +89,12 @@ export default (app) => {
     url: '/tasks',
     name: 'getAllTasks',
     handler: async (request, reply) => {
-      const statuses = await Models.TaskStatus.findAll();
-      const users = await Models.User.findAll();
-      const tags = await Models.Tag.findAll();
-
-      const filter = getTasksFilter(request);
-      const tasks = await Models.Task.findAll(filter);
+      const data = await getTasksAssociatedData(app);
+      const filter = getTasksFilter(app, request);
+      const tasks = await app.db.models.Task.findAll(filter);
       reply.render('/tasks/list', {
         data: {
-          tasks, statuses, users, tags,
+          tasks, ...data,
         },
         filter: { ...request.query },
       });
@@ -110,7 +107,7 @@ export default (app) => {
     url: '/task/:id',
     name: 'getTask',
     handler: async (request, reply) => {
-      const task = await findTaskById(request.params.id);
+      const task = await findTaskById(app, request.params.id);
       reply.render('tasks/view', { formData: task });
       return reply;
     },
@@ -130,7 +127,7 @@ export default (app) => {
     handler: async (request, reply) => {
       const { formData } = request.body;
       formData.creatorId = request.currentUser.id;
-      const task = Models.Task.build(formData);
+      const task = app.db.models.Task.build(formData);
       try {
         await task.save();
       } catch (e) {
@@ -160,7 +157,7 @@ export default (app) => {
     handler: async (request, reply) => {
       const { formData } = request.body;
 
-      const task = await findTaskById(request.params.id);
+      const task = await findTaskById(app, request.params.id);
       if (!task) {
         request.log.error(`Error updating task, task with id ${request.params.id} not found`);
         return redirect({
@@ -172,7 +169,7 @@ export default (app) => {
         if (!formData.tagsId) {
           formData.tagsId = [];
         }
-        await task.update(formData, { include: Models.Tag });
+        await task.update(formData, { include: app.db.models.Tag });
         await task.setTags(formData.tagsId);
       } catch (e) {
         request.log.error(`Task update error, ${e}`);
@@ -193,7 +190,7 @@ export default (app) => {
     name: 'deleteTask',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const task = await findTaskById(request.params.id);
+      const task = await findTaskById(app, request.params.id);
       if (!task) {
         request.log.error(`Error deleting task, task with id ${request.params.id} not found`);
         return redirect({
