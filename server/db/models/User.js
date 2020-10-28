@@ -1,15 +1,7 @@
 const crypto = require('crypto');
-const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate(models) {
-      this.hasMany(models.Task, { foreignKey: 'creatorId' });
-      this.hasOne(models.Task, { foreignKey: 'assignedToId' });
-    }
-  }
-
-  User.init({
+  const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
       defaultValue: '',
@@ -29,11 +21,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: '',
     },
-    confirm: {
-      type: DataTypes.VIRTUAL,
-      allowNull: false,
-      defaultValue: '',
-    },
     salt: {
       type: DataTypes.STRING,
     },
@@ -46,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+
+  User.associate = (models) => {
+    User.hasMany(models.Task, { foreignKey: 'creatorId' });
+    User.hasOne(models.Task, { foreignKey: 'assignedToId' });
+  };
 
   User.generateSalt = function generateSalt() {
     return crypto.randomBytes(16).toString('base64');
@@ -68,6 +60,8 @@ module.exports = (sequelize, DataTypes) => {
 
   User.beforeCreate(setSaltAndPassword);
   User.beforeUpdate(setSaltAndPassword);
+  User.beforeBulkCreate(setSaltAndPassword);
+  User.beforeBulkUpdate(setSaltAndPassword);
 
   User.prototype.checkPassword = function checkPassword(password) {
     const encryptedPassword = User.encryptPassword(password, this.salt);

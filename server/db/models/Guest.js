@@ -1,10 +1,5 @@
-const { Model } = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => { // eslint-disable-line
-  class Guest extends Model {
-  }
-
-  Guest.init({
+  const Guest = sequelize.define('Guest', {
 
   }, { sequelize, modelName: 'Guest' });
 
