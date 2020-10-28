@@ -1,9 +1,6 @@
 import 'reflect-metadata';
-import Models from '../db/models';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
-
-const findUserByEmail = async (email) => Models.User.findOne({ where: { email } });
 
 export default (app) => {
   app.route({
@@ -11,7 +8,7 @@ export default (app) => {
     url: '/users/register',
     name: 'getRegisterUserForm',
     handler: async (request, reply) => {
-      const formData = Models.User.build();
+      const formData = app.db.models.User.build();
 
       reply.render('users/register', { errors: {}, formData });
       return reply;
@@ -25,7 +22,7 @@ export default (app) => {
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
       const { email } = request.params;
-      const formData = await findUserByEmail(email);
+      const formData = await app.db.models.User.findOne({ where: { email } });
       reply.render('users/edit', { formData, email });
 
       return reply;
@@ -54,7 +51,7 @@ export default (app) => {
     name: 'getUser',
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await findUserByEmail(request.params.email);
+      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
       reply.render('/users/view', { formData: user });
     },
   });
@@ -64,7 +61,7 @@ export default (app) => {
     url: '/users',
     name: 'getAllUsers',
     handler: async (request, reply) => {
-      const users = await Models.User.findAll();
+      const users = await app.db.models.User.findAll();
       reply.render('/users/list', { users });
       return reply;
     },
@@ -82,7 +79,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
-      const user = Models.User.build(formData);
+      const user = app.db.models.User.build(formData);
       try {
         await user.save();
       } catch (e) {
@@ -112,7 +109,7 @@ export default (app) => {
     ),
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await findUserByEmail(request.params.email);
+      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
       try {
         await user.update(request.body.formData);
       } catch (e) {
@@ -140,7 +137,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await findUserByEmail(request.params.email);
+      const user = await app.db.User.findOne({ where: { email: request.params.email } });
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {
         const url = app.reverse('getLoginForm');
@@ -171,7 +168,7 @@ export default (app) => {
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await findUserByEmail(request.params.email);
+      const user = await app.db.User.findOne({ where: { email: request.params.email } });
 
       try {
         await user.destroy();

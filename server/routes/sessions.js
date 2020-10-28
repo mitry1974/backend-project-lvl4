@@ -1,4 +1,3 @@
-import Models from '../db/models';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
 
@@ -20,7 +19,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       const { formData } = request.body;
-      const user = await Models.User.findOne({ where: { email: formData.email } });
+      const user = await app.db.models.User.findOne({ where: { email: formData.email } });
       if (!user || !(await user.checkPassword(formData.password))) {
         request.log.error(`login with email ${formData.email} failed`);
         return redirect({

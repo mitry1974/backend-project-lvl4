@@ -1,12 +1,9 @@
-import Models from '../db/models';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
 
-const getTagById = (id) => Models.Tag.findByPk(id);
-
 export default (app) => {
   app.get('/tags', { name: 'getAllTags' }, async (request, reply) => {
-    const tags = await Models.Tag.findAll();
+    const tags = await app.db.models.Tag.findAll();
     reply.render('tags/list', { tags });
     return reply;
   });
@@ -17,7 +14,7 @@ export default (app) => {
     name: 'getNewTagForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const formData = Models.Tag.build();
+      const formData = app.db.models.Tag.build();
       reply.render('tags/new', { formData });
       return reply;
     },
@@ -29,7 +26,7 @@ export default (app) => {
     name: 'getEditTagForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const formData = await getTagById(request.params.id);
+      const formData = await app.db.models.Tag.findByPk(request.params.id);
       reply.render('tags/edit', { formData });
       return reply;
     },
@@ -48,7 +45,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
       try {
-        await Models.Tag.create(request.body.formData);
+        await app.db.models.Tag.create(request.body.formData);
       } catch (e) {
         return redirect({
           request, reply, flash: { type: 'error', message: 'flash.tags.create.error' }, url: app.reverse('getAllTags'),
@@ -73,7 +70,7 @@ export default (app) => {
     },
     preValidation: async (request, reply) => validateBody(app, request, reply),
     handler: async (request, reply) => {
-      const tag = await getTagById(request.params.id);
+      const tag = await app.db.models.Tag.findByPk(request.params.id);
       try {
         await tag.update(request.body.formData);
       } catch (e) {
@@ -93,7 +90,7 @@ export default (app) => {
     name: 'deleteTag',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const tag = await getTagById(request.params.id);
+      const tag = await app.db.models.Tag.findByPk(request.params.id);
       try {
         await tag.destroy();
       } catch (e) {
