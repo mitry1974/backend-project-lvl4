@@ -1,7 +1,6 @@
 import matchers from 'jest-supertest-matchers';
 import request from 'supertest';
 import { createTestApp } from './lib/utils';
-import Models from '../server/db/models';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
 
@@ -41,7 +40,7 @@ describe('test TaskStatus route', () => {
       .set('cookie', cookie)
       .send({ formData });
     expect(createResponse.status).toBe(302);
-    const tag = Models.TaskStatus.findOne({ where: { name: formData.name } });
+    const tag = app.db.models.TaskStatus.findOne({ where: { name: formData.name } });
     expect(tag).not.toBeNull();
   });
 
@@ -60,7 +59,7 @@ describe('test TaskStatus route', () => {
       .set('cookie', cookie)
       .send({ formData });
     expect(updateResponse.status).toBe(302);
-    const tag = await Models.Tag.findOne({ where: { id } });
+    const tag = await app.db.models.Tag.findOne({ where: { id } });
     expect(tag.name).toBe(formData.name);
   });
 
@@ -71,7 +70,7 @@ describe('test TaskStatus route', () => {
       .delete(app.reverse('deleteTag', { id }))
       .set('cookie', cookie);
     expect(deleteResponse.status).toBe(302);
-    const tag = await Models.Tag.findOne({ where: { id } });
+    const tag = await app.db.models.Tag.findOne({ where: { id } });
     expect(tag).toBeNull();
   });
 
