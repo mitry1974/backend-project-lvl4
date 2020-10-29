@@ -16,6 +16,7 @@ import ajvErrors from 'ajv-errors';
 import qs from 'qs';
 import fastifyMethodOverride from 'fastify-method-override';
 import fastifySequelize from 'fastify-sequelize';
+import 'make-promises-safe';
 
 import webpackConfig from '../webpack.config';
 import routes from './routes';
@@ -97,10 +98,6 @@ const setupViews = (app) => {
 };
 
 const setupHooks = (app) => {
-  app.addHook('onClose', async () => {
-    await app.sequelize.close();
-  });
-
   app.decorateRequest('currentUser', null);
   app.decorateRequest('signedIn', false);
 
