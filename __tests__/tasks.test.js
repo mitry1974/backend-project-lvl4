@@ -1,7 +1,8 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
-import { createTestApp } from './lib/utils';
+import { initTestDatabse } from './lib/utils';
+import getApp from '../server';
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
 
@@ -22,12 +23,16 @@ describe('test tasks', () => {
 
   beforeAll(async () => {
     expect.extend(matchers);
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen();
   });
 
   afterAll(async () => {
     await app.close();
-    app = null;
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   test('Create task not logged in user', async () => {

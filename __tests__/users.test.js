@@ -1,7 +1,8 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
-import { createTestApp } from './lib/utils';
+import { initTestDatabse } from './lib/utils';
+import getApp from '../server';
 import {
   createUser, deleteUser, updateUser, getUser, getAllUsers, updatePassword,
 } from './lib/testHelpers/users';
@@ -27,12 +28,16 @@ describe('test users', () => {
 
   beforeAll(async () => {
     expect.extend(matchers);
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen();
   });
 
-  afterAll(() => {
-    app.close();
-    app = null;
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   describe('http', () => {

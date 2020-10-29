@@ -1,6 +1,7 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
-import { createTestApp } from './lib/utils';
+import { initTestDatabse } from './lib/utils';
+import getApp from '../server';
 import { login, logout } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
 
@@ -9,11 +10,16 @@ describe('test sessions routes', () => {
 
   beforeAll(async () => {
     expect.extend(matchers);
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen(3000);
   });
 
-  afterAll(() => {
-    app.close();
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   test('Login with missing email', async () => {

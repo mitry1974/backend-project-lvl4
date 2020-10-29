@@ -1,13 +1,23 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
-import { createTestApp } from './lib/utils';
+import getApp from '../server';
+import { initTestDatabse } from './lib/utils';
 
 describe('test welcome route', () => {
   let app = null;
 
   beforeAll(async () => {
     expect.extend(matchers);
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   test('Testing server start', async () => {

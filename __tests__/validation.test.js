@@ -1,14 +1,21 @@
-import { createTestApp } from './lib/utils';
+import getApp from '../server';
+import { initTestDatabse } from './lib/utils';
 import { validate } from '../server/routes/validation';
 
 describe('Test validation', () => {
   let app = null;
+
   beforeAll(async () => {
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen();
   });
 
-  afterAll(() => {
-    app.close();
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   describe('Test user schemas', () => {

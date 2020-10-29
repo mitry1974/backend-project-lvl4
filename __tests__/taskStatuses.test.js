@@ -1,6 +1,7 @@
 import matchers from 'jest-supertest-matchers';
 import request from 'supertest';
-import { createTestApp } from './lib/utils';
+import { initTestDatabse } from './lib/utils';
+import getApp from '../server';
 import {
   createTaskStatus, getAllTaskStatuses, deleteTaskStatus, updateTaskStatus,
 } from './lib/testHelpers/taskStatuses';
@@ -12,11 +13,16 @@ describe('test TaskStatus route', () => {
 
   beforeAll(async () => {
     expect.extend(matchers);
-    app = await createTestApp();
+    app = await getApp();
+    await app.listen();
   });
 
   afterAll(async () => {
     await app.close();
+  });
+
+  beforeEach(async () => {
+    await initTestDatabse(app);
   });
 
   test('Get new taskStatus form', async () => {
