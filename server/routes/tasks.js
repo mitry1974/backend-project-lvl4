@@ -64,7 +64,7 @@ export default (app) => {
     name: 'getNewTaskForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const data = await getTasksAssociatedData();
+      const data = await getTasksAssociatedData(app);
       reply.render('tasks/new', { ...data });
       return reply;
     },
@@ -76,7 +76,7 @@ export default (app) => {
     name: 'getEditTaskForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const data = await getTasksAssociatedData();
+      const data = await getTasksAssociatedData(app);
       const task = await findTaskById(app, request.params.id);
       const formData = await formDataFromTask(task);
       reply.render('tasks/edit', { formData, ...data, task });
