@@ -2,15 +2,7 @@ import * as path from 'path';
 import fixtures from 'sequelize-fixtures';
 import getApp from '../../server';
 
-const clearDb = async () => {
-  // const connection = getConnection('default');
-  // if (connection.isConnected) {
-  //   await connection.dropDatabase();
-  //   await connection.close();
-  // }
-};
-
-const loadFixtures = async (app) => {
+const initTestDatabse = async (app) => {
   try {
     const { models } = app.db;
     await models.User.sync({ force: true });
@@ -29,9 +21,9 @@ const loadFixtures = async (app) => {
 
 const createTestApp = async () => {
   const app = await getApp();
-  await loadFixtures(app);
+  await initTestDatabse(app);
   await app.listen();
   return app;
 };
 
-export { loadFixtures, clearDb, createTestApp };
+export { initTestDatabse, createTestApp };
