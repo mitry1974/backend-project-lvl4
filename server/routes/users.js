@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import 'reflect-metadata';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
@@ -84,12 +85,12 @@ export default (app) => {
         await user.save();
       } catch (e) {
         request.log.error(`Error register new user: ${e}`);
-        return redirect({
+        redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.register.error' }, url: app.reverse('getRegisterUserForm'),
         });
       }
 
-      return redirect({
+      redirect({
         request, reply, flash: { type: 'info', message: 'flash.users.register.success' }, url: app.reverse('root'),
       });
     },
@@ -114,12 +115,12 @@ export default (app) => {
         await user.update(request.body.formData);
       } catch (e) {
         request.log.error(`Error updating user: ${e}`);
-        return redirect({
+        redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.update.error' }, url: app.reverse('getAllUsers'),
         });
       }
 
-      return redirect({
+      redirect({
         request, reply, flash: { type: 'info', message: 'flash.users.update.success' }, url: app.reverse('getAllUsers'),
       });
     },
@@ -137,11 +138,11 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await app.db.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {
         const url = app.reverse('getLoginForm');
-        return redirect({
+        redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
@@ -150,13 +151,13 @@ export default (app) => {
       } catch (e) {
         request.log.error(`Error updating user password: ${e}`);
         const url = app.reverse('getEditUserForm', { email: request.params.email });
-        return redirect({
+        redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
 
       const url = app.reverse('getEditUserForm', { email: request.params.email });
-      return redirect({
+      redirect({
         request, reply, flash: { type: 'info', message: 'flash.users.updatePassword.success' }, url,
       });
     },
@@ -168,20 +169,23 @@ export default (app) => {
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await app.db.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
 
       try {
         await user.destroy();
       } catch (e) {
         request.log.error(`Error deleting user: ${e}`);
-        return redirect({
+        redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
         });
+        return reply;
       }
 
-      return redirect({
+      request.flash('info', i18next.t('flash.users.delete.success'));
+      redirect({
         request, reply, flash: { type: 'info', message: 'flash.users.delete.success' }, url: app.reverse('getAllUsers'),
       });
+      return reply;
     },
   });
 };
