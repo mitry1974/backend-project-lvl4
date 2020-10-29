@@ -7,9 +7,6 @@ const env = process.env.NODE_ENV || 'production';
 const storage = path.join(__dirname, './db.sqlite');
 
 const config = {
-  default: {
-    instance: 'db',
-  },
   development: {
     dialect: 'sqlite',
     storage,
@@ -27,5 +24,5 @@ const config = {
     logging: false,
   },
 };
-const dbconfig = { ...config.default, ...config[env] };
+const dbconfig = { instance: 'db', ...config[env] };
 module.exports = dbconfig;
