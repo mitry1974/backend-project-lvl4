@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import 'reflect-metadata';
 import { validateBody } from './validation';
 import redirect from '../lib/redirect';
@@ -181,11 +180,9 @@ export default (app) => {
         return reply;
       }
 
-      request.flash('info', i18next.t('flash.users.delete.success'));
-      redirect({
-        request, reply, flash: { type: 'info', message: 'flash.users.delete.success' }, url: app.reverse('getAllUsers'),
+      return redirect({
+        request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
       });
-      return reply;
     },
   });
 };

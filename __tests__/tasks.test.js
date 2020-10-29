@@ -29,6 +29,7 @@ describe('test tasks', () => {
 
   afterAll(async () => {
     await app.close();
+    app = null;
   });
 
   beforeEach(async () => {

@@ -44,7 +44,7 @@ const registerPlugins = async (app) => {
   app.register(fastifyReverse.plugin);
   app.register(fastifyFormbody, { parser: (str) => qs.parse(str) });
 
-  app.register(fastifySession, {
+  await app.register(fastifySession, {
     secret: process.env.SESSION_KEY,
     cookie: {
       path: '/',
