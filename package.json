@@ -31,7 +31,11 @@
     "connect-flash": "^0.1.1",
     "css-loader": "^3.6.0",
     "dotenv": "^8.2.0",
+<<<<<<< HEAD
     "fastify": "^3.7.0",
+=======
+    "fastify": "^3.6.0",
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
     "fastify-acl-auth": "^1.4.0",
     "fastify-auth": "^1.0.1",
     "fastify-cookie": "^4.1.0",
@@ -43,7 +47,11 @@
     "fastify-reverse-routes": "^2.0.0",
     "fastify-secure-session": "^2.3.0",
     "fastify-sequelize": "^1.0.4",
+<<<<<<< HEAD
     "fastify-static": "^3.3.0",
+=======
+    "fastify-static": "^3.2.1",
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
     "fontawesome": "^5.6.3",
     "http-errors": "^1.8.0",
     "i18next": "^19.8.2",
@@ -77,7 +85,11 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "babel-eslint": "^10.1.0",
+<<<<<<< HEAD
     "babel-jest": "^26.6.1",
+=======
+    "babel-jest": "^26.5.2",
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
     "babel-loader": "^8.1.0",
     "concurrently": "^5.3.0",
     "cookie": "^0.4.1",
@@ -86,7 +98,11 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.0",
     "faker": "^4.1.0",
+<<<<<<< HEAD
     "jest": "^26.6.1",
+=======
+    "jest": "^26.5.3",
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
     "jest-supertest-matchers": "0.0.2",
     "sequelize-cli": "^6.2.0",
     "sequelize-fixtures": "^1.2.0",

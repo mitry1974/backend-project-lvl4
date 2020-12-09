@@ -7,6 +7,9 @@ const env = process.env.NODE_ENV || 'production';
 const storage = path.join(__dirname, './db.sqlite');
 
 const config = {
+  default: {
+    instance: 'db',
+  },
   development: {
     dialect: 'sqlite',
     storage,

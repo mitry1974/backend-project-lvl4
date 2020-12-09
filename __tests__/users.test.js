@@ -1,8 +1,12 @@
 import request from 'supertest';
 import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
+<<<<<<< HEAD
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
+=======
+import { createTestApp } from './lib/utils';
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
 import {
   createUser, deleteUser, updateUser, getUser, getAllUsers, updatePassword,
 } from './lib/testHelpers/users';
@@ -32,12 +36,18 @@ describe('test users', () => {
     await app.listen();
   });
 
+<<<<<<< HEAD
   afterAll(async () => {
     await app.close();
   });
 
   beforeEach(async () => {
     await initTestDatabse(app);
+=======
+  afterAll(() => {
+    app.close();
+    app = null;
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
   });
 
   describe('http', () => {

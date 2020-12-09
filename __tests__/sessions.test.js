@@ -18,10 +18,13 @@ describe('test sessions routes', () => {
     await app.close();
   });
 
+<<<<<<< HEAD
   beforeEach(async () => {
     await initTestDatabse(app);
   });
 
+=======
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
   test('Login with missing email', async () => {
     const loginData = {
       email: 'missing@email.ru',

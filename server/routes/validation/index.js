@@ -74,6 +74,7 @@ const validate = async (app, schemaName, data) => {
   }
 };
 
+<<<<<<< HEAD
 const renderWithErrors = ({
   request, reply, url, flashMessage, renderData,
 }) => {
@@ -83,6 +84,8 @@ const renderWithErrors = ({
   // return reply;
 };
 
+=======
+>>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
 const formatValidationErrorString = (formData, errors) => `Validation error: validated ${JSON.stringify(formData)}, errors: ${JSON.stringify(errors, null, '\t')}`;
 
 const validateBody = async (app, request, reply, renderData = {}) => {
