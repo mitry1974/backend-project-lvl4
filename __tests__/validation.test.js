@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import getApp from '../server';
 import { initTestDatabse } from './lib/utils';
-=======
-import { createTestApp } from './lib/utils';
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
 import { validate } from '../server/routes/validation';
 
 describe('Test validation', () => {

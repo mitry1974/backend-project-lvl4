@@ -76,11 +76,7 @@ export default (app) => {
     name: 'getEditTaskForm',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-<<<<<<< HEAD
       const data = await getTasksAssociatedData(app);
-=======
-      const data = await getTasksAssociatedData();
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
       const task = await findTaskById(app, request.params.id);
       const formData = await formDataFromTask(task);
       reply.render('tasks/edit', { formData, ...data, task });

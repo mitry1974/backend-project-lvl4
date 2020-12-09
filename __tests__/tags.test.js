@@ -1,11 +1,7 @@
 import matchers from 'jest-supertest-matchers';
 import request from 'supertest';
-<<<<<<< HEAD
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
-=======
-import { createTestApp } from './lib/utils';
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
 import { login } from './lib/testHelpers/sessions';
 import { testLoginData } from './lib/testHelpers/testData';
 

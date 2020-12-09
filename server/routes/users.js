@@ -84,20 +84,12 @@ export default (app) => {
         await user.save();
       } catch (e) {
         request.log.error(`Error register new user: ${e}`);
-<<<<<<< HEAD
         redirect({
-=======
-        return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
           request, reply, flash: { type: 'error', message: 'flash.users.register.error' }, url: app.reverse('getRegisterUserForm'),
         });
       }
 
-<<<<<<< HEAD
       redirect({
-=======
-      return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
         request, reply, flash: { type: 'info', message: 'flash.users.register.success' }, url: app.reverse('root'),
       });
     },
@@ -122,20 +114,12 @@ export default (app) => {
         await user.update(request.body.formData);
       } catch (e) {
         request.log.error(`Error updating user: ${e}`);
-<<<<<<< HEAD
         redirect({
-=======
-        return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
           request, reply, flash: { type: 'error', message: 'flash.users.update.error' }, url: app.reverse('getAllUsers'),
         });
       }
 
-<<<<<<< HEAD
       redirect({
-=======
-      return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
         request, reply, flash: { type: 'info', message: 'flash.users.update.success' }, url: app.reverse('getAllUsers'),
       });
     },
@@ -153,19 +137,11 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-<<<<<<< HEAD
       const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {
         const url = app.reverse('getLoginForm');
         redirect({
-=======
-      const user = await app.db.User.findOne({ where: { email: request.params.email } });
-      const { formData } = request.body;
-      if (!user || !(await user.checkPassword(formData.oldPassword))) {
-        const url = app.reverse('getLoginForm');
-        return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
           request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
@@ -174,21 +150,13 @@ export default (app) => {
       } catch (e) {
         request.log.error(`Error updating user password: ${e}`);
         const url = app.reverse('getEditUserForm', { email: request.params.email });
-<<<<<<< HEAD
         redirect({
-=======
-        return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
           request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
 
       const url = app.reverse('getEditUserForm', { email: request.params.email });
-<<<<<<< HEAD
       redirect({
-=======
-      return redirect({
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
         request, reply, flash: { type: 'info', message: 'flash.users.updatePassword.success' }, url,
       });
     },
@@ -200,17 +168,12 @@ export default (app) => {
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-<<<<<<< HEAD
       const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
-=======
-      const user = await app.db.User.findOne({ where: { email: request.params.email } });
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
 
       try {
         await user.destroy();
       } catch (e) {
         request.log.error(`Error deleting user: ${e}`);
-<<<<<<< HEAD
         redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
         });
@@ -219,15 +182,6 @@ export default (app) => {
 
       return redirect({
         request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
-=======
-        return redirect({
-          request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
-        });
-      }
-
-      return redirect({
-        request, reply, flash: { type: 'info', message: 'flash.users.delete.success' }, url: app.reverse('getAllUsers'),
->>>>>>> 662dde9fe07cc5ae41790689ad7946156f8ec25f
       });
     },
   });
