@@ -14,6 +14,7 @@ module.exports = {
     publicPath: '/assets/',
   },
   devServer: {
+    publicPath: '/assets/',
     host: 'localhost',
     port: 5001,
   },
@@ -33,16 +34,12 @@ module.exports = {
         }, {
           loader: 'postcss-loader',
           options: {
-            plugins: () => [autoprefixer],
+            postcssOptions: {
+              plugins: () => [autoprefixer],
+            },
           },
         }],
       },
     ],
   },
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-    }),
-  ],
 };
