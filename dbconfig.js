@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 const envpath = path.join(__dirname, '.env');
 dotenv.config({ path: envpath });
-const env = process.env.NODE_ENV || 'production';
+const env = process.env.NODE_ENV || 'development';
 const storage = path.join(__dirname, './db.sqlite');
 
 const config = {
