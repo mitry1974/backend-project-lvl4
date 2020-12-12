@@ -2,23 +2,12 @@
   {
     "model": "User",
     "data": {
-      "id": "0",
+      "id": "1",
       "firstname": "Admin firstname",
       "lastname": "Admin lastname",
       "email": "admin@fakedomain.com",
       "password": "123456",
       "role": "admin"
-    }
-  },
-  {
-    "model": "User",
-    "data": {
-      "id": "1",
-      "firstname": "User1 firstname",
-      "lastname": "User1 lastname",
-      "email": "user1@fakedomain.com",
-      "password": "123456",
-      "role": "user"
     }
   },
   {
@@ -66,52 +55,63 @@
     }
   },
   {
+    "model": "User",
+    "data": {
+      "id": "6",
+      "firstname": "User6 firstname",
+      "lastname": "User6 lastname",
+      "email": "user6@fakedomain.com",
+      "password": "123456",
+      "role": "user"
+    }
+  },
+  {
     "model": "Tag",
     "data": {
-      "id": "0",
+      "id": "1",
       "name": "tag1"
     }
   },
   {
   "model": "Tag",
     "data": {
-      "id": "1",
+      "id": "2",
       "name": "tag2"
     }
   },
   {
   "model": "Tag" ,
     "data": {
-      "id": "2",
+      "id": "3",
       "name": "tag3"
     }
   },
   {
   "model": "TaskStatus",
     "data": {
-      "id": "0",
+      "id": "1",
       "name": "status1"
     }
   },
   {
   "model": "TaskStatus",
     "data": {
-      "id": "1",
+      "id": "2",
       "name": "status2"
     }
   },
   {
   "model": "TaskStatus",
     "data": {
-      "id": "2",
+      "id": "3",
       "name": "status3"
     }
   },
   {
   "model": "Task" ,
     "data": {
-      "id": "0",
-      "name": "Task0",
+      "id": "1",
+      "name": "Task1",
       "description": "Description of that task",
       "statusId": "1",
       "creatorId": "1",
@@ -121,18 +121,18 @@
   {
   "model": "Task",
     "data": {
-      "id": "1",
-      "name": "Task1",
+      "id": "2",
+      "name": "Task2",
       "description": "Description of second task",
       "statusId": "1",
       "creatorId": "1",
-      "assignedToId": "0"
+      "assignedToId": "1"
     }
   },
   {
   "model": "Task",
     "data": {
-      "id": "2",
+      "id": "3",
       "name": "Task3",
       "description": "Description of third task",
       "statusId": "1",

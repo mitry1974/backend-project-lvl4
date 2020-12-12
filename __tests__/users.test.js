@@ -1,5 +1,3 @@
-import request from 'supertest';
-import matchers from 'jest-supertest-matchers';
 import faker from 'faker';
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
@@ -27,7 +25,6 @@ describe('test users', () => {
   let app = null;
 
   beforeAll(async () => {
-    expect.extend(matchers);
     app = await getApp();
     await app.listen();
   });
@@ -42,17 +39,23 @@ describe('test users', () => {
 
   describe('http', () => {
     test('Get new user page', async () => {
-      const res = await request(app.server)
-        .get(app.reverse('getRegisterUserForm'));
-      expect(res).toHaveHTTPStatus(200);
+      const response = await app.inject({
+        method: 'get',
+        url: app.reverse('getRegisterUserForm'),
+      });
+
+      expect(response.statusCode).toBe(200);
     });
 
     test('Get edit user page', async () => {
-      const { cookie } = await login({ app, formData: testLoginData.user1 });
-      const res = await request(app.server)
-        .get(app.reverse('getEditUserForm', { email: testLoginData.user1.email }))
-        .set('cookie', cookie);
-      expect(res).toHaveHTTPStatus(200);
+      const { cookie } = await login({ app, formData: testLoginData.user2 });
+      const response = await app.inject({
+        method: 'get',
+        url: app.reverse('getEditUserForm', { email: testLoginData.user2.email }),
+        cookies: cookie,
+      });
+
+      expect(response.statusCode).toBe(200);
     });
   });
 
@@ -60,7 +63,7 @@ describe('test users', () => {
     test('Create new user with good data', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user' });
       const { createResponse } = await createUser({ app, formData });
-      expect(createResponse.status).toBe(302);
+      expect(createResponse.statusCode).toBe(302);
       const createdUser = await app.db.models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).not.toBeNull();
     });
@@ -68,7 +71,7 @@ describe('test users', () => {
     test('Create user with wrong email', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user', email: 'wrong' });
       const { createResponse } = await createUser({ app, formData });
-      expect(createResponse.status).toBe(400);
+      expect(createResponse.statusCode).toBe(400);
       const createdUser = await app.db.models.User.findOne({ where: { email: formData.email } });
       expect(createdUser).toBeNull();
     });
@@ -76,25 +79,25 @@ describe('test users', () => {
     test('Create user with existing email', async () => {
       const formData = generateFakeUserRegisterData({ role: 'user', email: testLoginData.admin.email });
       const { createResponse } = await createUser({ app, formData });
-      expect(createResponse.status).toBe(400);
+      expect(createResponse.statusCode).toBe(400);
     });
   });
 
   describe('Read user tests', () => {
     test('Get all users', async () => {
-      const { getResponse } = await getAllUsers({ app, cookie: '' });
-      expect(getResponse.status).toBe(200);
+      const { getResponse } = await getAllUsers({ app, cookies: {} });
+      expect(getResponse.statusCode).toBe(200);
     });
 
     test('Get user data, not logged in', async () => {
-      const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user1.email });
-      expect(getResponse.status).toBe(302);
+      const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user2.email });
+      expect(getResponse.statusCode).toBe(302);
     });
 
     test('Get user data, logged in', async () => {
       const { cookie } = await login({ app, formData: testLoginData.user1 });
-      const { getResponse } = await getUser({ app, cookie, email: testLoginData.user1.email });
-      expect(getResponse.status).toBe(200);
+      const { getResponse } = await getUser({ app, cookie, email: testLoginData.user2.email });
+      expect(getResponse.statusCode).toBe(302);
     });
   });
 
@@ -102,7 +105,7 @@ describe('test users', () => {
     const testUpdateSuccessData = [
       {
         loginData: testLoginData.admin,
-        emailToUpdate: testLoginData.user1.email,
+        emailToUpdate: testLoginData.user2.email,
         newData: generateFakeUserRegisterData({ role: 'user' }),
       },
       {
@@ -125,7 +128,7 @@ describe('test users', () => {
           app, emailToUpdate, formData: newData, cookie,
         },
       );
-      expect(updateResponse.status).toBe(302);
+      expect(updateResponse.statusCode).toBe(302);
 
       const findedUser = await app.db.models.User.findOne({ where: { email: newData.email } });
       expect(findedUser).not.toBeNull();
@@ -150,7 +153,7 @@ describe('test users', () => {
           cookie,
         },
       );
-      expect(updateResponse.status).toBe(302);
+      expect(updateResponse.statusCode).toBe(302);
     });
   });
 
@@ -158,10 +161,10 @@ describe('test users', () => {
     const succedData = [
       {
         emailWhoDelete: testLoginData.admin.email,
-        emailToDelete: testLoginData.user1.email,
-      }, {
-        emailWhoDelete: testLoginData.user2.email,
         emailToDelete: testLoginData.user2.email,
+      }, {
+        emailWhoDelete: testLoginData.user3.email,
+        emailToDelete: testLoginData.user3.email,
       },
     ];
 
@@ -169,15 +172,15 @@ describe('test users', () => {
       const { cookie } = await login({ app, formData: { email: emailWhoDelete, password: '123456' } });
 
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(302);
+      expect(deleteResponse.statusCode).toBe(302);
       const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeFalsy();
     });
 
     test('Delete by not logged in user, should fail', async () => {
       const emailToDelete = testLoginData.user5.email;
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: '' });
-      expect(deleteResponse.status).toBe(302);
+      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: {} });
+      expect(deleteResponse.statusCode).toBe(302);
       const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
@@ -187,7 +190,7 @@ describe('test users', () => {
 
       const emailToDelete = testLoginData.user5.email;
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(302);
+      expect(deleteResponse.statusCode).toBe(302);
       const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
       expect(user).toBeTruthy();
     });
@@ -197,7 +200,7 @@ describe('test users', () => {
 
       const emailToDelete = 'unknown@email.com';
       const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
-      expect(deleteResponse.status).toBe(302);
+      expect(deleteResponse.statusCode).toBe(302);
     });
   });
 });

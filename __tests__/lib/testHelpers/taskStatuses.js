@@ -1,34 +1,42 @@
-import request from 'supertest';
+const createTaskStatus = async ({ app, formData, cookies }) => {
+  const createResponse = await app.inject({
+    method: 'post',
+    url: app.reverse('createTaskStatus'),
+    cookies,
+    payload: { formData },
+  });
 
-const createTaskStatus = async ({ app, formData, cookie }) => {
-  const createResponse = await request(app.server)
-    .post(app.reverse('createTaskStatus'))
-    .set('cookie', cookie)
-    .send({ formData });
   return { createResponse };
 };
 
 const getAllTaskStatuses = async ({ app }) => {
-  const getAllResponse = await request(app.server)
-    .get(app.reverse('getAllTaskStatuses'));
+  const getAllResponse = await app.inject({
+    method: 'get',
+    url: app.reverse('getAllTaskStatuses'),
+  });
   return { getAllResponse };
 };
 
 const updateTaskStatus = async ({
   app, id, formData, cookie,
 }) => {
-  const updateResponse = await request(app.server)
-    .put(app.reverse('updateTaskStatus', { id }))
-    .set('cookie', cookie)
-    .send({ formData });
+  const updateResponse = await app.inject({
+    method: 'put',
+    url: app.reverse('updateTaskStatus', { id }),
+    cookies: cookie,
+    payload: { formData },
+  });
 
   return { updateResponse };
 };
 
 const deleteTaskStatus = async ({ app, id, cookie }) => {
-  const deleteResponse = await request(app.server)
-    .delete(app.reverse('deleteTaskStatus', { id }))
-    .set('cookie', cookie);
+  const deleteResponse = await app.inject({
+    method: 'delete',
+    url: app.reverse('deleteTaskStatus', { id }),
+    cookies: cookie,
+  });
+
   return { deleteResponse };
 };
 

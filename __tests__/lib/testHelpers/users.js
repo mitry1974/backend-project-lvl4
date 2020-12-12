@@ -1,16 +1,20 @@
-import request from 'supertest';
-
 const createUser = async ({ app, formData }) => {
-  const createResponse = await request(app.server)
-    .post('/users')
-    .send({ formData });
+  const createResponse = await app.inject({
+    method: 'post',
+    url: app.reverse('registerUser'),
+    payload: { formData },
+  });
+
   return { createResponse };
 };
 
 const deleteUser = async ({ app, emailToDelete, cookie }) => {
-  const deleteResponse = await request(app.server)
-    .delete(app.reverse('deleteUser', { email: emailToDelete }))
-    .set('Cookie', cookie);
+  const deleteResponse = await app.inject({
+    method: 'delete',
+    url: app.reverse('deleteUser', { email: emailToDelete }),
+    cookies: cookie,
+  });
+
   return { deleteResponse };
 };
 
@@ -19,10 +23,12 @@ const updateUser = async (
     app, emailToUpdate, formData, cookie,
   },
 ) => {
-  const updateResponse = await request(app.server)
-    .put(`/users/${emailToUpdate}`)
-    .set('cookie', cookie)
-    .send({ formData });
+  const updateResponse = await app.inject({
+    method: 'put',
+    url: app.reverse('updateUser', { email: emailToUpdate }),
+    cookies: cookie,
+    payload: { formData },
+  });
 
   return { updateResponse };
 };
@@ -32,26 +38,33 @@ const updatePassword = async (
     app, emailToUpdate, formData, cookie,
   },
 ) => {
-  const updateResponse = await request(app.server)
-    .put(app.reverse('updatePassword', { email: emailToUpdate }))
-    .set('cookie', cookie)
-    .send({ formData });
+  const updateResponse = await app.inject({
+    method: 'put',
+    url: app.reverse('updatePassword', { email: emailToUpdate }),
+    cookies: cookie,
+    payload: { formData },
+  });
 
   return { updateResponse };
 };
 
 const getUser = async ({ app, cookie, email }) => {
-  const getResponse = await request(app.server)
-    .get(app.reverse('getUser', { email }))
-    .set('cookie', cookie);
+  const getResponse = await app.inject({
+    method: 'get',
+    url: app.reverse('getUser', { email }),
+    cookie,
+  });
 
   return { getResponse };
 };
 
 const getAllUsers = async ({ app, cookie }) => {
-  const getResponse = await request(app.server)
-    .get(app.reverse('getAllUsers'))
-    .set('cookie', cookie);
+  const getResponse = await app.inject({
+    method: 'get',
+    url: app.reverse('getAllUsers'),
+    cookies: cookie,
+  });
+
   return { getResponse };
 };
 

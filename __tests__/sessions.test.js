@@ -1,5 +1,3 @@
-import request from 'supertest';
-import matchers from 'jest-supertest-matchers';
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
 import { login, logout } from './lib/testHelpers/sessions';
@@ -9,7 +7,6 @@ describe('test sessions routes', () => {
   let app = null;
 
   beforeAll(async () => {
-    expect.extend(matchers);
     app = await getApp();
     await app.listen(3000);
   });
@@ -47,18 +44,20 @@ describe('test sessions routes', () => {
   });
 
   test('Logout', async () => {
-    const { status } = await login({ app, formData: testLoginData.user1 });
-    expect(status).toBe(302);
+    const loginResponse = await login({ app, formData: testLoginData.user2 });
+    expect(loginResponse.status).toBe(302);
 
-    const logoutResponse = await logout({ app });
-    expect(logoutResponse.status).toBe(302);
-    const cookie = logoutResponse.header['set-cookie'];
+    const { status, cookie } = await logout({ app });
+    expect(status).toBe(302);
     expect(cookie.session).toBeFalsy();
   });
 
-  test('Logout route', async () => {
-    const getResponse = await request(app.server)
-      .get('/session/new');
-    expect(getResponse.status).toBe(200);
+  test('get login form route', async () => {
+    const getResponse = await app.inject({
+      method: 'get',
+      url: app.reverse('getLoginForm'),
+    });
+
+    expect(getResponse.statusCode).toBe(200);
   });
 });

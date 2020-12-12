@@ -1,5 +1,3 @@
-import matchers from 'jest-supertest-matchers';
-import request from 'supertest';
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
 import {
@@ -12,7 +10,6 @@ describe('test TaskStatus route', () => {
   let app = null;
 
   beforeAll(async () => {
-    expect.extend(matchers);
     app = await getApp();
     await app.listen();
   });
@@ -27,32 +24,38 @@ describe('test TaskStatus route', () => {
 
   test('Get new taskStatus form', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
-    const getResponse = await request(app.server)
-      .get(app.reverse('getNewTaskStatusForm'))
-      .set('cookie', cookie);
-    expect(getResponse.status).toBe(200);
+    const getResponse = await app.inject({
+      method: 'get',
+      url: app.reverse('getNewTaskStatusForm'),
+      cookies: cookie,
+    });
+
+    expect(getResponse.statusCode).toBe(200);
   });
 
   test('Get edit taskstatus form', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
-    const getResponse = await request(app.server)
-      .get(app.reverse('getEditTaskStatusForm', { id: 1 }))
-      .set('cookie', cookie);
-    expect(getResponse.status).toBe(200);
+    const getResponse = await app.inject({
+      method: 'get',
+      url: app.reverse('getEditTaskStatusForm', { id: 1 }),
+      cookies: cookie,
+    });
+
+    expect(getResponse.statusCode).toBe(200);
   });
 
   test('Create new TaskStatus', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const formData = { name: 'status4' };
     const { createResponse } = await createTaskStatus({ app, formData, cookie });
-    expect(createResponse.status).toBe(302);
+    expect(createResponse.statusCode).toBe(302);
     const ts = app.db.models.TaskStatus.findOne({ where: { name: formData.name } });
     expect(ts).not.toBeNull();
   });
 
   test('Get all TaskStatuses', async () => {
     const { getAllResponse } = await getAllTaskStatuses({ app });
-    expect(getAllResponse.status).toBe(200);
+    expect(getAllResponse.statusCode).toBe(200);
   });
 
   test('Update TaskStatus', async () => {
@@ -61,7 +64,7 @@ describe('test TaskStatus route', () => {
     const { updateResponse } = await updateTaskStatus({
       app, id, formData: { name: 'updated' }, cookie,
     });
-    expect(updateResponse.status).toBe(302);
+    expect(updateResponse.statusCode).toBe(302);
     const ts = await app.db.models.TaskStatus.findOne({ where: { id } });
     expect(ts.name).toBe('updated');
   });
@@ -70,7 +73,7 @@ describe('test TaskStatus route', () => {
     const id = 2;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
-    expect(deleteResponse.status).toBe(302);
+    expect(deleteResponse.statusCode).toBe(302);
     const ts = await app.db.models.TaskStatus.findOne({ where: { id } });
     expect(ts).toBeNull();
   });
@@ -79,6 +82,6 @@ describe('test TaskStatus route', () => {
     const id = 2000;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
-    expect(deleteResponse.status).toBe(302);
+    expect(deleteResponse.statusCode).toBe(302);
   });
 });
