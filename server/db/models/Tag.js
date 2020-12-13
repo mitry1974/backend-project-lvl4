@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Tag.associate = (models) => Tag.belongsToMany(models.Task, { through: 'TaskTags', foreignKey: 'tagId' });
 
-  Tag.prototype.toString = function tagName() {
+  Tag.prototype.getName = function getName() {
     return this.name;
   };
 

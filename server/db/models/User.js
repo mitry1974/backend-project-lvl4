@@ -68,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
     return encryptedPassword === this.password;
   };
 
-  User.prototype.toString = function toString() {
+  User.prototype.getName = function getName() {
     return `${this.email}, (${this.firstname} ${this.lastname})`;
   };
 
