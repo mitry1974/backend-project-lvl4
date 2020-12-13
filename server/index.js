@@ -104,7 +104,7 @@ const setupHooks = (app) => {
   app.addHook('preHandler', async (req) => {
     const { models } = app.db;
     const userId = req.session.get('userId');
-    if (userId !== undefined) {
+    if (userId) {
       const currentUser = await models.User.findOne({ where: { id: userId } });
       if (currentUser) {
         req.currentUser = currentUser;
