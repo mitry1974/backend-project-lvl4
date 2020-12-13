@@ -62,9 +62,9 @@ mixin select(entity, propertyName, inputClass, options)
       - const value = v[options.compareBy];
       - const isSelected = _.isArray(currentValue) ? _.indexOf(currentValue, value) !== -1 : value === currentValue;
       if(isSelected)
-        option(value=value selected)= v.getName()
+        option(value=value selected)= v.getFullName()
       else
-        option(value=value)= v.getName()
+        option(value=value)= v.getFullName()
 
 mixin submit(options={})
   div(class=options.divClass)

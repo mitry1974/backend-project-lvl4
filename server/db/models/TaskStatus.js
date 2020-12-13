@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'TaskStatus',
   });
 
-  TaskStatus.prototype.getName = function getName() {
+  TaskStatus.prototype.getFullName = function getFullName() {
     return this.name;
   };
 

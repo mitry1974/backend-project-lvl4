@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import { generateSalt, encryptPassword } from '../../lib/password';
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -34,27 +34,19 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'User',
   });
 
+  User.prototype.getFullName = function getFullName() {
+    return `${this.email}, (${this.firstname} ${this.lastname})`;
+  };
+
   User.associate = (models) => {
     User.hasMany(models.Task, { foreignKey: 'creatorId' });
     User.hasOne(models.Task, { foreignKey: 'assignedToId' });
   };
 
-  User.generateSalt = function generateSalt() {
-    return crypto.randomBytes(16).toString('base64');
-  };
-
-  User.encryptPassword = function encryptPassword(plainText, salt) {
-    return crypto
-      .createHash('RSA-SHA256')
-      .update(plainText)
-      .update(salt)
-      .digest('hex');
-  };
-
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      user.salt = User.generateSalt(); // eslint-disable-line
-      user.password = User.encryptPassword(user.password, user.salt); // eslint-disable-line
+      user.salt = generateSalt(); // eslint-disable-line
+      user.password = encryptPassword(user.password, user.salt); // eslint-disable-line
     }
   };
 
@@ -62,15 +54,6 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeUpdate(setSaltAndPassword);
   User.beforeBulkCreate(setSaltAndPassword);
   User.beforeBulkUpdate(setSaltAndPassword);
-
-  User.prototype.checkPassword = function checkPassword(password) {
-    const encryptedPassword = User.encryptPassword(password, this.salt);
-    return encryptedPassword === this.password;
-  };
-
-  User.prototype.getName = function getName() {
-    return `${this.email}, (${this.firstname} ${this.lastname})`;
-  };
 
   return User;
 };

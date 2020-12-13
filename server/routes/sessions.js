@@ -1,4 +1,5 @@
 import { validateBody } from './validation';
+import { checkPassword } from '../lib/password';
 import redirect from '../lib/redirect';
 
 export default (app) => {
@@ -20,7 +21,7 @@ export default (app) => {
     handler: async (request, reply) => {
       const { formData } = request.body;
       const user = await app.db.models.User.findOne({ where: { email: formData.email } });
-      if (!user || !(await user.checkPassword(formData.password))) {
+      if (!user || !(await checkPassword(formData.password, user))) {
         request.log.error(`login with email ${formData.email} failed`);
         return redirect({
           request, reply, flash: { type: 'error', message: 'flash.session.create.error' }, url: '/session/new',
