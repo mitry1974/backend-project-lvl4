@@ -1,4 +1,4 @@
-import { generateSalt, encryptPassword } from '../../lib/password';
+const { generateSalt, encryptPassword } = require('../../lib/password');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
