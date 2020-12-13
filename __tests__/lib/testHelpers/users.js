@@ -8,10 +8,10 @@ const createUser = async ({ app, formData }) => {
   return { createResponse };
 };
 
-const deleteUser = async ({ app, emailToDelete, cookie }) => {
+const deleteUser = async ({ app, userIdToDelete, cookie }) => {
   const deleteResponse = await app.inject({
     method: 'delete',
-    url: app.reverse('deleteUser', { email: emailToDelete }),
+    url: app.reverse('deleteUser', { userId: userIdToDelete }),
     cookies: cookie,
   });
 
@@ -20,12 +20,12 @@ const deleteUser = async ({ app, emailToDelete, cookie }) => {
 
 const updateUser = async (
   {
-    app, emailToUpdate, formData, cookie,
+    app, userIdToUpdate, formData, cookie,
   },
 ) => {
   const updateResponse = await app.inject({
     method: 'put',
-    url: app.reverse('updateUser', { email: emailToUpdate }),
+    url: app.reverse('updateUser', { userId: userIdToUpdate }),
     cookies: cookie,
     payload: { formData },
   });
@@ -35,12 +35,12 @@ const updateUser = async (
 
 const updatePassword = async (
   {
-    app, emailToUpdate, formData, cookie,
+    app, userIdToUpdate, formData, cookie,
   },
 ) => {
   const updateResponse = await app.inject({
     method: 'put',
-    url: app.reverse('updatePassword', { email: emailToUpdate }),
+    url: app.reverse('updatePassword', { userId: userIdToUpdate }),
     cookies: cookie,
     payload: { formData },
   });
@@ -48,10 +48,10 @@ const updatePassword = async (
   return { updateResponse };
 };
 
-const getUser = async ({ app, cookie, email }) => {
+const getUser = async ({ app, cookie, userId }) => {
   const getResponse = await app.inject({
     method: 'get',
-    url: app.reverse('getUser', { email }),
+    url: app.reverse('getUser', { userId }),
     cookie,
   });
 

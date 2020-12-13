@@ -17,13 +17,17 @@ export default (app) => {
 
   app.route({
     method: 'GET',
-    url: '/users/:email/edit',
+    url: '/users/:userId/edit',
     name: 'getEditUserForm',
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const { email } = request.params;
-      const formData = await app.db.models.User.findOne({ where: { email } });
-      reply.render('users/edit', { formData, email });
+      console.log('=======================================================> 1');
+      const userId = parseInt(request.params.userId, 10);
+      console.log('=======================================================> 2');
+      const formData = await app.db.models.User.findByPk(userId);
+      console.log('=======================================================> 3');
+      reply.render('users/edit', { formData, userId });
+      console.log('=======================================================> 4');
 
       return reply;
     },
@@ -31,7 +35,7 @@ export default (app) => {
 
   app.route({
     method: 'GET',
-    url: '/users/:email/updatePassword',
+    url: '/users/:userId/updatePassword',
     name: 'getUpdatePasswordForm',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
@@ -40,18 +44,18 @@ export default (app) => {
         confirm: '',
         oldPassword: '',
       };
-      reply.render('users/updatePassword', { formData, email: request.params.email });
+      reply.render('users/updatePassword', { formData, id: request.params.userId });
       return reply;
     },
   });
 
   app.route({
     method: 'GET',
-    url: '/users/:email',
+    url: '/users/:userId',
     name: 'getUser',
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findByPk(request.params.userId);
       reply.render('/users/view', { formData: user });
     },
   });
@@ -97,7 +101,7 @@ export default (app) => {
 
   app.route({
     method: 'PUT',
-    url: '/users/:email',
+    url: '/users/:userId',
     name: 'updateUser',
     config: {
       flashMessage: 'flash.users.update.error',
@@ -105,11 +109,11 @@ export default (app) => {
       schemaName: 'updateUserSchema',
     },
     preValidation: async (request, reply) => validateBody(
-      app, request, reply, { email: request.params.email },
+      app, request, reply, { id: request.params.userId },
     ),
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findByPk(request.params.userId);
       try {
         await user.update(request.body.formData);
       } catch (e) {
@@ -127,7 +131,7 @@ export default (app) => {
 
   app.route({
     method: 'PUT',
-    url: '/users/:email/updatePassword',
+    url: '/users/:userId/updatePassword',
     name: 'updatePassword',
     config: {
       flashMessage: 'flash.users.updatePassword.error',
@@ -137,7 +141,7 @@ export default (app) => {
     preValidation: async (request, reply) => validateBody(app, request, reply),
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findByPk(request.params.userId);
       const { formData } = request.body;
       if (!user || !(await user.checkPassword(formData.oldPassword))) {
         const url = app.reverse('getLoginForm');
@@ -149,13 +153,13 @@ export default (app) => {
         await user.update(request.body.formData);
       } catch (e) {
         request.log.error(`Error updating user password: ${e}`);
-        const url = app.reverse('getEditUserForm', { email: request.params.email });
+        const url = app.reverse('getEditUserForm', { userId: request.params.userId });
         redirect({
           request, reply, flash: { type: 'error', message: 'flash.users.updatePassword.error' }, url,
         });
       }
 
-      const url = app.reverse('getEditUserForm', { email: request.params.email });
+      const url = app.reverse('getEditUserForm', { id: request.params.id });
       redirect({
         request, reply, flash: { type: 'info', message: 'flash.users.updatePassword.success' }, url,
       });
@@ -164,11 +168,11 @@ export default (app) => {
 
   app.route({
     method: 'DELETE',
-    url: '/users/:email',
+    url: '/users/:userId',
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await app.db.models.User.findOne({ where: { email: request.params.email } });
+      const user = await app.db.models.User.findByPk(request.params.userId);
 
       try {
         await user.destroy();

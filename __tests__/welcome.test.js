@@ -1,5 +1,3 @@
-import request from 'supertest';
-import matchers from 'jest-supertest-matchers';
 import getApp from '../server';
 import { initTestDatabse } from './lib/utils';
 
@@ -7,7 +5,6 @@ describe('test welcome route', () => {
   let app = null;
 
   beforeAll(async () => {
-    expect.extend(matchers);
     app = await getApp();
     await app.listen();
   });
@@ -21,15 +18,19 @@ describe('test welcome route', () => {
   });
 
   test('Testing server start', async () => {
-    const res = await request(app.server)
-      .get('/');
-    expect(res).toHaveHTTPStatus(200);
+    const response = await app.inject({
+      method: 'get',
+      url: '/',
+    });
+    expect(response.statusCode).toBe(200);
   });
 
   test('Testing server about page', async () => {
-    const res = await request(app.server)
-      .get('/about');
-    expect(res).toHaveHTTPStatus(200);
+    const response = await app.inject({
+      method: 'get',
+      url: '/about',
+    });
+    expect(response.statusCode).toBe(200);
   });
 
   afterAll(async () => {

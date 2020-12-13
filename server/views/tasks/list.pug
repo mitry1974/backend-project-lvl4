@@ -74,12 +74,12 @@ block content
                 title=t('views.tooltips.showTask'))= task.description
           td= task.status.name
           td
-            a(href=route('getUser', { email: task.creator.email })
+            a(href=route('getUser', { userId: task.creator.id })
               data-toggle="tooltip"
               data-placement="top"
               title=t('views.tooltips.showUser'))= task.creator.firstname
           td
-            a(href=route('getUser', { email: task.assignedTo.email })
+            a(href=route('getUser', { userId: task.assignedTo.id })
               data-toggle="tooltip"
               data-placement="top"
               title=t('views.tooltips.showUser'))= task.assignedTo.firstname
@@ -98,7 +98,7 @@ block content
                   title=t('views.tooltips.editTask'))
                   i.fas.fa-edit
               li.list-inline-item
-                a(href=route('deleteTask', { id: task.id, email: task.creator.email })
+                a(href=route('deleteTask', { id: task.id, userId: task.creator.id })
                   data-toggle="tooltip"
                   data-placement="top"
                   title=t('views.tooltips.deleteTask')

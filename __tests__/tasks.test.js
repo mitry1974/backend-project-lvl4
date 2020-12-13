@@ -86,7 +86,7 @@ describe('test tasks', () => {
     const formData = generateFakeTaskData({ id, creatorId: 1 });
     const response = await app.inject({
       method: 'put',
-      url: app.reverse('updateTask', { id, email: testLoginData.user2.email }),
+      url: app.reverse('updateTask', { id, userId: testLoginData.user2.id }),
       cookies: cookie,
       payload: { formData },
     });
@@ -102,7 +102,7 @@ describe('test tasks', () => {
     const { cookie } = await login({ app, formData: testLoginData.admin });
     const deleteResponse = await app.inject({
       method: 'delete',
-      url: app.reverse('deleteTask', { id: testLoginData.admin.id, email: testLoginData.user2.email }),
+      url: app.reverse('deleteTask', { id: testLoginData.admin.id, userId: testLoginData.user2.id }),
       cookies: cookie,
     });
 

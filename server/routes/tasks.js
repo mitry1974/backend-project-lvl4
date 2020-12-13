@@ -145,7 +145,7 @@ export default (app) => {
 
   app.route({
     method: 'PUT',
-    url: '/tasks/:id/:email',
+    url: '/tasks/:id/:userId',
     name: 'updateTask',
     config: {
       flashMessage: 'flash.tasks.update.error',
@@ -186,7 +186,7 @@ export default (app) => {
 
   app.route({
     method: 'DELETE',
-    url: '/task:id/:email',
+    url: '/task:id/:userId',
     name: 'deleteTask',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {

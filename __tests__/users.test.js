@@ -51,7 +51,7 @@ describe('test users', () => {
       const { cookie } = await login({ app, formData: testLoginData.user2 });
       const response = await app.inject({
         method: 'get',
-        url: app.reverse('getEditUserForm', { email: testLoginData.user2.email }),
+        url: app.reverse('getEditUserForm', { userId: testLoginData.user2.id }),
         cookies: cookie,
       });
 
@@ -90,13 +90,13 @@ describe('test users', () => {
     });
 
     test('Get user data, not logged in', async () => {
-      const { getResponse } = await getUser({ app, cookie: '', email: testLoginData.user2.email });
+      const { getResponse } = await getUser({ app, cookie: {}, userId: testLoginData.user2.id });
       expect(getResponse.statusCode).toBe(302);
     });
 
     test('Get user data, logged in', async () => {
       const { cookie } = await login({ app, formData: testLoginData.user1 });
-      const { getResponse } = await getUser({ app, cookie, email: testLoginData.user2.email });
+      const { getResponse } = await getUser({ app, cookie, userId: testLoginData.user2.id });
       expect(getResponse.statusCode).toBe(302);
     });
   });
@@ -105,27 +105,27 @@ describe('test users', () => {
     const testUpdateSuccessData = [
       {
         loginData: testLoginData.admin,
-        emailToUpdate: testLoginData.user2.email,
+        userIdToUpdate: testLoginData.user2.id,
         newData: generateFakeUserRegisterData({ role: 'user' }),
       },
       {
         loginData: testLoginData.admin,
-        emailToUpdate: testLoginData.admin.email,
+        userIdToUpdate: testLoginData.admin.id,
         newData: generateFakeUserRegisterData({ role: 'admin' }),
       },
       {
         loginData: testLoginData.user2,
-        emailToUpdate: testLoginData.user2.email,
+        userIdToUpdate: testLoginData.user2.id,
         newData: generateFakeUserRegisterData({ role: 'user' }),
       },
     ];
 
-    test.each(testUpdateSuccessData)('Update test, should suceeded', async ({ emailToUpdate, loginData, newData }) => {
+    test.each(testUpdateSuccessData)('Update test, should suceeded', async ({ userIdToUpdate, loginData, newData }) => {
       const { cookie } = await login({ app, formData: loginData });
 
       const { updateResponse } = await updateUser(
         {
-          app, emailToUpdate, formData: newData, cookie,
+          app, userIdToUpdate, formData: newData, cookie,
         },
       );
       expect(updateResponse.statusCode).toBe(302);
@@ -144,13 +144,13 @@ describe('test users', () => {
       const { updateResponse } = await updatePassword(
         {
           app,
-          emailToUpdate: testLoginData.user2.email,
+          userIdToUpdate: testLoginData.user2.id,
           formData: {
             oldPassword: testLoginData.user2.password,
             password: '1234',
             confirm: '1234',
           },
-          cookie,
+          cookies: cookie,
         },
       );
       expect(updateResponse.statusCode).toBe(302);
@@ -160,46 +160,46 @@ describe('test users', () => {
   describe('Delete user tests', () => {
     const succedData = [
       {
-        emailWhoDelete: testLoginData.admin.email,
-        emailToDelete: testLoginData.user2.email,
+        loginData: testLoginData.admin,
+        userIdToDelete: testLoginData.user2.id,
       }, {
-        emailWhoDelete: testLoginData.user3.email,
-        emailToDelete: testLoginData.user3.email,
+        loginData: testLoginData.user3,
+        userIdToDelete: testLoginData.user3.id,
       },
     ];
 
-    test.each(succedData)('Delete user, testing succeded data', async ({ emailWhoDelete, emailToDelete }) => {
-      const { cookie } = await login({ app, formData: { email: emailWhoDelete, password: '123456' } });
+    test.each(succedData)('Delete user, testing succeded data', async ({ loginData, userIdToDelete }) => {
+      const { cookie } = await login({ app, formData: loginData });
 
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
+      const { deleteResponse } = await deleteUser({ app, userIdToDelete, cookie });
       expect(deleteResponse.statusCode).toBe(302);
-      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findByPk(userIdToDelete);
       expect(user).toBeFalsy();
     });
 
     test('Delete by not logged in user, should fail', async () => {
-      const emailToDelete = testLoginData.user5.email;
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie: {} });
+      const userIdToDelete = testLoginData.user5.id;
+      const { deleteResponse } = await deleteUser({ app, userIdToDelete, cookie: {} });
       expect(deleteResponse.statusCode).toBe(302);
-      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findByPk(userIdToDelete);
       expect(user).toBeTruthy();
     });
 
     test('Delete with logged in user, user cant delete another user, fail', async () => {
       const { cookie } = await login({ app, formData: testLoginData.user3 });
 
-      const emailToDelete = testLoginData.user5.email;
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
+      const userIdToDelete = testLoginData.user5.id;
+      const { deleteResponse } = await deleteUser({ app, userIdToDelete, cookie });
       expect(deleteResponse.statusCode).toBe(302);
-      const user = await app.db.models.User.findOne({ where: { email: emailToDelete } });
+      const user = await app.db.models.User.findByPk(userIdToDelete);
       expect(user).toBeTruthy();
     });
 
-    test('Delete user with wrong email', async () => {
+    test('Delete user with wrong id', async () => {
       const { cookie } = await login({ app, formData: testLoginData.admin });
 
-      const emailToDelete = 'unknown@email.com';
-      const { deleteResponse } = await deleteUser({ app, emailToDelete, cookie });
+      const userIdToDelete = 1000;
+      const { deleteResponse } = await deleteUser({ app, userIdToDelete, cookie });
       expect(deleteResponse.statusCode).toBe(302);
     });
   });

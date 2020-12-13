@@ -9,12 +9,17 @@ export function verifyAdmin(request, reply, done) {
 }
 
 export async function verifyUserSelf(request, reply, done) {
-  const { email } = request.params;
-  if (request.currentUser.email !== email) {
-    request.log.error('verifyUserSelf, User try to perform operation not on his own record!');
-    done(new TMError('auth.userNotTheSame', '/'));
+  try {
+    const id = parseInt(request.params.userId, 10);
+    if (request.currentUser.id !== id) {
+      request.log.error('verifyUserSelf, User try to perform operation not on his own record!');
+      done(new TMError('auth.userNotTheSame', '/'));
+    }
+    done();
+  } catch (e) {
+    console.log('==========================================================================>');
+    console.log(e);
   }
-  done();
 }
 
 export function verifyLoggedIn(request, reply, done) {

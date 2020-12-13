@@ -27,9 +27,9 @@ block content
             td
               ul.list-inline.m-0
                 li.list-inline-item
-                  a(href=route('getEditUserForm', { email: user.email }))
+                  a(href=route('getEditUserForm', { userId: user.id }))
                     i.fas.fa-edit
                 li.list-inline-item
                   a(href=route('deleteUser',
-                    { email: user.email }) data-confirm=t('views.users.list.deleteConfirmation') data-method="delete" rel="nofollow")
+                    { userId: user.id }) data-confirm=t('views.users.list.deleteConfirmation') data-method="delete" rel="nofollow")
                     i.fas.fa-trash
