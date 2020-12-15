@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && npx webpack-cli && NODE_ENV=production npx babel server --out-dir dist/server && npx babel dbconfig.js --out-dir dist/ && cp webpack.config.js package.json dist && cp -r server/views dist/server/ && npm run migrations-run && npm run seeds-run",
     "start": "NODE_ENV=production cd ./dist && node server/bin/server.js",
-    "start-server-debug": "NODE_ENV=production cd ./dist && node server/bin/server.js --inspect",
+    "start-production-debug": "NODE_ENV=production cd ./dist && node server/bin/server.js --inspect",
     "start-debug-client": "NODE_ENV=development npx webpack serve --config webpack.config.js",
     "start-debug-server": "NODE_ENV=development npx nodemon --exec DEBUG=application:* npx babel-node -r dotenv/config server/bin/server.js --inspect --source-maps inline",
     "start-debug": "npx concurrently npm:start-debug-client npm:start-debug-server",
