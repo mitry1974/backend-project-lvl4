@@ -28,5 +28,4 @@ const config = {
   },
 };
 const dbconfig = { instance: 'db', ...config[env] };
-console.log(dbconfig);
 module.exports = dbconfig;
