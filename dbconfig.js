@@ -28,4 +28,10 @@ const config = {
   },
 };
 const dbconfig = { instance: 'db', ...config[env] };
+
+if (dbconfig.use_env_variable) {
+  delete dbconfig.use_env_variable;
+  dbconfig.DATABASE_URL = process.env.DATABASE_URL;
+}
+console.log(dbconfig);
 module.exports = dbconfig;
