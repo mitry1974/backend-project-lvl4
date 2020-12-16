@@ -38,6 +38,7 @@ const isDevelopment = !isProduction && !isTest;
 
 const registerPlugins = async (app) => {
   await app.register(fastifySequelize, dbconfig);
+
   initializeModels(app.db);
 
   app.register(fastifyMethodOverride);
