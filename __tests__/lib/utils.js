@@ -14,7 +14,7 @@ const initTestDatabse = async (app) => {
     const fixturesFilename = path.resolve(__dirname, '../__fixtures__/fixtures.json');
     await fixtures.loadFile(fixturesFilename, models);
   } catch (err) {
-      console.log(`Load fixtures error - ${err.message}`);
+    console.log(`Load fixtures error - ${err.message}`);
     throw err;
   }
 };
