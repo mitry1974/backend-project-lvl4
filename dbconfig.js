@@ -6,6 +6,7 @@ dotenv.config({ path: envpath });
 const env = process.env.NODE_ENV || 'development';
 const storage = path.join(__dirname, './db.sqlite');
 
+console.log(`env = ${process.env.NODE_ENV}`);
 const config = {
   default: {
     instance: 'db',
