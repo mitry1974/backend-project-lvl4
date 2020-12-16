@@ -16,7 +16,8 @@ const config = {
     logging: false,
   },
   production: {
-    use_env_variable: 'DATABASE_URL',
+    // use_env_variable: 'DATABASE_URL',
+    url: process.env.DATABASE_URL,
     dialect: 'postgres',
     logging: console.log,
   },
@@ -29,9 +30,9 @@ const config = {
 };
 const dbconfig = { instance: 'db', ...config[env] };
 
-if (dbconfig.use_env_variable) {
-  delete dbconfig.use_env_variable;
-  dbconfig.DATABASE_URL = process.env.DATABASE_URL;
-}
+// if (dbconfig.use_env_variable) {
+//   delete dbconfig.use_env_variable;
+//   dbconfig.DATABASE_URL = process.env.DATABASE_URL;
+// }
 console.log(dbconfig);
 module.exports = dbconfig;
