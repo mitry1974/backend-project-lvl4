@@ -1,5 +1,6 @@
 const path = require('path');
 const dotenv = require('dotenv');
+const parse = require('sequelize-parse-url');
 
 const envpath = path.join(__dirname, '.env');
 dotenv.config({ path: envpath });
@@ -16,8 +17,7 @@ const config = {
     logging: false,
   },
   production: {
-    // use_env_variable: 'DATABASE_URL',
-    url: process.env.DATABASE_URL,
+    use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
     logging: console.log,
   },
@@ -28,11 +28,9 @@ const config = {
     logging: false,
   },
 };
-const dbconfig = { instance: 'db', ...config[env] };
 
-// if (dbconfig.use_env_variable) {
-//   delete dbconfig.use_env_variable;
-//   dbconfig.DATABASE_URL = process.env.DATABASE_URL;
-// }
+const postgresConfig = config.use_env_variable ? parse(process.env[config.use_env_variable]) : {};
+const dbconfig = { instance: 'db', ...config[env], ...postgresConfig };
+
 console.log(dbconfig);
 module.exports = dbconfig;
