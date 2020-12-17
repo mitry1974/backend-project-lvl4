@@ -8,7 +8,6 @@ describe('test tags routes', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {

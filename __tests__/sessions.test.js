@@ -8,7 +8,6 @@ describe('test sessions routes', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen(3000);
   });
 
   afterAll(async () => {

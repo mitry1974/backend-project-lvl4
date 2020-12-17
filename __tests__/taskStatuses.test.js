@@ -11,7 +11,6 @@ describe('test TaskStatus route', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {

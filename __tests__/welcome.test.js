@@ -6,7 +6,6 @@ describe('test welcome route', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {

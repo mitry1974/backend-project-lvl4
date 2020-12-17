@@ -22,7 +22,6 @@ const initTestDatabse = async (app) => {
 const createTestApp = async () => {
   const app = await getApp();
   await initTestDatabse(app);
-  await app.listen();
   return app;
 };
 

@@ -26,7 +26,6 @@ describe('test users', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {

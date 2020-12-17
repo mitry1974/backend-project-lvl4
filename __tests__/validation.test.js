@@ -7,7 +7,6 @@ describe('Test validation', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {

@@ -21,7 +21,6 @@ describe('test tasks', () => {
 
   beforeAll(async () => {
     app = await getApp();
-    await app.listen();
   });
 
   afterAll(async () => {
