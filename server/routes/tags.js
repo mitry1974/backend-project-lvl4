@@ -90,8 +90,19 @@ export default (app) => {
     name: 'deleteTag',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const tag = await app.db.models.Tag.findByPk(request.params.id);
       try {
+        const tag = await app.db.models.Tag.findByPk(
+          request.params.id,
+          { include: [app.db.models.Task] },
+        );
+
+        if (tag.Tasks.length !== 0) {
+          request.log.error(`Error deleting tag, linked tasks: ${tag.Tasks.map((task) => task.name).join(',')}`);
+          redirect({
+            request, reply, flash: { type: 'error', message: 'flash.tags.delete.errorLinkedTask' }, url: app.reverse('getAllUsers'),
+          });
+          return reply;
+        }
         await tag.destroy();
       } catch (e) {
         return redirect({

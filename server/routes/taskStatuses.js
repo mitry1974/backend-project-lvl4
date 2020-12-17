@@ -96,14 +96,24 @@ export default (app) => {
     name: 'deleteTaskStatus',
     preHandler: app.auth([app.verifyLoggedIn]),
     handler: async (request, reply) => {
-      const ts = await app.db.models.TaskStatus.findOne({ where: { id: request.params.id } });
-      if (!ts) {
-        return redirect({
-          request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.error' }, url: app.reverse('getAllTaskStatuses'),
-        });
-      }
-
       try {
+        const ts = await app.db.models.TaskStatus.findByPk(request.params.id);
+        if (!ts) {
+          return redirect({
+            request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.error' }, url: app.reverse('getAllTaskStatuses'),
+          });
+        }
+
+        const tasks = await app.db.models.Task.findAll({ where: { statusId: ts.id } });
+
+        if (tasks.length !== 0) {
+          request.log.error(`Error deleting tag, linked tasks: ${tasks.map((task) => task.name).join(',')}`);
+          redirect({
+            request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.errorLinkedTask' }, url: app.reverse('getAllUsers'),
+          });
+          return reply;
+        }
+
         await ts.destroy();
       } catch (e) {
         request.log.error(`Delete task status error, ${e}`);
