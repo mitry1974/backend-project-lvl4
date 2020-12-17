@@ -37,6 +37,8 @@ const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 
 const registerPlugins = async (app) => {
+  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>');
+  console.log(dbconfig);
   await app.register(fastifySequelize, dbconfig);
 
   initializeModels(app.db);
