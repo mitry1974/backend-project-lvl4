@@ -13,7 +13,7 @@ module.exports = {
       },
       {
         id: 2,
-        name: 'Task1',
+        name: 'Task2',
         description: 'Description of second task',
         statusId: 1,
         creatorId: 1,

@@ -172,9 +172,33 @@ export default (app) => {
     name: 'deleteUser',
     preHandler: app.auth([app.verifyAdmin, app.verifyUserSelf]),
     handler: async (request, reply) => {
-      const user = await app.db.models.User.findByPk(request.params.userId);
-
       try {
+        const user = await app.db.models.User.findByPk(request.params.userId);
+        if (!user) {
+          request.log.error('Error deleting user, user not found');
+          redirect({
+            request, reply, flash: { type: 'error', message: 'flash.users.delete.errorUserNotFound' }, url: app.reverse('getAllUsers'),
+          });
+          return reply;
+        }
+
+        const linkedTasks = await app.db.models.Task.findAll({
+          where: {
+            [app.db.Op.or]: [
+              { assignedToId: user.id },
+              { creatorId: user.id },
+            ],
+          },
+        });
+
+        if (linkedTasks.length !== 0) {
+          request.log.error(`Error deleting user, because it has linked tasks: ${linkedTasks.map((task) => task.name).join(',')}`);
+          redirect({
+            request, reply, flash: { type: 'error', message: 'flash.users.delete.errorLinkedTask' }, url: app.reverse('getAllUsers'),
+          });
+          return reply;
+        }
+
         await user.destroy();
       } catch (e) {
         request.log.error(`Error deleting user: ${e}`);
@@ -185,7 +209,7 @@ export default (app) => {
       }
 
       return redirect({
-        request, reply, flash: { type: 'error', message: 'flash.users.delete.error' }, url: app.reverse('getAllUsers'),
+        request, reply, flash: { type: 'info', message: 'flash.users.delete.success' }, url: app.reverse('getAllUsers'),
       });
     },
   });

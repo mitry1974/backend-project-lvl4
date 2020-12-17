@@ -126,7 +126,7 @@
       "description": "Description of second task",
       "statusId": "1",
       "creatorId": "1",
-      "assignedToId": "1"
+      "assignedToId": "5"
     }
   },
   {

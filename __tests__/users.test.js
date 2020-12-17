@@ -160,8 +160,9 @@ describe('test users', () => {
     const succedData = [
       {
         loginData: testLoginData.admin,
-        userIdToDelete: testLoginData.user2.id,
-      }, {
+        userIdToDelete: testLoginData.user3.id,
+      },
+      {
         loginData: testLoginData.user3,
         userIdToDelete: testLoginData.user3.id,
       },
