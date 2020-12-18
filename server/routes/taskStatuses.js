@@ -107,7 +107,7 @@ export default (app) => {
         const tasks = await app.db.models.Task.findAll({ where: { statusId: ts.id } });
 
         if (tasks.length !== 0) {
-          request.log.error(`Error deleting tag, linked tasks: ${tasks.map((task) => task.name).join(',')}`);
+          request.log.error(`Error deleting task status, linked tasks: ${tasks.map((task) => task.name).join(',')}`);
           redirect({
             request, reply, flash: { type: 'error', message: 'flash.taskStatuses.delete.errorLinkedTask' }, url: app.reverse('getAllUsers'),
           });

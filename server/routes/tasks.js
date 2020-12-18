@@ -119,7 +119,7 @@ export default (app) => {
     name: 'createTask',
     config: {
       flashMessage: 'flash.tasks.create.error',
-      template: `${'tasks/create'}`,
+      template: 'tasks/create',
       schemaName: 'tasksSchema',
     },
     preValidation: async (request, reply) => validateTaskBody(app, request, reply),
