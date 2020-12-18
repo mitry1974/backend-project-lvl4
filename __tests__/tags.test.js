@@ -1,7 +1,7 @@
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
 import { login } from './lib/testHelpers/sessions';
-import { testLoginData } from './lib/testHelpers/testData';
+import { testLoginData, testTagData } from './lib/testHelpers/testData';
 
 describe('test tags routes', () => {
   let app = null;
@@ -33,7 +33,7 @@ describe('test tags routes', () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const getResponse = await app.inject({
       method: 'get',
-      url: app.reverse('getEditTagForm', { id: 1 }),
+      url: app.reverse('getEditTagForm', { id: testTagData.tag1.id }),
       cookies: cookie,
     });
 
@@ -42,7 +42,7 @@ describe('test tags routes', () => {
 
   test('Create new tag', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
-    const formData = { name: 'tag4' };
+    const formData = { name: testTagData.missingTag.name };
     const createResponse = await app.inject({
       method: 'post',
       url: app.reverse('createTag'),
@@ -64,7 +64,7 @@ describe('test tags routes', () => {
   });
 
   test('Update tag', async () => {
-    const id = 1;
+    const { id } = testTagData.tag1;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const formData = { name: 'updated' };
     const updateResponse = await app.inject({
@@ -80,7 +80,7 @@ describe('test tags routes', () => {
   });
 
   test('Delete Tag', async () => {
-    const id = 2;
+    const { id } = testTagData.tag2;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const deleteResponse = await app.inject({
       method: 'delete',
@@ -94,7 +94,7 @@ describe('test tags routes', () => {
   });
 
   test('Delete Tag, wrong id', async () => {
-    const id = 200;
+    const { id } = testTagData.missingTag;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const deleteResponse = await app.inject({
       method: 'delete',

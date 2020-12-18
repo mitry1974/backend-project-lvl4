@@ -58,4 +58,40 @@ const testTaskData = {
   },
 };
 
-export { testLoginData, testTaskData };
+const testTaskStatusData = {
+  taskStatus1: {
+    id: 1,
+    name: 'status1',
+  },
+  taskStatus2: {
+    id: 2,
+    name: 'status2',
+  },
+  taskStatus3: {
+    id: 3,
+    name: 'status3',
+  },
+};
+
+const testTagData = {
+  tag1: {
+    id: 1,
+    name: 'tag1',
+  },
+  tag2: {
+    id: 2,
+    name: 'tag2',
+  },
+  tag3: {
+    id: 3,
+    name: 'tag3',
+  },
+  missingTag: {
+    id: 200,
+    name: 'missing',
+  },
+};
+
+export {
+  testLoginData, testTaskData, testTaskStatusData, testTagData,
+};

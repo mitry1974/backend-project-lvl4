@@ -1,10 +1,11 @@
+import faker from 'faker';
 import { initTestDatabse } from './lib/utils';
 import getApp from '../server';
 import {
   createTaskStatus, getAllTaskStatuses, deleteTaskStatus, updateTaskStatus,
 } from './lib/testHelpers/taskStatuses';
 import { login } from './lib/testHelpers/sessions';
-import { testLoginData } from './lib/testHelpers/testData';
+import { testLoginData, testTaskStatusData } from './lib/testHelpers/testData';
 
 describe('test TaskStatus route', () => {
   let app = null;
@@ -36,7 +37,7 @@ describe('test TaskStatus route', () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const getResponse = await app.inject({
       method: 'get',
-      url: app.reverse('getEditTaskStatusForm', { id: 1 }),
+      url: app.reverse('getEditTaskStatusForm', { id: testTaskStatusData.taskStatus1.id }),
       cookies: cookie,
     });
 
@@ -45,7 +46,8 @@ describe('test TaskStatus route', () => {
 
   test('Create new TaskStatus', async () => {
     const { cookie } = await login({ app, formData: testLoginData.user2 });
-    const formData = { name: 'status4' };
+    const newStatus = faker.lorem.word();
+    const formData = { name: newStatus };
     const { createResponse } = await createTaskStatus({ app, formData, cookie });
     expect(createResponse.statusCode).toBe(302);
     const ts = app.db.models.TaskStatus.findOne({ where: { name: formData.name } });
@@ -58,7 +60,7 @@ describe('test TaskStatus route', () => {
   });
 
   test('Update TaskStatus', async () => {
-    const id = 1;
+    const { id } = testTaskStatusData.taskStatus1;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { updateResponse } = await updateTaskStatus({
       app, id, formData: { name: 'updated' }, cookie,
@@ -69,7 +71,7 @@ describe('test TaskStatus route', () => {
   });
 
   test('Delete TaskSatus', async () => {
-    const id = 2;
+    const { id } = testTaskStatusData.taskStatus2;
     const { cookie } = await login({ app, formData: testLoginData.user2 });
     const { deleteResponse } = await deleteTaskStatus({ app, id, cookie });
     expect(deleteResponse.statusCode).toBe(302);
