@@ -15,6 +15,16 @@ module.exports = (sequelize, DataTypes) => {
     },
   },
   {
+    scopes: {
+      byStatus: (statusId) => ({ where: { statusId } }),
+      byAssignedTo: (assignedToId) => ({ where: { assignedToId } }),
+      byCreator: (creatorId) => ({ where: { creatorId } }),
+      // byTag: (tagId) => ({
+      //   model: 'Tag',
+      //   as: 'tags',
+      //   where: { id: tagId },
+      // }),
+    },
     sequelize,
     modelName: 'Task',
   });
@@ -24,6 +34,18 @@ module.exports = (sequelize, DataTypes) => {
     Task.belongsTo(models.User, { foreignKey: 'creatorId', as: 'creator' });
     Task.belongsTo(models.User, { foreignKey: 'assignedToId', as: 'assignedTo' });
     Task.belongsToMany(models.Tag, { through: 'TaskTags', as: 'tags', foreignKey: 'taskId' });
+
+    Task.addScope('byTag', (tagId) => ({
+      include: [{
+        model: models.Tag,
+        as: 'tags',
+        where: {
+          id: {
+            [sequelize.Op.eq]: tagId,
+          },
+        },
+      }],
+    }));
   };
 
   return Task;

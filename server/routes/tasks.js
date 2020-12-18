@@ -13,34 +13,6 @@ const getTasksAssociatedData = async (app) => {
   return data;
 };
 
-const getTasksFilter = (app, request) => {
-  const {
-    tagId = '', statusId = '', assignedToId = '', selfTasks = '',
-  } = request.query;
-  const filter = { where: {}, include: ['status', 'creator', 'assignedTo'] };
-  if (assignedToId) {
-    filter.where.assignedToId = assignedToId;
-  }
-
-  if (statusId) {
-    filter.where.statusId = statusId;
-  }
-
-  if (tagId) {
-    filter.include.push({
-      model: app.db.models.Tag,
-      as: 'tags',
-      where: { id: tagId },
-    });
-  }
-
-  if (selfTasks === 'on') {
-    filter.where.creatorId = request.currentUser.id;
-  }
-
-  return filter;
-};
-
 const formDataFromTask = async (task) => ({
   id: task.id,
   name: task.name,
@@ -84,14 +56,23 @@ export default (app) => {
     },
   });
 
+  const params2scopes = {
+    tagId: (request) => ({ method: ['byTag', request.query.tagId] }),
+    statusId: (request) => ({ method: ['byStatus', request.query.statusId] }),
+    assignedToId: (request) => ({ method: ['byAssignedTo', request.query.assignedToId] }),
+    selfTasks: (request) => ({ method: ['byCreator', request.currentUser.id] }),
+  };
   app.route({
     method: 'GET',
     url: '/tasks',
     name: 'getAllTasks',
     handler: async (request, reply) => {
+      const activeScopes = Object.keys(request.query)
+        .filter((paramName) => request.query[paramName])
+        .map((paramName) => params2scopes[paramName](request));
+
+      const tasks = await app.db.models.Task.scope(activeScopes).findAll({ include: ['status', 'creator', 'assignedTo'] });
       const data = await getTasksAssociatedData(app);
-      const filter = getTasksFilter(app, request);
-      const tasks = await app.db.models.Task.findAll(filter);
       reply.render('/tasks/list', {
         data: {
           tasks, ...data,
