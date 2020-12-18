@@ -13,7 +13,8 @@ block content
       +addInput('input', formData, 'createdAt', t('views.tasks.createdAt'), { errors, divClass: 'col-md-4 mb-3' })(
         value=task.createdAt.toLocaleString()
         readonly)
-      +addInput('input', formData, '', t('views.tasks.creator'), { errors, divClass: 'col-md-6 mb-3' })(value=task.creator.getFullName() readonly)
+      +addInput('input', formData, '', t('views.tasks.creator'), { errors, divClass: 'col-md-6 mb-3' })(
+        value=`${task.creator.email}, (${task.creator.firstname} ${task.creator.lastname})` readonly)
       +addInput('input', formData, 'creatorId', '', { errors, divClass: 'col-md-6 mb-3' })(type="hidden")
     .form-row
       +addInput('input', formData, 'name', t('views.tasks.name'), { errors, divClass: 'col-md-5 mb-3' })

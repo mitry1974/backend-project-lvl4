@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'User',
   });
 
-  User.prototype.getFullName = function getFullName() {
-    return `${this.email}, (${this.firstname} ${this.lastname})`;
-  };
-
   User.associate = (models) => {
     User.hasMany(models.Task, { foreignKey: 'creatorId' });
     User.hasOne(models.Task, { foreignKey: 'assignedToId' });

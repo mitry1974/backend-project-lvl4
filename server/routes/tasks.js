@@ -7,7 +7,8 @@ const getTasksAssociatedData = async (app) => {
   const data = {};
   const { models } = app.db;
   data.statuses = await models.TaskStatus.findAll();
-  data.users = await models.User.findAll();
+  const rawUsers = await models.User.findAll();
+  data.users = rawUsers.map((user) => ({ name: `${user.email}, (${user.firstname} ${user.lastname})`, id: user.id }));
   data.tags = await models.Tag.findAll();
 
   return data;

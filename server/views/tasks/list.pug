@@ -26,9 +26,9 @@ block content
           each user in data.users
             - const value=user.id
             if(value==filter.assignedToId)
-              option(value=user.id selected)= user.toString()
+              option(value=user.id selected)= user.name
             else
-              option(value=user.id)= user.toString()
+              option(value=user.id)= user.name
       .col-auto
         label(for="byTag")= t('views.tasks.tags')
         select.form-control(id="tagId" name="tagId")

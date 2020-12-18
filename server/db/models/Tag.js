@@ -7,10 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  Tag.prototype.getFullName = function getFullName() {
-    return this.name;
-  };
-
   Tag.associate = (models) => Tag.belongsToMany(models.Task, { through: 'TaskTags', foreignKey: 'tagId' });
 
   return Tag;
