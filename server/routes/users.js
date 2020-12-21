@@ -21,13 +21,9 @@ export default (app) => {
     name: 'getEditUserForm',
     preHandler: app.auth([app.verifyLoggedIn, app.verifyUserSelf], { relation: 'and' }),
     handler: async (request, reply) => {
-      console.log('=======================================================> 1');
       const userId = parseInt(request.params.userId, 10);
-      console.log('=======================================================> 2');
       const formData = await app.db.models.User.findByPk(userId);
-      console.log('=======================================================> 3');
       reply.render('users/edit', { formData, userId });
-      console.log('=======================================================> 4');
 
       return reply;
     },

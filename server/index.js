@@ -37,8 +37,6 @@ const isTest = env === 'test';
 const isDevelopment = !isProduction && !isTest;
 
 const registerPlugins = async (app) => {
-  console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~>');
-  console.log(dbconfig);
   await app.register(fastifySequelize, dbconfig);
 
   initializeModels(app.db);
@@ -141,14 +139,14 @@ const setupValidation = (app) => {
 
 export default async () => {
   setupLocalization();
-  const logger = {
-    level: 'trace',
-    prettyPrint: !isProduction,
-    timestamp: !isDevelopment,
-    base: null,
-  };
-  const app = fastify({ logger });
-  // const app = fastify();
+  // const logger = {
+  //   level: 'trace',
+  //   prettyPrint: !isProduction,
+  //   timestamp: !isDevelopment,
+  //   base: null,
+  // };
+  // const app = fastify({ logger });
+  const app = fastify();
   setupErrorHandler(app);
   setupValidation(app);
   app.decorate('i18n', i18next);
